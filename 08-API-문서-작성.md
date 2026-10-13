@@ -82,6 +82,7 @@ paths:
 ```
 
 서버를 켜고 `http://localhost:8080/swagger-ui/index.html` 을 열면 문서 화면이 보여요.
+운영 서버에서는 `springdoc.swagger-ui.enabled: false`로 끄고, Spring Security를 쓰면 `/swagger-ui/**`, `/v3/api-docs/**`를 열어 줘야 해요.
 
 설명을 더 붙이고 싶으면 어노테이션을 달아요.
 
@@ -110,6 +111,13 @@ API **테스트 코드**를 쓰면, 테스트가 실제로 주고받은 요청·
 - 👍 테스트가 통과해야 문서가 생기니 **문서와 실제 동작이 어긋날 수 없어요.**
 - 👍 운영 코드에 문서용 어노테이션이 붙지 않아 깔끔해요.
 - 👎 테스트를 꼼꼼히 써야 해서 처음엔 손이 많이 가요.
+
+적용 순서는 네 단계예요. 전체 코드는 [`발표/예제-프로젝트/blog-api`](발표/예제-프로젝트/blog-api)에 있어요.
+
+1. 의존성 추가: `spring-restdocs-mockmvc`(테스트) + Asciidoctor 플러그인
+2. 테스트 작성: `@AutoConfigureRestDocs` + `.andDo(document("post-get", responseFields(...)))`
+3. 테스트 실행 → `generated-snippets/post-get/`에 요청·응답 문서 조각이 생김
+4. `src/docs/asciidoc/index.adoc`에서 조각을 `include`하고 빌드 → HTML 문서
 
 ### 방법 3. 손으로 쓰기 (Notion, 위키, 엑셀)
 
