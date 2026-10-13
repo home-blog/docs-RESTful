@@ -4,15 +4,25 @@ import html, os, sys
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 os.makedirs(OUT, exist_ok=True)
 
-FONT = "'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif"
-MONO = "'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace"
+FONT = "'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif"
+MONO = "'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace"
+# 구조는 회색 계열, 강조는 파랑 하나, 의미가 있는 색(성공·4xx·5xx)만 따로 쓴다.
 C = dict(
-    ink="#1C2230", muted="#5A6474", line="#B4BCC8", faint="#E3E7ED", soft="#F4F6F9", white="#FFFFFF",
-    blue="#2459C2", blueBg="#EAF0FB", teal="#0D7468", tealBg="#E2F2EF",
-    violet="#5B45B8", violetBg="#EEEAFA", green="#1B7F3B", greenBg="#E5F3E9",
-    orange="#B55400", orangeBg="#FCEFE0", red="#BF2A20", redBg="#FBE8E6",
+    ink="#15181D", muted="#6B7280", line="#D3D8DF", faint="#E8EBEF", soft="#F6F7F9", white="#FFFFFF",
+    blue="#2E5BDB", blueBg="#F3F6FD", teal="#2B3440", tealBg="#F6F7F9",
+    violet="#2B3440", violetBg="#F6F7F9", green="#18794E", greenBg="#F1F8F4",
+    orange="#B54708", orangeBg="#FEF6EE", red="#B42318", redBg="#FEF3F2",
+    sortc="#0F766E", pagec="#6941C6",
 )
 MARKERS = ["ink", "muted", "blue", "teal", "violet", "green", "orange", "red"]
+NEUTRAL_STROKE = {"ink", "teal", "violet"}       # 상자 테두리는 강조·의미 색이 아니면 옅은 회색으로
+CIRCLED = {"①": "1.", "②": "2.", "③": "3.", "④": "4.", "⑤": "5.", "⑥": "6."}
+
+
+def plain(s):
+    for k, v in CIRCLED.items():
+        s = s.replace(k, v)
+    return s
 
 
 def esc(s):
@@ -39,11 +49,16 @@ class Fig:
 
     def rect(self, x, y, w, h, stroke="line", fill="white", rx=14, sw=2, dash=None):
         d = f' stroke-dasharray="{dash}"' if dash else ""
+        if stroke in NEUTRAL_STROKE and fill != stroke:
+            stroke = "line"
+        rx = rx if h <= 40 else min(rx, 8)
+        sw = max(1, round(sw * 0.6, 2)) if sw else 0
         self.add(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{rx}" fill="{C[fill]}" stroke="{C[stroke]}" stroke-width="{sw}"{d}/>')
 
     def text(self, x, y, s, size=20, weight=400, fill="ink", anchor="middle", mono=False):
         fam = MONO if mono else FONT
-        self.add(f'<text x="{x}" y="{y}" font-family="{fam}" font-size="{size}" font-weight="{weight}" fill="{C[fill]}" text-anchor="{anchor}" xml:space="preserve">{esc(s)}</text>')
+        weight = 600 if (weight == 700 and not mono) else weight
+        self.add(f'<text x="{x}" y="{y}" font-family="{fam}" font-size="{size}" font-weight="{weight}" fill="{C[fill]}" text-anchor="{anchor}" xml:space="preserve">{esc(plain(s))}</text>')
 
     def rich(self, x, y, spans, size=20, anchor="start"):
         """spans: (text, color, weight, mono)"""
@@ -53,13 +68,15 @@ class Fig:
             wt = sp[2] if len(sp) > 2 else 400
             mono = sp[3] if len(sp) > 3 else False
             fam = MONO if mono else FONT
-            out.append(f'<tspan font-family="{fam}" font-weight="{wt}" fill="{C[col]}">{esc(t)}</tspan>')
+            wt = 600 if (wt == 700 and not mono) else wt
+            out.append(f'<tspan font-family="{fam}" font-weight="{wt}" fill="{C[col]}">{esc(plain(t))}</tspan>')
         self.add(f'<text x="{x}" y="{y}" font-size="{size}" text-anchor="{anchor}" xml:space="preserve">{"".join(out)}</text>')
 
     def path(self, pts, color="muted", arrow=True, dash=None, sw=2.5):
         d = "M" + " L".join(f"{x},{y}" for x, y in pts)
         m = f' marker-end="url(#ah-{color})"' if arrow else ""
         da = f' stroke-dasharray="{dash}"' if dash else ""
+        sw = round(sw * 0.62, 2)
         self.add(f'<path d="{d}" fill="none" stroke="{C[color]}" stroke-width="{sw}" stroke-linejoin="round"{da}{m}/>')
 
     def pill(self, cx, cy, s, color, size=16, weight=600, pad=12, fill="white"):
@@ -68,13 +85,12 @@ class Fig:
         self.text(cx, cy + size * 0.36, s, size, weight, color)
 
     def xmark(self, cx, cy, r=16):
-        self.add(f'<circle cx="{cx}" cy="{cy}" r="{r}" fill="{C["redBg"]}" stroke="{C["red"]}" stroke-width="2"/>')
-        k = r * 0.45
-        self.add(f'<path d="M{cx-k},{cy-k} L{cx+k},{cy+k} M{cx+k},{cy-k} L{cx-k},{cy+k}" stroke="{C["red"]}" stroke-width="3" stroke-linecap="round"/>')
+        k = r * 0.5
+        self.add(f'<path d="M{cx-k},{cy-k} L{cx+k},{cy+k} M{cx+k},{cy-k} L{cx-k},{cy+k}" stroke="{C["red"]}" stroke-width="2" stroke-linecap="round"/>')
 
     def svg(self):
         defs = "".join(
-            f'<marker id="ah-{c}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" '
+            f'<marker id="ah-{c}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" '
             f'markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{C[c]}"/></marker>'
             for c in MARKERS
         )
@@ -82,7 +98,7 @@ class Fig:
         return (
             f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 {self.oy} {self.w} {self.h-self.oy}" width="{self.w}" height="{self.h-self.oy}" '
             f'role="img" aria-label="{esc(self.claim)}">\n<title>{esc(self.title)}</title>\n<defs>{defs}</defs>\n'
-            f'<rect x="0" y="{self.oy}" width="{self.w}" height="{self.h-self.oy}" rx="18" fill="{C["white"]}"/>\n{body}\n</svg>\n'
+            f'<rect x="0" y="{self.oy}" width="{self.w}" height="{self.h-self.oy}" fill="{C["white"]}"/>\n{body}\n</svg>\n'
         )
 
 
@@ -158,8 +174,8 @@ f.rect(520, 150, 240, 200, "teal", "tealBg")
 f.text(640, 222, "서버", 28, 700, "teal")
 f.text(640, 258, "Spring Boot", 19, 400, "muted")
 f.text(640, 305, "요청을 처리한다", 19, 500)
-f.add(f'<rect x="508" y="168" width="14" height="164" rx="5" fill="{C["teal"]}"/>')
-f.text(515, 132, "API", 18, 700, "teal")
+f.add(f'<rect x="514" y="168" width="4" height="164" rx="2" fill="{C["blue"]}"/>')
+f.text(516, 140, "API", 16, 700, "blue")
 f.rect(940, 150, 220, 200, "violet", "violetBg")
 f.text(1050, 222, "데이터베이스", 26, 700, "violet")
 f.text(1050, 258, "글 · 댓글 · 회원", 19, 400, "muted")
@@ -259,8 +275,7 @@ for i, (task, bad, m, url, warn) in enumerate(VR):
         f.text(660, cy + 24, warn, 12, 700, "red", "end")
     f.path([(676, cy), (734, cy)], "muted")
     f.rect(740, y, 460, 58, "green", "white", rx=10, sw=1.5)
-    f.add(f'<circle cx="764" cy="{cy}" r="11" fill="{C["greenBg"]}" stroke="{C["green"]}" stroke-width="2"/>')
-    f.add(f'<path d="M758,{cy} L762.5,{cy+4.5} L770,{cy-4}" fill="none" stroke="{C["green"]}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>')
+    f.add(f'<path d="M757,{cy} L762,{cy+5} L771,{cy-5}" fill="none" stroke="{C["green"]}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>')
     f.rich(788, cy + 6, [(f"{m:<7}", "blue", 700, True), (url, "teal", 700, True)], 18)
 f.rect(40, 512, 1160, 108, "faint", "soft", rx=14)
 f.rich(620, 552, [("동사(get · create · update · delete)는 ", "ink", 700), ("HTTP 메서드", "blue", 700),
@@ -593,9 +608,9 @@ URL_GROUPS = [
     ("?", "muted", 400, None, None),
     ("topic=TRAVEL&keyword=제주", "blue", 700, "검색", "어떤 글만?"),
     ("&", "muted", 400, None, None),
-    ("sort=createdAt,desc", "teal", 700, "정렬", "어떤 순서로?"),
+    ("sort=createdAt,desc", "sortc", 700, "정렬", "어떤 순서로?"),
     ("&", "muted", 400, None, None),
-    ("page=0&size=20", "violet", 700, "페이징", "몇 개씩, 몇 번째 묶음?"),
+    ("page=0&size=20", "pagec", 700, "페이징", "몇 개씩, 몇 번째 묶음?"),
 ]
 URL_STEPS = {1: 1, 2: 3, 3: 5, 4: 7}   # 단계별로 보여 줄 조각 수
 
@@ -632,8 +647,8 @@ f.rect(40, 76, 600, 410, "teal", "white")
 JL = [
     ("{", "ink", 400), ('  "content": [', "teal", 700), ('    { "id": 37, "title": "부산 맛집", ... },', "ink", 400),
     ('    { "id": 36, "title": "제주 여행", ... },', "ink", 400), ("    ... 모두 20개", "muted", 400), ("  ],", "teal", 700),
-    ('  "page": {', "violet", 700), ('    "number": 1,', "violet", 700), ('    "size": 20,', "violet", 700),
-    ('    "totalElements": 57,', "violet", 700), ('    "totalPages": 3', "violet", 700), ("  }", "violet", 700), ("}", "ink", 400),
+    ('  "page": {', "pagec", 700), ('    "number": 1,', "pagec", 700), ('    "size": 20,', "pagec", 700),
+    ('    "totalElements": 57,', "pagec", 700), ('    "totalPages": 3', "pagec", 700), ("  }", "pagec", 700), ("}", "ink", 400),
 ]
 for i, (t, c, w) in enumerate(JL):
     f.text(62, 112 + i * 28, t, 16, w, c, "start", True)
@@ -643,8 +658,8 @@ f.text(664, 202, "최대 size개, 결과가 없으면 빈 배열 []", 15, 400, "
 for i, (k, t) in enumerate([("number", "지금 몇 번째 묶음인지 (0부터 → 화면엔 2쪽)"), ("size", "한 묶음에 몇 개"),
                             ("totalElements", "전체 글 수"), ("totalPages", "전체 묶음 수 → 마지막 쪽 번호")]):
     y = 308 + i * 28
-    f.add(f'<line x1="{620 - (0 if k != "totalElements" else 0)}" y1="{y-5}" x2="656" y2="{y-5}" stroke="{C["violet"]}" stroke-width="1.5" stroke-dasharray="3 4"/>')
-    f.rich(664, y, [(k, "violet", 700, True), ("  " + t, "ink", 400)], 15)
+    f.add(f'<line x1="{620 - (0 if k != "totalElements" else 0)}" y1="{y-5}" x2="656" y2="{y-5}" stroke="{C["pagec"]}" stroke-width="1.5" stroke-dasharray="3 4"/>')
+    f.rich(664, y, [(k, "pagec", 700, True), ("  " + t, "ink", 400)], 15)
 f.text(664, 440, "화면 표시", 15, 700, "muted", "start")
 for j, (lab, on) in enumerate([("‹", False), ("1", False), ("2", True), ("3", False), ("›", False)]):
     bx = 760 + j * 46
@@ -746,8 +761,8 @@ f.rich(600, 414, [("좋은 문서에 꼭  ", "ink", 700),
 # ---------------------------------------------------------------- 14 한 장 요약
 f = fig("14-한-장-요약", "한 장 요약: 요청 하나의 여정", 1280, 390,
         "요청 하나는 URL, 메서드, 입력 검증, 전역 예외 처리, 상태 코드와 공통 응답 순으로 지나가고, API 문서가 이 약속을 미리 알려 준다.")
-f.rect(60, 30, 1160, 56, "green", "greenBg", rx=12)
-f.rich(640, 65, [("API 문서  ", "green", 700), ("아래 규칙을 모두 미리 적어 둔다", "ink", 500)], 19, "middle")
+f.rect(60, 30, 1160, 56, "line", "soft", rx=12)
+f.rich(640, 65, [("API 문서  ", "ink", 700), ("아래 규칙을 모두 미리 적어 둔다", "ink", 500)], 19, "middle")
 steps = [
     ("/posts/42", "teal", 18, "무엇 = URL", "명사 · 복수형"),
     ("DELETE", "blue", 18, "어떻게 = 메서드", "조회·생성·수정·삭제"),
@@ -757,8 +772,8 @@ steps = [
 ]
 for k, (code, col, sz, cap, sub) in enumerate(steps):
     x = 60 + k * 240
-    f.rect(x, 116, 200, 150, col, "white", rx=14)
-    f.add(f'<circle cx="{x+22}" cy="{138}" r="13" fill="{C[col]}"/>')
+    f.rect(x, 116, 200, 150, "line", "white", rx=14)
+    f.add(f'<circle cx="{x+22}" cy="{138}" r="12" fill="{C["ink"]}"/>')
     f.text(x + 22, 143, str(k + 1), 14, 700, "white")
     f.text(x + 100, 186, code, sz, 700, col, mono=True)
     f.text(x + 100, 220, cap, 18, 700)
@@ -848,7 +863,7 @@ for (y, n, pth, db, hl) in SV:
     f.path([(872, y + 60), (1006, y + 60)], "violet" if hl else "line", sw=2.5 if hl else 2)
 f.text(938, 330, "⑤ INSERT", 14, 700, "violet", mono=True)
 f.path([(512, 320), (596, 320)], "blue")
-f.text(554, 306, "③", 15, 700, "blue")
+f.text(554, 306, "③ 전달", 14, 700, "blue")
 f.path([(690, 278), (690, 214)], "teal")
 f.path([(780, 214), (780, 278)], "teal", dash="6 5")
 f.text(800, 238, "④ GET /api/v1/posts/42", 13, 700, "teal", "start", True)
