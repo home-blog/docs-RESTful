@@ -588,30 +588,71 @@ f.text(132, 345, "같은 양식의", 15, 700, "teal", "start")
 f.text(132, 367, "에러 응답", 15, 700, "teal", "start")
 
 # ---------------------------------------------------------------- 11 검색·정렬·페이징 주소
-f = fig("11-검색-정렬-페이징-주소", "검색·정렬·페이징 주소 읽기", 1200, 300,
-        "목록 조건은 물음표 뒤 쿼리에 검색, 정렬, 페이징 순으로 이름=값을 &로 이어 붙인다.", oy=45)
-SZ = 24
-groups = [
-    ("/api/v1/posts?", "ink", 400, "어떤 자원", "경로 (? 앞)"),
-    ("topic=TRAVEL&keyword=제주", "blue", 700, "검색 · 필터", "어떤 글만?"),
+URL_GROUPS = [
+    ("/api/v1/posts", "ink", 400, "어떤 자원", "경로"),
+    ("?", "muted", 400, None, None),
+    ("topic=TRAVEL&keyword=제주", "blue", 700, "검색", "어떤 글만?"),
     ("&", "muted", 400, None, None),
     ("sort=createdAt,desc", "teal", 700, "정렬", "어떤 순서로?"),
     ("&", "muted", 400, None, None),
-    ("page=0&size=20", "violet", 700, "페이징", "몇 개씩, 몇 번째 쪽?"),
+    ("page=0&size=20", "violet", 700, "페이징", "몇 개씩, 몇 번째 묶음?"),
 ]
-total = sum(tw(g[0], SZ, True) for g in groups)
-x = (1200 - total) / 2
-f.rich(x, 100, [(g[0], g[1], g[2], True) for g in groups], SZ)
-for (s, col, wt, l1, l2) in groups:
-    w = tw(s, SZ, True)
-    if l1:
-        bc = "muted" if col == "ink" else col
-        f.add(f'<path d="M{x+4:.1f},120 V130 H{x+w-4:.1f} V120 M{x+w/2:.1f},130 V140" fill="none" stroke="{C[bc]}" stroke-width="2.5"/>')
-        f.text(x + w / 2, 174, l1, 20, 700, bc)
-        f.text(x + w / 2, 202, l2, 16, 400, "muted")
-    x += w
-f.rect(150, 236, 900, 46, "faint", "soft", rx=23)
-f.text(600, 266, "물음표(?) 뒤에 이름=값을 &로 잇는다 · 안 보내면 기본값 (최신순, 20개)", 17, 500)
+URL_STEPS = {1: 1, 2: 3, 3: 5, 4: 7}   # 단계별로 보여 줄 조각 수
+
+
+def url_fig(f, upto, footer):
+    SZ = 24
+    x = (1200 - sum(tw(g[0], SZ, True) for g in URL_GROUPS)) / 2   # 단계가 달라도 위치가 같도록 전체 기준
+    for (s_, col, wt, l1, l2) in URL_GROUPS[:upto]:
+        w = tw(s_, SZ, True)
+        f.text(x, 100, s_, SZ, wt, col, "start", True)
+        if l1:
+            bc = "muted" if col == "ink" else col
+            f.add(f'<path d="M{x+4:.1f},120 V130 H{x+w-4:.1f} V120 M{x+w/2:.1f},130 V140" fill="none" stroke="{C[bc]}" stroke-width="2.5"/>')
+            f.text(x + w / 2, 174, l1, 20, 700, bc)
+            f.text(x + w / 2, 202, l2, 16, 400, "muted")
+        x += w
+    if footer:
+        f.rect(150, 236, 900, 46, "faint", "soft", rx=23)
+        f.text(600, 266, "조건은 모두 물음표(?) 뒤에 이름=값으로 · 안 보내면 기본값 (최신순, 20개)", 17, 500)
+
+
+f = fig("11-검색-정렬-페이징-주소", "검색·정렬·페이징 주소 읽기", 1200, 300,
+        "목록 조건은 경로가 아니라 물음표 뒤 쿼리에 검색, 정렬, 페이징을 이름=값으로 이어 붙인다.", oy=45)
+url_fig(f, 7, True)
+for k, upto in URL_STEPS.items():
+    f = fig(f"애니메이션/11-주소-쌓기-{k}단계", f"주소 쌓기 {k}단계", 1200, 300, f"검색·정렬·페이징 주소를 쌓아 가는 {k}단계", oy=45)
+    url_fig(f, upto, k == 4)
+
+# ---------------------------------------------------------------- 11b 목록 응답 형식
+f = fig("11b-목록-응답-형식", "목록 응답 형식", 1240, 590,
+        "목록 응답은 이번 묶음의 글(content)과 페이지 정보(page)를 함께 주고, 화면은 페이지 정보로 페이지 번호와 다음 버튼을 그린다.")
+f.rich(40, 50, [("요청  ", "muted", 700), ("GET /api/v1/posts?page=1&size=20", "blue", 700, True)], 19)
+f.rect(40, 76, 600, 410, "teal", "white")
+JL = [
+    ("{", "ink", 400), ('  "content": [', "teal", 700), ('    { "id": 37, "title": "부산 맛집", ... },', "ink", 400),
+    ('    { "id": 36, "title": "제주 여행", ... },', "ink", 400), ("    ... 모두 20개", "muted", 400), ("  ],", "teal", 700),
+    ('  "page": {', "violet", 700), ('    "number": 1,', "violet", 700), ('    "size": 20,', "violet", 700),
+    ('    "totalElements": 57,', "violet", 700), ('    "totalPages": 3', "violet", 700), ("  }", "violet", 700), ("}", "ink", 400),
+]
+for i, (t, c, w) in enumerate(JL):
+    f.text(62, 112 + i * 28, t, 16, w, c, "start", True)
+f.add(f'<path d="M626,140 H650 V224 H626" fill="none" stroke="{C["teal"]}" stroke-width="2"/>')
+f.text(664, 178, "content: 이번 묶음의 글 목록", 17, 700, "teal", "start")
+f.text(664, 202, "최대 size개, 결과가 없으면 빈 배열 []", 15, 400, "muted", "start")
+for i, (k, t) in enumerate([("number", "지금 몇 번째 묶음인지 (0부터 → 화면엔 2쪽)"), ("size", "한 묶음에 몇 개"),
+                            ("totalElements", "전체 글 수"), ("totalPages", "전체 묶음 수 → 마지막 쪽 번호")]):
+    y = 308 + i * 28
+    f.add(f'<line x1="{620 - (0 if k != "totalElements" else 0)}" y1="{y-5}" x2="656" y2="{y-5}" stroke="{C["violet"]}" stroke-width="1.5" stroke-dasharray="3 4"/>')
+    f.rich(664, y, [(k, "violet", 700, True), ("  " + t, "ink", 400)], 15)
+f.text(664, 440, "화면 표시", 15, 700, "muted", "start")
+for j, (lab, on) in enumerate([("‹", False), ("1", False), ("2", True), ("3", False), ("›", False)]):
+    bx = 760 + j * 46
+    f.rect(bx, 418, 38, 36, "blue" if on else "line", "blue" if on else "white", rx=8, sw=1.5)
+    f.text(bx + 19, 442, lab, 16, 700, "white" if on else "ink")
+f.text(1000, 442, "2 / 3쪽", 16, 600, "ink", "start")
+f.rect(40, 512, 1160, 52, "faint", "soft", rx=12)
+f.rich(620, 545, [("서버가 제한할 것  ", "ink", 700), ("size 최대 100 · 정렬은 정해 둔 필드만 · 정렬 조건이 없으면 최신순", "muted", 500)], 17, "middle")
 
 # ---------------------------------------------------------------- 12 오프셋과 커서
 f = fig("12-오프셋과-커서", "오프셋과 커서", 1200, 600,
@@ -856,6 +897,7 @@ f.text(650, 624, "그대로 500을 주지 말고 원인에 맞는 코드로", 14
 
 # ---------------------------------------------------------------- write
 for fg in FIGS:
+    os.makedirs(os.path.dirname(os.path.join(OUT, fg.name + ".svg")), exist_ok=True)
     with open(os.path.join(OUT, fg.name + ".svg"), "w", encoding="utf-8") as fh:
         fh.write(fg.svg())
 print(len(FIGS), "figures written to", OUT)
