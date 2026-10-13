@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 570" width="1200" height="570" role="img" aria-label="API마다 다른 에러 모양을 표준 형식 하나로 통일하면, 화면은 code 하나만 보고 처리할 수 있다.">
+<title>공통 에러 형식</title>
+<defs><marker id="ah-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1C2230"/></marker><marker id="ah-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5A6474"/></marker><marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2459C2"/></marker><marker id="ah-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0D7468"/></marker><marker id="ah-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B45B8"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1B7F3B"/></marker><marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B55400"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#BF2A20"/></marker></defs>
+<rect x="0" y="0" width="1200" height="570" rx="18" fill="#FFFFFF"/>
+<line x1="600" y1="30" x2="600" y2="540" stroke="#E3E7ED" stroke-width="2" stroke-dasharray="6 8"/>
+<text x="300" y="62" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="23" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">통일 전</text>
+<text x="300" y="92" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">API마다 에러 모양이 다르다</text>
+<rect x="40" y="128" width="130" height="56" rx="10" fill="#F4F6F9" stroke="#B4BCC8" stroke-width="2"/>
+<text x="105" y="162" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">글 API</text>
+<path d="M172,156 L196,156" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<rect x="200" y="128" width="370" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="2"/>
+<text x="214" y="162" font-size="15" text-anchor="start" xml:space="preserve"><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="700" fill="#1C2230">404</tspan><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="400" fill="#1C2230">  { &quot;error&quot;: &quot;not found&quot; }</tspan></text>
+<rect x="40" y="204" width="130" height="56" rx="10" fill="#F4F6F9" stroke="#B4BCC8" stroke-width="2"/>
+<text x="105" y="238" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">댓글 API</text>
+<path d="M172,232 L196,232" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<rect x="200" y="204" width="370" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="2"/>
+<text x="214" y="238" font-size="15" text-anchor="start" xml:space="preserve"><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="700" fill="#1C2230">400</tspan><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="400" fill="#1C2230">  { &quot;result&quot;: false, &quot;msg&quot;: &quot;실패&quot; }</tspan></text>
+<rect x="40" y="280" width="130" height="56" rx="10" fill="#F4F6F9" stroke="#B4BCC8" stroke-width="2"/>
+<text x="105" y="314" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">회원 API</text>
+<path d="M172,308 L196,308" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<rect x="200" y="280" width="370" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="2"/>
+<text x="214" y="314" font-size="15" text-anchor="start" xml:space="preserve"><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="700" fill="#BF2A20">200</tspan><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="400" fill="#1C2230">  &quot;FAIL&quot;</tspan></text>
+<text x="556" y="314" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="700" fill="#BF2A20" text-anchor="end" xml:space="preserve">실패인데 200</text>
+<path d="M300,350 L300,446" fill="none" stroke="#5A6474" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<rect x="130" y="450" width="340" height="90" rx="14" fill="#FCEFE0" stroke="#B55400" stroke-width="2"/>
+<text x="300" y="487" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="700" fill="#B55400" text-anchor="middle" xml:space="preserve">화면 개발자</text>
+<text x="300" y="517" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="middle" xml:space="preserve">에러 모양 3가지를 따로 처리</text>
+<text x="900" y="62" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="23" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">통일 후</text>
+<text x="900" y="92" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">모든 API가 같은 모양으로 응답</text>
+<rect x="630" y="128" width="120" height="56" rx="10" fill="#F4F6F9" stroke="#B4BCC8" stroke-width="2"/>
+<text x="690" y="162" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">글 API</text>
+<path d="M752,156 L776,156" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round"/>
+<rect x="630" y="204" width="120" height="56" rx="10" fill="#F4F6F9" stroke="#B4BCC8" stroke-width="2"/>
+<text x="690" y="238" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">댓글 API</text>
+<path d="M752,232 L776,232" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round"/>
+<rect x="630" y="280" width="120" height="56" rx="10" fill="#F4F6F9" stroke="#B4BCC8" stroke-width="2"/>
+<text x="690" y="314" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">회원 API</text>
+<path d="M752,308 L776,308" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M776,156 L776,308" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round"/>
+<path d="M776,232 L798,232" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-teal)"/>
+<rect x="800" y="110" width="370" height="300" rx="14" fill="#FFFFFF" stroke="#0D7468" stroke-width="2"/>
+<text x="818" y="142" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">{</text>
+<text x="818" y="170" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">  &quot;type&quot;: &quot;/errors/post-not-found&quot;,</text>
+<text x="818" y="198" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">  &quot;title&quot;: &quot;글을 찾을 수 없습니다&quot;,</text>
+<text x="818" y="226" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">  &quot;status&quot;: 404,</text>
+<text x="818" y="254" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">  &quot;detail&quot;: &quot;42번 글이 없습니다.&quot;,</text>
+<text x="818" y="282" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="700" fill="#2459C2" text-anchor="start" xml:space="preserve">  &quot;code&quot;: &quot;POST_NOT_FOUND&quot;</text>
+<text x="818" y="310" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="15" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">}</text>
+<line x1="816" y1="348" x2="1154" y2="348" stroke="#E3E7ED" stroke-width="1.5"/>
+<text x="818" y="372" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">type · title · status · detail: 표준 (RFC 9457)</text>
+<text x="818" y="396" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="700" fill="#2459C2" text-anchor="start" xml:space="preserve">code: 우리 팀 에러 코드</text>
+<path d="M985,412 L985,446" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-teal)"/>
+<rect x="815" y="450" width="340" height="90" rx="14" fill="#E5F3E9" stroke="#1B7F3B" stroke-width="2"/>
+<text x="985" y="487" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="700" fill="#1B7F3B" text-anchor="middle" xml:space="preserve">화면 개발자</text>
+<text x="985" y="517" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="middle" xml:space="preserve">code 하나만 보고 처리</text>
+</svg>
