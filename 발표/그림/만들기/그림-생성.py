@@ -702,46 +702,98 @@ f.text(645, 486, "단점: 5쪽으로 바로 가기는 어렵다", 16, 600, "oran
 f.rich(600, 568, [("안전장치  ", "ink", 700), ("size 최댓값 (예: 100) · 기본 정렬 · 정렬할 수 있는 칸 제한", "muted", 500)], 18, "middle")
 
 # ---------------------------------------------------------------- 13 API 문서
-f = fig("13-API-문서가-만들어지는-길", "API 문서가 만들어지는 길", 1200, 460,
-        "코드에서 springdoc이 OpenAPI 명세를 만들고 Swagger UI가 보여 주며, 정확도가 필요하면 테스트를 통과해야 생기는 REST Docs를 쓴다.")
-f.text(30, 56, "시작이 쉬움", 15, 700, "teal", "start")
-f.text(30, 216, "정확도 높음", 15, 700, "violet", "start")
-f.rect(30, 70, 210, 110, "line", "white")
-f.text(135, 112, "컨트롤러 코드", 19, 700)
-f.text(135, 142, "@GetMapping", 14, 500, "muted", mono=True)
-f.text(135, 164, "@Schema", 14, 500, "muted", mono=True)
-f.path([(242, 125), (326, 125)], "teal")
-f.text(285, 112, "springdoc", 14, 700, "teal", mono=True)
-f.text(285, 150, "자동 생성", 14, 500, "teal")
-f.rect(330, 70, 230, 110, "teal", "tealBg")
-f.text(445, 112, "OpenAPI 명세", 19, 700, "teal")
-f.text(445, 140, "openapi.json", 15, 500, "ink", mono=True)
-f.text(445, 164, "문서의 규격", 15, 400, "muted")
-f.path([(562, 125), (636, 125)], "teal")
-f.text(600, 112, "화면으로", 14, 500, "teal")
-f.rect(640, 70, 250, 110, "blue", "blueBg")
-f.text(765, 112, "Swagger UI", 19, 700, "blue")
-f.text(765, 140, "API 목록 · 예시", 15, 400)
-f.text(765, 164, "Try it out 으로 호출", 15, 400, "muted")
-f.path([(892, 125), (956, 125)], "blue")
-f.rect(960, 70, 210, 270, "green", "greenBg")
-f.text(1065, 176, "읽는 사람", 21, 700, "green")
-f.text(1065, 210, "프론트 개발자", 16, 500)
-f.text(1065, 236, "다른 팀 · 미래의 나", 16, 500)
-f.rect(30, 230, 210, 110, "line", "white")
-f.text(135, 276, "테스트 코드", 19, 700)
-f.text(135, 304, "API를 실제로 호출", 15, 400, "muted")
-f.path([(242, 285), (326, 285)], "violet")
-f.text(285, 272, "통과해야", 14, 700, "violet")
-f.text(285, 310, "문서 생성", 14, 500, "violet")
-f.rect(330, 230, 230, 110, "violet", "violetBg")
-f.text(445, 274, "Spring REST Docs", 18, 700, "violet")
-f.text(445, 304, "코드와 어긋나지 않음", 15, 400)
-f.path([(562, 285), (956, 285)], "violet")
-f.text(760, 272, "HTML 문서", 15, 500, "violet")
-f.rect(30, 378, 1140, 58, "faint", "soft", rx=12)
-f.rich(600, 414, [("좋은 문서에 꼭  ", "ink", 700),
-                  ("메서드 + URL · 인증 · 요청 예시 · 응답 예시 · 에러 코드 표", "muted", 500)], 18, "middle")
+f = fig("13-API-문서가-만들어지는-길", "API 문서가 만들어지는 길", 1280, 660,
+        "개발자가 쓴 컨트롤러 코드를 springdoc이 읽어 OpenAPI 명세(JSON)를 자동으로 만들고, Swagger UI가 그 명세를 브라우저 화면으로 보여 준다.")
+PX = [30, 460, 890]
+PW, PY, PH = 360, 66, 410
+for x, (n, t) in zip(PX, [("1", "개발자가 쓰는 코드"), ("2", "서버가 자동으로 만드는 명세"), ("3", "브라우저에서 보는 문서")]):
+    f.add(f'<circle cx="{x+12}" cy="40" r="12" fill="{C["ink"]}"/>')
+    f.text(x + 12, 45, n, 14, 700, "white")
+    f.text(x + 32, 46, t, 18, 700, "ink", "start")
+    f.rect(x, PY, PW, PH, "line", "white", rx=12)
+    f.add(f'<path d="M{x},{PY+12} a12,12 0 0 1 12,-12 h{PW-24} a12,12 0 0 1 12,12 v24 h-{PW} z" fill="{C["soft"]}"/>')
+    f.add(f'<line x1="{x}" y1="{PY+36}" x2="{x+PW}" y2="{PY+36}" stroke="{C["faint"]}" stroke-width="1.5"/>')
+TABS = ["PostController.java", "GET /v3/api-docs  (openapi.json)", "localhost:8080/swagger-ui.html"]
+for x, t in zip(PX, TABS):
+    f.text(x + 16, PY + 24, t, 13, 500, "muted", "start", True)
+
+# 1. 코드
+code = [
+    [("@Operation(summary = ", "ink"), ('"글 하나 조회"', "blue"), (")", "ink")],
+    [("@GetMapping(", "ink"), ('"/api/v1/posts/{id}"', "teal"), (")", "ink")],
+    [("public PostResponse get(", "ink")],
+    [("        @PathVariable Long ", "ink"), ("id", "orange"), (") {", "ink")],
+    [("    return postService.get(id);", "muted")],
+    [("}", "ink")],
+]
+for i, spans in enumerate(code):
+    f.rich(PX[0] + 18, PY + 72 + i * 30, [(t, c, 600 if c in ("blue", "teal", "orange") else 400, True) for t, c in spans], 14)
+f.rect(PX[0] + 18, PY + 270, PW - 36, 110, "faint", "soft", rx=10)
+f.text(PX[0] + 34, PY + 302, "개발자가 하는 일", 14, 700, "ink", "start")
+f.text(PX[0] + 34, PY + 328, "평소처럼 API 코드를 쓰고,", 14, 400, "muted", "start")
+f.text(PX[0] + 34, PY + 352, "설명 한 줄(@Operation)만 덧붙인다", 14, 400, "muted", "start")
+
+# 2. 명세
+js = [
+    [('"/api/v1/posts/{id}"', "teal"), (": {", "ink")],
+    [('  "get": {', "ink")],
+    [('    "summary": ', "ink"), ('"글 하나 조회"', "blue"), (",", "ink")],
+    [('    "parameters": [', "ink")],
+    [('      { "name": ', "ink"), ('"id"', "orange"), (', "in": "path" }', "ink")],
+    [("    ],", "ink")],
+    [('    "responses": {', "ink")],
+    [('      "200": { ... },', "green")],
+    [('      "404": { ... }', "orange")],
+    [("    } } }", "ink")],
+]
+for i, spans in enumerate(js):
+    f.rich(PX[1] + 18, PY + 70 + i * 26, [(t, c, 600 if c in ("blue", "teal", "orange", "green") else 400, True) for t, c in spans], 13)
+f.rect(PX[1] + 18, PY + 330, PW - 36, 64, "faint", "soft", rx=10)
+f.text(PX[1] + 34, PY + 358, "직접 쓰지 않는다", 14, 700, "ink", "start")
+f.text(PX[1] + 34, PY + 380, "서버를 실행하면 springdoc이 코드를 읽어 만든다", 13, 400, "muted", "start")
+
+# 3. Swagger UI 화면
+x0 = PX[2] + 16
+f.text(x0, PY + 66, "Blog API  v1", 17, 700, "ink", "start")
+f.rect(x0, PY + 82, PW - 32, 200, "blue", "blueBg", rx=8, sw=1.5)
+f.rect(x0 + 10, PY + 94, 52, 26, "blue", "blue", rx=4, sw=0)
+f.text(x0 + 36, PY + 112, "GET", 13, 700, "white", mono=True)
+f.text(x0 + 72, PY + 112, "/api/v1/posts/{id}", 13, 700, "teal", "start", True)
+f.text(x0 + PW - 44, PY + 112, "글 하나 조회", 13, 700, "blue", "end")
+f.text(x0 + 12, PY + 148, "Parameters", 12, 700, "muted", "start")
+f.text(x0 + 12, PY + 174, "id *", 13, 700, "orange", "start", True)
+f.rect(x0 + 60, PY + 157, 90, 26, "line", "white", rx=4, sw=1.5)
+f.text(x0 + 72, PY + 175, "42", 13, 500, "ink", "start", True)
+f.rect(x0 + 164, PY + 157, 80, 26, "blue", "blue", rx=4, sw=0)
+f.text(x0 + 204, PY + 175, "Execute", 12, 700, "white")
+f.text(x0 + 12, PY + 212, "Response", 12, 700, "muted", "start")
+f.rich(x0 + 12, PY + 238, [("200", "green", 700, True), ('  { "id": 42, "title": "제주 여행" }', "ink", 400, True)], 12)
+f.text(x0 + 12, PY + 264, "← 버튼을 누르면 실제로 호출된다", 12, 500, "muted", "start")
+for j, (m, col, path_, desc) in enumerate([("POST", "green", "/api/v1/posts", "글 작성"),
+                                           ("PATCH", "teal", "/api/v1/posts/{id}", "글 수정"),
+                                           ("DELETE", "red", "/api/v1/posts/{id}", "글 삭제")]):
+    y = PY + 296 + j * 36
+    f.rect(x0, y, PW - 32, 30, "line", "white", rx=6, sw=1.5)
+    f.rect(x0 + 8, y + 5, 58, 20, col, col, rx=4, sw=0)
+    f.text(x0 + 37, y + 20, m, 11, 700, "white", mono=True)
+    f.text(x0 + 74, y + 20, path_, 12, 500, "ink", "start", True)
+    f.text(x0 + PW - 44, y + 20, desc, 12, 500, "muted", "end")
+
+# 패널 사이 화살표
+for x, l1, l2 in [(PX[0] + PW, "서버 실행 시", "자동 생성"), (PX[1] + PW, "브라우저로", "열기")]:
+    f.path([(x + 8, PY + 200), (x + 62, PY + 200)], "ink")
+    f.text(x + 35, PY + 168, l1, 12, 700, "ink")
+    f.text(x + 35, PY + 184, l2, 12, 700, "ink")
+
+# 아래: 왜 좋은가
+f.rect(30, 500, 1220, 86, "faint", "soft", rx=12)
+f.text(56, 534, "코드를 고치면 문서도 같이 바뀐다", 17, 700, "ink", "start")
+f.text(56, 562, "문서를 따로 쓰면 코드만 바뀌고 문서는 그대로 남아 어긋나기 쉽다", 15, 400, "muted", "start")
+f.text(660, 534, "프론트 개발자는 이 화면에서 바로 호출해 본다", 17, 700, "ink", "start")
+f.text(660, 562, "어떤 값을 보내고 무엇이 오는지 묻지 않아도 확인할 수 있다", 15, 400, "muted", "start")
+f.rich(30, 628, [("같은 색 = 같은 정보  ", "muted", 700), ("글 하나 조회", "blue", 700), ("  ·  ", "muted", 400),
+                 ("/api/v1/posts/{id}", "teal", 700, True), ("  ·  ", "muted", 400), ("id", "orange", 700, True),
+                 ("     문서가 코드와 어긋나면 안 될 때는 Spring REST Docs (테스트를 통과해야 문서 생성)", "muted", 400)], 14)
 
 # ---------------------------------------------------------------- 14 한 장 요약
 f = fig("14-한-장-요약", "한 장 요약: 요청 하나의 여정", 1280, 390,
