@@ -294,6 +294,8 @@ f.add(f'<path d="M880,112 H896 V258 H880" fill="none" stroke="{C["orange"]}" str
 f.text(912, 172, "관계는 슬래시로", 19, 700, "orange", "start")
 f.text(912, 200, "중첩은 2단계까지", 19, 700, "orange", "start")
 f.text(912, 226, "(글 → 댓글)", 16, 400, "muted", "start")
+f.text(912, 262, "더 깊어지면", 15, 400, "muted", "start")
+f.rich(912, 286, [("/comments/7", "teal", 700, True), (" 로 끊는다", "muted", 400)], 15)
 f.add(f'<line x1="40" y1="430" x2="1160" y2="430" stroke="{C["faint"]}" stroke-width="2"/>')
 f.text(60, 476, "경로와 쿼리", 20, 700, "ink", "start")
 f.rich(60, 532, [("/api/v1/posts", "ink", 400, True), ("/42", "teal", 700, True)], 22)
