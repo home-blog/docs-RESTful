@@ -234,8 +234,42 @@ f.path([(772, 158), (830, 158)], "muted", sw=3)
 f.rect(250, 350, 700, 58, "line", "soft", rx=29)
 f.text(600, 387, "읽는 법: “42번 글을 지웠고, 잘 끝났다”", 22, 500)
 
+# ---------------------------------------------------------------- 04a 동사 URL과 자원 URL 비교
+f = fig("04a-동사-URL과-자원-URL", "동사 URL과 자원 URL", 1240, 650,
+        "URL에 동사를 넣는 대신, 행동은 HTTP 메서드로 표현하고 URL은 명사로 자원만 가리킨다.")
+f.text(40, 46, "하는 일", 16, 700, "muted", "start")
+f.text(230, 46, "동사가 들어간 URL", 16, 700, "red", "start")
+f.text(740, 46, "메서드 + 명사 URL", 16, 700, "green", "start")
+VR = [
+    ("글 목록 조회", [("GET  /", "muted"), ("get", "red"), ("Posts", "ink")], "GET", "/posts", None),
+    ("글 작성", [("POST /", "muted"), ("create", "red"), ("Post", "ink")], "POST", "/posts", None),
+    ("42번 글 조회", [("GET  /", "muted"), ("get", "red"), ("Post?id=42", "ink")], "GET", "/posts/42", None),
+    ("42번 글 수정", [("POST /", "muted"), ("update", "red"), ("Post?id=42", "ink")], "PATCH", "/posts/42", None),
+    ("42번 글 삭제", [("GET  /", "muted"), ("delete", "red"), ("Post?id=42", "ink")], "DELETE", "/posts/42", "GET인데 데이터가 바뀜"),
+    ("42번 글의 댓글 조회", [("GET  /", "muted"), ("get", "red"), ("CommentsByPostId?postId=42", "ink")], "GET", "/posts/42/comments", None),
+]
+for i, (task, bad, m, url, warn) in enumerate(VR):
+    y = 66 + i * 72
+    cy = y + 29
+    f.text(40, cy + 6, task, 17, 600, "ink", "start")
+    f.rect(230, y, 440, 58, "line", "soft", rx=10, sw=1.5)
+    f.xmark(254, cy, 11)
+    f.rich(276, cy + 6, [(t, c, 700 if c == "red" else 500, True) for t, c in bad], 17)
+    if warn:
+        f.text(660, cy + 24, warn, 12, 700, "red", "end")
+    f.path([(676, cy), (734, cy)], "muted")
+    f.rect(740, y, 460, 58, "green", "white", rx=10, sw=1.5)
+    f.add(f'<circle cx="764" cy="{cy}" r="11" fill="{C["greenBg"]}" stroke="{C["green"]}" stroke-width="2"/>')
+    f.add(f'<path d="M758,{cy} L762.5,{cy+4.5} L770,{cy-4}" fill="none" stroke="{C["green"]}" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>')
+    f.rich(788, cy + 6, [(f"{m:<7}", "blue", 700, True), (url, "teal", 700, True)], 18)
+f.rect(40, 512, 1160, 108, "faint", "soft", rx=14)
+f.rich(620, 552, [("동사(get · create · update · delete)는 ", "ink", 700), ("HTTP 메서드", "blue", 700),
+                  ("가 표현하고, URL은 ", "ink", 700), ("자원(명사)", "teal", 700), ("만 가리킨다", "ink", 700)], 19, "middle")
+f.rich(620, 590, [("같은 주소 ", "muted", 400), ("/posts/42", "teal", 700, True),
+                  ("에 메서드만 바꿔 조회 · 수정 · 삭제를 한다", "muted", 400)], 17, "middle")
+
 # ---------------------------------------------------------------- 04 자원 중심 URL
-f = fig("04-자원-중심-URL", "자원 중심 URL", 1200, 640,
+f = fig("04b-자원-중심-URL", "자원 중심 URL", 1200, 640,
         "URL은 폴더 경로처럼 명사를 이어 붙여 자원을 가리키고, 누구인지는 경로에, 보여 주는 방식은 쿼리에 둔다.")
 rows = [
     (0, "/api/v1", "/posts", "글 목록 (복수형 명사)"),
