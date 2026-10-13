@@ -302,34 +302,70 @@ f.rich(600, 532, [("멱등 O: ", "green", 700), ("GET · PUT · DELETE", "ink", 
                   ("   →  글쓰기 버튼은 한 번 누르면 막아 둔다", "muted", 400)], 18, "middle")
 
 # ---------------------------------------------------------------- 07 상태 코드
-f = fig("07-상태-코드-세-갈래", "상태 코드 세 갈래", 1200, 620,
-        "서버의 처리 결과는 2xx 성공, 4xx 요청한 쪽 잘못, 5xx 서버 잘못 세 갈래로 나뉘고, 실패를 200으로 주면 안 된다.")
+f = fig("07-상태-코드-네-갈래", "상태 코드 네 갈래", 1200, 640,
+        "서버의 처리 결과는 2xx 성공, 3xx 리다이렉트, 4xx 클라이언트 오류, 5xx 서버 오류 네 갈래로 나뉘고, 실패를 200으로 주면 안 된다.")
 f.rect(40, 215, 170, 110, "blue", "blueBg")
 f.text(125, 265, "클라이언트", 22, 700, "blue")
 f.text(125, 293, "요청", 16, 400, "muted")
 f.rect(280, 215, 190, 110, "teal", "tealBg")
 f.text(375, 262, "서버", 24, 700, "teal")
-f.text(375, 292, "처리 결과는?", 16, 400, "muted")
+f.text(375, 292, "처리 결과", 16, 400, "muted")
 f.path([(212, 270), (276, 270)], "blue")
 f.text(125, 362, "바디를 읽기 전에", 15, 400, "muted")
 f.text(125, 384, "상태 코드로 결과를 안다", 15, 400, "muted")
 f.path([(472, 270), (535, 270)], "muted", arrow=False)
 for (y, col, code, t1, codes, t3) in [
-    (40, "green", "2xx", "성공", "200 OK · 201 Created · 204 No Content", "할 일 없음, 결과를 쓰면 된다"),
-    (205, "orange", "4xx", "요청한 쪽 잘못", "400 · 401 · 403 · 404 · 409", "클라이언트가 요청을 고쳐서 다시"),
-    (370, "red", "5xx", "서버 잘못", "500 · 503", "서버가 고쳐야 한다 (잠시 후 다시)"),
+    (24, "green", "2xx", "성공", "200 OK · 201 Created · 204 No Content", "요청한 작업이 처리됨"),
+    (150, "violet", "3xx", "리다이렉트", "301 · 302 · 304 Not Modified", "다른 주소로 이동 / 캐시를 그대로 사용 (API에선 드묾)"),
+    (276, "orange", "4xx", "클라이언트 오류", "400 · 401 · 403 · 404 · 409", "요청을 고쳐서 다시 보내야 함"),
+    (402, "red", "5xx", "서버 오류", "500 · 502 · 503 · 504", "서버 쪽 문제, 클라이언트는 잠시 후 재시도"),
 ]:
-    cy = y + 65
-    f.path([(535, 270), (535, cy), (596, cy)] if cy != 270 else [(535, 270), (596, 270)], col)
-    f.rect(600, y, 560, 130, col, col + "Bg")
-    f.text(668, cy + 14, code, 40, 700, col, mono=True)
-    f.text(750, cy - 22, t1, 22, 700, col, "start")
-    f.text(750, cy + 9, codes, 17, 500, "ink", "start", True)
-    f.text(750, cy + 40, t3, 16, 400, "muted", "start")
-f.rect(40, 530, 1120, 66, "red", "redBg", rx=12)
-f.xmark(80, 563, 15)
-f.rich(108, 570, [("하지 말 것: 실패인데 ", "ink", 600), ('200 OK + { "success": false }', "red", 700, True),
-                  ("  →  모니터링·재시도 도구가 성공으로 착각", "ink", 400)], 18)
+    cy = y + 54
+    f.path([(535, 270), (535, cy), (596, cy)], col)
+    f.rect(600, y, 560, 108, col, col + "Bg")
+    f.text(668, cy + 13, code, 36, 700, col, mono=True)
+    f.text(750, cy - 18, t1, 20, 700, col, "start")
+    f.text(750, cy + 9, codes, 16, 500, "ink", "start", True)
+    f.text(750, cy + 36, t3, 15, 400, "muted", "start")
+f.rect(40, 548, 1120, 66, "red", "redBg", rx=12)
+f.xmark(80, 581, 15)
+f.rich(108, 588, [("하지 말 것: 실패인데 ", "ink", 600), ('200 OK + { "success": false }', "red", 700, True),
+                  ("  →  모니터링·재시도·캐시가 성공으로 처리", "ink", 400)], 18)
+
+# ---------------------------------------------------------------- 07b 자주 만나는 에러 코드
+f = fig("07b-자주-만나는-에러-코드", "자주 만나는 에러 상태 코드", 1240, 700,
+        "실제로 자주 보는 에러 코드는 400, 401, 403, 404, 409와 500, 502, 503, 504이며, 코드마다 먼저 확인할 곳이 다르다.")
+COLS = [(40, "코드"), (170, "이름"), (430, "언제 나오나 (블로그 API 예)"), (850, "먼저 확인할 것")]
+for x, t in COLS:
+    f.text(x, 46, t, 16, 700, "muted", "start")
+f.add(f'<line x1="30" y1="62" x2="1210" y2="62" stroke="{C["line"]}" stroke-width="2"/>')
+ROWS = [
+    ("400", "Bad Request", "필수 값 누락, 형식 오류 (빈 제목, 깨진 JSON)", "응답의 errors: 어느 필드가 틀렸나", "orange", True),
+    ("401", "Unauthorized", "토큰이 없거나 만료됨", "Authorization 헤더, 토큰 만료 시간", "orange", True),
+    ("403", "Forbidden", "로그인했지만 권한 없음 (남의 글 삭제)", "사용자 역할, 자원 소유자", "orange", False),
+    ("404", "Not Found", "없는 자원 (/posts/99999), URL 오타", "URL 경로와 id, 삭제된 데이터인지", "orange", True),
+    ("409", "Conflict", "중복 (같은 이메일로 가입), 동시 수정", "유니크 값, 버전 필드", "orange", False),
+    ("500", "Internal Server Error", "처리하지 못한 예외 (NullPointerException 등)", "서버 로그의 스택 트레이스", "red", True),
+    ("502", "Bad Gateway", "게이트웨이가 뒤쪽 서버에서 잘못된 응답을 받음", "뒤쪽 서비스가 떠 있나, 주소·포트", "red", False),
+    ("503", "Service Unavailable", "과부하, 점검, 배포 중이라 처리 불가", "서버 상태, 배포·재시작 중인지", "red", False),
+    ("504", "Gateway Timeout", "뒤쪽 서버가 제한 시간 안에 응답 안 함", "느린 쿼리, 타임아웃 설정", "red", False),
+]
+for i, (code, name, when, check, col, hot) in enumerate(ROWS):
+    y = 70 + i * 62
+    cy = y + 37
+    if i % 2 == 0:
+        f.add(f'<rect x="30" y="{y+4}" width="1180" height="56" rx="8" fill="{C["soft"]}"/>')
+    f.add(f'<rect x="30" y="{y+4}" width="5" height="56" rx="2" fill="{C[col]}"/>')
+    f.text(48, cy + 2, code, 24, 700, col, "start", True)
+    if hot:
+        f.rect(100, cy - 16, 52, 26, col, col + "Bg", rx=13, sw=1.2)
+        f.text(126, cy + 2, "자주", 13, 700, col)
+    f.text(170, cy, name, 16, 600, "ink", "start", True)
+    f.text(430, cy, when, 16, 400, "ink", "start")
+    f.text(850, cy, check, 16, 400, "muted", "start")
+    if code == "409":
+        f.add(f'<line x1="30" y1="{y+66}" x2="1210" y2="{y+66}" stroke="{C["line"]}" stroke-width="1.5" stroke-dasharray="4 6"/>')
+f.text(40, 664, "그 밖에:  405 Method Not Allowed (메서드 틀림) · 415 Unsupported Media Type (Content-Type 틀림) · 429 Too Many Requests (요청 과다)", 15, 400, "muted", "start")
 
 # ---------------------------------------------------------------- 08 401과 403
 f = fig("08-401과-403", "401과 403", 1200, 420,
@@ -598,6 +634,132 @@ for k, (code, col, sz, cap, sub) in enumerate(steps):
 f.rect(60, 300, 1160, 60, "faint", "soft", rx=12)
 f.rich(640, 337, [("목록은 나눠서  ", "violet", 700), ("?page=0&size=20&sort=createdAt,desc", "ink", 600, True),
                   ("  처럼 쿼리로", "muted", 500)], 18, "middle")
+
+# ---------------------------------------------------------------- 15 단일 서버 요청 흐름
+def req_strip(f, y=44):
+    f.rich(40, y, [("요청  ", "muted", 700), ("POST /api/v1/posts/42/comments", "blue", 700, True),
+                   ("   42번 글에 댓글 작성", "muted", 400)], 19)
+
+f = fig("15-단일-서버의-요청-흐름", "단일 서버의 요청 흐름", 1240, 640,
+        "단일 서버에서는 애플리케이션 하나가 인증, URL 매핑, 컨트롤러, 서비스를 모두 처리하고, 모듈 사이 호출은 메서드 호출이며 DB는 하나다.")
+req_strip(f)
+f.rect(30, 250, 160, 110, "blue", "blueBg")
+f.text(110, 300, "클라이언트", 20, 700, "blue")
+f.text(110, 326, "브라우저 · 앱", 14, 400, "muted")
+f.rect(250, 80, 720, 480, "teal", "white", rx=18)
+f.text(274, 112, "Spring Boot 애플리케이션 1개", 18, 700, "teal", "start")
+f.text(560, 112, "(서버 1대, 배포 단위 1개)", 15, 400, "muted", "start")
+f.rect(280, 132, 660, 46, "line", "soft", rx=10)
+f.rich(300, 162, [("① 인증 필터  ", "ink", 700), ("토큰 확인, 실패하면 401", "muted", 400)], 16)
+f.rect(280, 192, 660, 46, "line", "soft", rx=10)
+f.rich(300, 222, [("② URL 매핑  ", "ink", 700), ("경로와 메서드로 컨트롤러 선택", "muted", 400)], 16)
+for k, (c, path_, sv, hl) in enumerate([("PostController", "/posts/**", "PostService", False),
+                                        ("CommentController", "/posts/{id}/comments", "CommentService", True),
+                                        ("MemberController", "/members/**", "MemberService", False)]):
+    x = 280 + k * 240
+    col, bg = ("blue", "blueBg") if hl else ("line", "white")
+    tc = "blue" if hl else "ink"
+    f.rect(x, 270, 180, 70, col, bg, rx=10)
+    f.text(x + 90, 298, c, 14, 700, tc, mono=True)
+    f.text(x + 90, 322, path_, 13, 400, "muted", mono=True)
+    f.rect(x, 390, 180, 60, col, bg, rx=10)
+    f.text(x + 90, 426, sv, 15, 700, tc, mono=True)
+    if hl:
+        f.path([(x + 90, 240), (x + 90, 266)], "blue")
+        f.path([(x + 90, 342), (x + 90, 386)], "blue")
+f.path([(520, 420), (464, 420)], "teal")
+f.text(492, 478, "③ postService.exists(42)", 14, 700, "teal", mono=True)
+f.text(492, 500, "같은 프로세스 안의 메서드 호출 (네트워크 없음)", 14, 400, "muted")
+f.path([(192, 280), (226, 280), (226, 155), (276, 155)], "blue")
+f.path([(248, 330), (194, 330)], "green")
+f.text(110, 392, "⑤ 201 Created", 16, 700, "green")
+f.text(110, 414, "또는 4xx · 5xx", 14, 400, "muted")
+f.rect(1030, 300, 180, 190, "violet", "violetBg")
+f.text(1120, 336, "DB 1개", 19, 700, "violet")
+for k, t in enumerate(["posts", "comments", "members"]):
+    f.text(1120, 380 + k * 32, t, 16, 600 if t == "comments" else 400, "ink", mono=True)
+f.path([(702, 440), (730, 440), (730, 536), (1120, 536), (1120, 494)], "violet")
+f.text(850, 526, "④ INSERT", 14, 700, "violet", mono=True)
+f.text(40, 610, "장점: 구조가 단순하고 내부 호출이 빠르다      단점: 일부 기능만 따로 배포하거나 확장하기 어렵다", 16, 500, "muted", "start")
+
+# ---------------------------------------------------------------- 16 MSA 요청 흐름
+f = fig("16-MSA의-요청-흐름", "MSA의 요청 흐름", 1240, 700,
+        "MSA에서는 API 게이트웨이가 인증과 라우팅을 맡고, 기능별 서비스가 각자 DB를 가지며, 서비스끼리도 REST API로 통신한다.")
+req_strip(f)
+f.rect(30, 290, 160, 110, "blue", "blueBg")
+f.text(110, 340, "클라이언트", 20, 700, "blue")
+f.text(110, 366, "브라우저 · 앱", 14, 400, "muted")
+f.rect(240, 150, 270, 400, "teal", "tealBg")
+f.text(375, 190, "API Gateway", 21, 700, "teal")
+f.text(375, 216, "외부 요청이 들어오는 단일 입구", 14, 400, "muted")
+f.text(262, 262, "① 인증", 16, 700, "ink", "start")
+f.text(262, 286, "토큰 확인, 실패하면 401", 14, 400, "muted", "start")
+f.text(262, 334, "② 라우팅 (경로 → 서비스)", 16, 700, "ink", "start")
+for k, (r, hl) in enumerate([("/posts/*/comments → comment", True), ("/posts/**         → post", False),
+                             ("/members/**       → member", False)]):
+    f.text(262, 364 + k * 26, r, 13, 700 if hl else 400, "blue" if hl else "ink", "start", True)
+f.text(262, 466, "그 밖에: 요청 로그, 요청 수 제한(429),", 13, 400, "muted", "start")
+f.text(262, 486, "뒤쪽 장애 시 502 · 503 · 504", 13, 400, "muted", "start")
+f.path([(192, 320), (236, 320)], "blue")
+SV = [(90, "post-service", "/posts/**", "post DB", False),
+      (280, "comment-service", "/posts/{id}/comments", "comment DB", True),
+      (470, "member-service", "/members/**", "member DB", False)]
+for (y, n, pth, db, hl) in SV:
+    col, bg = ("blue", "blueBg") if hl else ("line", "white")
+    f.rect(600, y, 270, 120, col, bg)
+    f.text(735, y + 50, n, 18, 700, "blue" if hl else "ink", mono=True)
+    f.text(735, y + 78, pth, 14, 400, "muted", mono=True)
+    f.rect(1010, y + 20, 190, 80, "violet", "violetBg", rx=12)
+    f.text(1105, y + 66, db, 17, 700, "violet")
+    f.path([(872, y + 60), (1006, y + 60)], "violet" if hl else "line", sw=2.5 if hl else 2)
+f.text(938, 330, "⑤ INSERT", 14, 700, "violet", mono=True)
+f.path([(512, 320), (596, 320)], "blue")
+f.text(554, 306, "③", 15, 700, "blue")
+f.path([(690, 278), (690, 214)], "teal")
+f.path([(780, 214), (780, 278)], "teal", dash="6 5")
+f.text(800, 238, "④ GET /api/v1/posts/42", 13, 700, "teal", "start", True)
+f.text(800, 258, "HTTP 호출 → 200 또는 404", 13, 400, "muted", "start")
+f.path([(596, 370), (514, 370)], "green")
+f.path([(236, 370), (194, 370)], "green")
+f.text(110, 432, "⑥ 201 Created", 16, 700, "green")
+f.text(110, 454, "또는 4xx · 5xx", 14, 400, "muted")
+f.text(40, 650, "장점: 서비스마다 따로 배포·확장      단점: 서비스 사이가 네트워크 호출이라 지연·장애를 처리해야 한다", 16, 500, "muted", "start")
+f.text(40, 678, "클라이언트가 보내는 요청(URL·메서드)은 단일 서버와 똑같다", 16, 700, "ink", "start")
+
+# ---------------------------------------------------------------- 17 MSA 에러 전달
+f = fig("17-MSA에서-에러가-전달되는-흐름", "MSA에서 에러가 전달되는 흐름", 1240, 660,
+        "post-service의 404가 comment-service와 게이트웨이를 거쳐 같은 상태 코드와 에러 형식으로 클라이언트에 전달되고, 응답이 없으면 503이나 504가 된다.")
+LX = [(130, "클라이언트", "blue", "blueBg"), (450, "API Gateway", "teal", "tealBg"),
+      (780, "comment-service", "blue", "white"), (1090, "post-service", "ink", "white")]
+for x, n, col, bg in LX:
+    f.rect(x - 110, 30, 220, 56, col, bg, rx=12)
+    f.text(x, 65, n, 17, 700, "ink" if col == "ink" else col, mono=(n.endswith("service")))
+    f.add(f'<line x1="{x}" y1="88" x2="{x}" y2="520" stroke="{C["line"]}" stroke-width="2" stroke-dasharray="5 6"/>')
+
+
+def msg(f, x1, x2, y, label, col="ink", dash=None, mono=True):
+    f.path([(x1, y), (x2 + (-6 if x2 > x1 else 6), y)], col, dash=dash)
+    f.text((x1 + x2) / 2, y - 12, label, 14, 700, col, mono=mono)
+
+
+msg(f, 130, 450, 140, "POST /api/v1/posts/42/comments", "blue")
+f.rect(470, 165, 190, 34, "teal", "white", rx=17, sw=1.5)
+f.text(565, 188, "토큰 확인 OK", 14, 600, "teal")
+msg(f, 450, 780, 240, "POST /api/v1/posts/42/comments", "blue")
+msg(f, 780, 1090, 300, "GET /api/v1/posts/42", "teal")
+f.rect(1100, 318, 130, 34, "line", "white", rx=8, sw=1.5)
+f.text(1165, 341, "42번 글 없음", 14, 600, "muted")
+msg(f, 1090, 780, 380, "404  POST_NOT_FOUND", "orange", dash="7 5")
+msg(f, 780, 450, 430, "404  POST_NOT_FOUND", "orange", dash="7 5")
+msg(f, 450, 130, 480, "404  POST_NOT_FOUND", "orange", dash="7 5")
+f.rect(30, 540, 580, 100, "orange", "orangeBg", rx=12)
+f.text(50, 574, "에러 형식이 모든 서비스에서 같으면", 16, 700, "orange", "start")
+f.text(50, 600, "상태 코드와 code가 그대로 전달된다", 16, 400, "ink", "start")
+f.text(50, 624, "→ 클라이언트는 어느 서비스에서 났는지 몰라도 처리 가능", 14, 400, "muted", "start")
+f.rect(630, 540, 580, 100, "red", "redBg", rx=12)
+f.text(650, 574, "post-service가 응답하지 않으면", 16, 700, "red", "start")
+f.rich(650, 600, [("꺼져 있음 → ", "ink", 400), ("503", "red", 700, True), ("   제한 시간 초과 → ", "ink", 400), ("504", "red", 700, True)], 16)
+f.text(650, 624, "그대로 500을 주지 말고 원인에 맞는 코드로", 14, 400, "muted", "start")
 
 # ---------------------------------------------------------------- write
 for fg in FIGS:
