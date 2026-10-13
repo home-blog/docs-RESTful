@@ -1,0 +1,30 @@
+= Blog API 문서
+:doctype: book
+:toc: left
+:toclevels: 2
+:sectnums:
+:source-highlighter: highlightjs
+
+== 글 하나 조회
+
+=== 요청
+include::{snippets}/post-get/http-request.adoc[]
+include::{snippets}/post-get/path-parameters.adoc[]
+
+=== 응답
+include::{snippets}/post-get/http-response.adoc[]
+include::{snippets}/post-get/response-fields.adoc[]
+
+=== 글이 없을 때 (404)
+include::{snippets}/post-get-not-found/http-response.adoc[]
+include::{snippets}/post-get-not-found/response-fields.adoc[]
+
+== 글 작성
+
+=== 요청
+include::{snippets}/post-create/curl-request.adoc[]
+include::{snippets}/post-create/request-fields.adoc[]
+
+=== 응답
+include::{snippets}/post-create/http-response.adoc[]
+include::{snippets}/post-create/response-fields.adoc[]

@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: blog-api
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    try-it-out-enabled: true
