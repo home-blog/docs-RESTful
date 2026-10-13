@@ -5,23 +5,23 @@
 <rect x="40" y="150" width="220" height="200" rx="14" fill="#EAF0FB" stroke="#2459C2" stroke-width="2"/>
 <text x="150" y="222" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="28" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">클라이언트</text>
 <text x="150" y="258" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">브라우저 · 앱</text>
-<text x="150" y="305" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="21" font-weight="500" fill="#1C2230" text-anchor="middle" xml:space="preserve">= 손님</text>
+<text x="150" y="305" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="500" fill="#1C2230" text-anchor="middle" xml:space="preserve">요청을 보낸다</text>
 <rect x="520" y="150" width="240" height="200" rx="14" fill="#E2F2EF" stroke="#0D7468" stroke-width="2"/>
 <text x="640" y="222" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="28" font-weight="700" fill="#0D7468" text-anchor="middle" xml:space="preserve">서버</text>
 <text x="640" y="258" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">Spring Boot</text>
-<text x="640" y="305" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="21" font-weight="500" fill="#1C2230" text-anchor="middle" xml:space="preserve">= 주방</text>
+<text x="640" y="305" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="500" fill="#1C2230" text-anchor="middle" xml:space="preserve">요청을 처리한다</text>
 <rect x="508" y="168" width="14" height="164" rx="5" fill="#0D7468"/>
-<text x="515" y="132" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="700" fill="#0D7468" text-anchor="middle" xml:space="preserve">API (창구)</text>
+<text x="515" y="132" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="700" fill="#0D7468" text-anchor="middle" xml:space="preserve">API</text>
 <rect x="940" y="150" width="220" height="200" rx="14" fill="#EEEAFA" stroke="#5B45B8" stroke-width="2"/>
 <text x="1050" y="222" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="26" font-weight="700" fill="#5B45B8" text-anchor="middle" xml:space="preserve">데이터베이스</text>
 <text x="1050" y="258" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">글 · 댓글 · 회원</text>
-<text x="1050" y="305" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="21" font-weight="500" fill="#1C2230" text-anchor="middle" xml:space="preserve">= 식재료 창고</text>
+<text x="1050" y="305" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="500" fill="#1C2230" text-anchor="middle" xml:space="preserve">데이터를 저장한다</text>
 <path d="M262,215 L504,215" fill="none" stroke="#2459C2" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-blue)"/>
-<text x="383" y="198" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="600" fill="#2459C2" text-anchor="middle" xml:space="preserve">① 요청 (주문서)</text>
+<text x="383" y="198" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="600" fill="#2459C2" text-anchor="middle" xml:space="preserve">① 요청</text>
 <path d="M506,290 L264,290" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-teal)"/>
-<text x="385" y="322" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="600" fill="#0D7468" text-anchor="middle" xml:space="preserve">④ 응답 (음식)</text>
+<text x="385" y="322" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="600" fill="#0D7468" text-anchor="middle" xml:space="preserve">④ 응답</text>
 <path d="M762,215 L936,215" fill="none" stroke="#5B45B8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-violet)"/>
-<text x="850" y="198" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="600" fill="#5B45B8" text-anchor="middle" xml:space="preserve">② 꺼내기 · 저장</text>
+<text x="850" y="198" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="600" fill="#5B45B8" text-anchor="middle" xml:space="preserve">② 조회 · 저장</text>
 <path d="M938,290 L764,290" fill="none" stroke="#5B45B8" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-violet)"/>
 <text x="850" y="322" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="600" fill="#5B45B8" text-anchor="middle" xml:space="preserve">③ 결과</text>
 <path d="M150,352 L150,440 L1050,440 L1050,352" fill="none" stroke="#BF2A20" stroke-width="2" stroke-linejoin="round" stroke-dasharray="8 7"/>

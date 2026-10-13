@@ -4,7 +4,7 @@
 <rect x="0" y="0" width="1200" height="560" rx="18" fill="#FFFFFF"/>
 <rect x="40" y="30" width="540" height="460" rx="16" fill="#F4F6F9" stroke="#E3E7ED" stroke-width="2"/>
 <text x="310" y="76" font-size="22" text-anchor="middle" xml:space="preserve"><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="700" fill="#1C2230">POST /posts</tspan><tspan font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-weight="700" fill="#1C2230"> 를 3번 보내면</tspan></text>
-<text x="310" y="106" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">자판기 버튼: 누를 때마다 하나씩 나온다</text>
+<text x="310" y="106" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">보낼 때마다 새 자원이 하나씩 생긴다</text>
 <text x="76" y="166" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#5A6474" text-anchor="start" xml:space="preserve">1번째</text>
 <path d="M140,160 L298,160" fill="none" stroke="#5A6474" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
 <rect x="306" y="138" width="240" height="44" rx="22" fill="#E5F3E9" stroke="#1B7F3B" stroke-width="1.5"/>
@@ -22,7 +22,7 @@
 <text x="310" y="440" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="400" fill="#1C2230" text-anchor="middle" xml:space="preserve">멱등 아님 → 중복을 막아야 한다</text>
 <rect x="620" y="30" width="540" height="460" rx="16" fill="#F4F6F9" stroke="#E3E7ED" stroke-width="2"/>
 <text x="890" y="76" font-size="22" text-anchor="middle" xml:space="preserve"><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="700" fill="#1C2230">DELETE /posts/42</tspan><tspan font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-weight="700" fill="#1C2230"> 를 3번 보내면</tspan></text>
-<text x="890" y="106" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">엘리베이터 버튼: 여러 번 눌러도 한 번과 같다</text>
+<text x="890" y="106" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="17" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">몇 번 보내도 서버 상태는 같다</text>
 <text x="656" y="166" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#5A6474" text-anchor="start" xml:space="preserve">1번째</text>
 <path d="M720,160 L878,160" fill="none" stroke="#5A6474" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
 <rect x="886" y="138" width="240" height="44" rx="22" fill="#E5F3E9" stroke="#1B7F3B" stroke-width="1.5"/>

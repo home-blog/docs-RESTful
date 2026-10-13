@@ -9,8 +9,8 @@
 <text x="375" y="262" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="24" font-weight="700" fill="#0D7468" text-anchor="middle" xml:space="preserve">서버</text>
 <text x="375" y="292" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">처리 결과는?</text>
 <path d="M212,270 L276,270" fill="none" stroke="#2459C2" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-blue)"/>
-<text x="125" y="362" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="15" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">상자를 열기 전에</text>
-<text x="125" y="384" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="15" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">스티커로 결과를 안다</text>
+<text x="125" y="362" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="15" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">바디를 읽기 전에</text>
+<text x="125" y="384" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="15" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">상태 코드로 결과를 안다</text>
 <path d="M472,270 L535,270" fill="none" stroke="#5A6474" stroke-width="2.5" stroke-linejoin="round"/>
 <path d="M535,270 L535,105 L596,105" fill="none" stroke="#1B7F3B" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-green)"/>
 <rect x="600" y="40" width="560" height="130" rx="14" fill="#E5F3E9" stroke="#1B7F3B" stroke-width="2"/>
