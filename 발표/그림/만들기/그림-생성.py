@@ -795,6 +795,40 @@ f.rich(30, 628, [("같은 색 = 같은 정보  ", "muted", 700), ("글 하나 �
                  ("/api/v1/posts/{id}", "teal", 700, True), ("  ·  ", "muted", 400), ("id", "orange", 700, True),
                  ("     문서가 코드와 어긋나면 안 될 때는 Spring REST Docs (테스트를 통과해야 문서 생성)", "muted", 400)], 14)
 
+# ---------------------------------------------------------------- 13b 문서 만드는 방법
+f = fig("13b-문서-만드는-방법", "API 문서 만드는 방법", 1240, 560,
+        "Swagger(springdoc)는 의존성 한 줄과 서버 실행으로 문서가 생기고, Spring REST Docs는 API마다 테스트를 써서 실행하면 문서가 생긴다.")
+COLS13 = [
+    (30, "Swagger (springdoc)", "시작이 쉬움", "blue", "blueBg", [
+        ("의존성 한 줄 추가", ["implementation", "  'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'"]),
+        ("서버 실행 → 문서 화면 완성", ["http://localhost:8080/swagger-ui/index.html"]),
+        ("(선택) 설명 덧붙이기", ['@Operation(summary = "글 하나 조회")']),
+    ], "결과: 화면에서 바로 호출해 볼 수 있다"),
+    (630, "Spring REST Docs", "정확함", "teal", "tealBg", [
+        ("의존성 + 빌드 설정", ["testImplementation", "  'org.springframework.restdocs:spring-restdocs-mockmvc'", "+ asciidoctor 플러그인"]),
+        ("API마다 테스트 작성", ['.andDo(document("post-get",', '    responseFields(fieldWithPath("title")...)))']),
+        ("테스트 실행 → HTML 문서", ["generated-snippets/post-get/*.adoc → index.html"]),
+    ], "결과: 테스트가 통과해야 문서가 생겨 코드와 어긋나지 않는다"),
+]
+for (x, title, sub, col, bg, steps, result) in COLS13:
+    f.rect(x, 30, 580, 500, "line", "white", rx=14)
+    f.add(f'<path d="M{x},{30+14} a14,14 0 0 1 14,-14 h552 a14,14 0 0 1 14,14 v50 h-580 z" fill="{C[bg]}"/>')
+    f.add(f'<line x1="{x}" y1="94" x2="{x+580}" y2="94" stroke="{C[col]}" stroke-width="2"/>')
+    f.text(x + 24, 72, title, 22, 700, col, "start")
+    f.text(x + 556, 72, sub, 15, 700, "muted", "end")
+    y = 116
+    for k, (st, code) in enumerate(steps):
+        f.add(f'<circle cx="{x+38}" cy="{y+14}" r="13" fill="{C[col]}"/>')
+        f.text(x + 38, y + 19, str(k + 1), 14, 700, "white")
+        f.text(x + 62, y + 20, st, 18, 700, "ink", "start")
+        h = 18 + 22 * len(code)
+        f.rect(x + 62, y + 34, 494, h, "faint", "soft", rx=8, sw=1.5)
+        for j, c in enumerate(code):
+            f.text(x + 76, y + 56 + j * 22, c, 13, 500, "ink", "start", True)
+        y += 34 + h + 22
+    f.rect(x + 24, 468, 532, 44, col, bg, rx=10, sw=1.5)
+    f.text(x + 290, 496, result, 16, 700, col)
+
 # ---------------------------------------------------------------- 14 한 장 요약
 f = fig("14-한-장-요약", "한 장 요약: 요청 하나의 여정", 1280, 390,
         "요청 하나는 URL, 메서드, 입력 검증, 전역 예외 처리, 상태 코드와 공통 응답 순으로 지나가고, API 문서가 이 약속을 미리 알려 준다.")
