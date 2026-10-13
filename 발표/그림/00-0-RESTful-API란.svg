@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 590" width="1240" height="590" role="img" aria-label="API는 프로그램끼리 요청과 응답을 주고받는 정해진 방법이고, REST는 자원·행동·결과를 URL·메서드·상태 코드로 표현하자는 원칙이며, 이를 잘 지킨 API가 RESTful API다.">
+<title>RESTful API란</title>
+<defs><marker id="ah-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1C2230"/></marker><marker id="ah-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5A6474"/></marker><marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2459C2"/></marker><marker id="ah-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0D7468"/></marker><marker id="ah-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B45B8"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1B7F3B"/></marker><marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B55400"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#BF2A20"/></marker></defs>
+<rect x="0" y="0" width="1240" height="590" rx="18" fill="#FFFFFF"/>
+<rect x="40" y="40" width="340" height="290" rx="14" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="2"/>
+<text x="64" y="88" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="28" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">API</text>
+<text x="64" y="114" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#5A6474" text-anchor="start" xml:space="preserve">Application Programming Interface</text>
+<text x="64" y="156" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="500" fill="#1C2230" text-anchor="start" xml:space="preserve">프로그램끼리 요청과 응답을</text>
+<text x="64" y="182" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">주고받는 정해진 방법</text>
+<rect x="60" y="262" width="300" height="44" rx="8" fill="#FFFFFF" stroke="#E3E7ED" stroke-width="1.5"/>
+<text x="210" y="290" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="14" font-weight="700" fill="#1C2230" text-anchor="middle" xml:space="preserve">GET /api/v1/posts/42</text>
+<rect x="450" y="40" width="340" height="290" rx="14" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="2"/>
+<text x="474" y="88" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="28" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">REST</text>
+<text x="474" y="114" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#5A6474" text-anchor="start" xml:space="preserve">Representational State Transfer</text>
+<text x="474" y="156" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="500" fill="#1C2230" text-anchor="start" xml:space="preserve">HTTP를 그대로 살려 API를 설계하자는 원칙</text>
+<text x="474" y="182" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">(2000년, Roy Fielding 논문)</text>
+<text x="474" y="228" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">자원</text>
+<path d="M520,223 L554,223" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<text x="564" y="228" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#0D7468" text-anchor="start" xml:space="preserve">URL</text>
+<text x="474" y="260" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">행동</text>
+<path d="M520,255 L554,255" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<text x="564" y="260" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#0D7468" text-anchor="start" xml:space="preserve">HTTP 메서드</text>
+<text x="474" y="292" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">결과</text>
+<path d="M520,287 L554,287" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
+<text x="564" y="292" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#0D7468" text-anchor="start" xml:space="preserve">상태 코드</text>
+<rect x="860" y="40" width="340" height="290" rx="14" fill="#EAF0FB" stroke="#2459C2" stroke-width="2"/>
+<text x="884" y="88" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="28" font-weight="700" fill="#2459C2" text-anchor="start" xml:space="preserve">RESTful API</text>
+<text x="884" y="114" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#5A6474" text-anchor="start" xml:space="preserve">REST 원칙을 잘 지킨 API</text>
+<text x="884" y="156" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="500" fill="#1C2230" text-anchor="start" xml:space="preserve">주소만 보고도</text>
+<text x="884" y="182" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">무슨 일을 하는지 알 수 있다</text>
+<rect x="880" y="262" width="300" height="44" rx="8" fill="#FFFFFF" stroke="#E3E7ED" stroke-width="1.5"/>
+<text x="1030" y="290" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="14" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">DELETE /api/v1/posts/42 → 204</text>
+<text x="415" y="196" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="40" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">+</text>
+<text x="825" y="196" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="40" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">=</text>
+<line x1="40" y1="366" x2="1200" y2="366" stroke="#E3E7ED" stroke-width="2"/>
+<text x="40" y="402" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="18" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">오늘 다룰 순서</text>
+<rect x="40" y="422" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="62" y="457" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">1</text>
+<text x="88" y="457" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">왜 요청을 보내나</text>
+<rect x="276" y="422" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="298" y="457" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">2</text>
+<text x="324" y="457" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">자원 중심 URL</text>
+<rect x="512" y="422" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="534" y="457" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">3</text>
+<text x="560" y="457" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">HTTP 메서드</text>
+<rect x="748" y="422" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="770" y="457" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">4</text>
+<text x="796" y="457" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">상태 코드</text>
+<rect x="984" y="422" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="1006" y="457" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">5</text>
+<text x="1032" y="457" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">응답·에러 형식</text>
+<rect x="40" y="494" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="62" y="529" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">6</text>
+<text x="88" y="529" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">예외 처리·입력 검증</text>
+<rect x="276" y="494" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="298" y="529" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">7</text>
+<text x="324" y="529" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">페이징·검색·정렬</text>
+<rect x="512" y="494" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="534" y="529" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">8</text>
+<text x="560" y="529" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">API 문서</text>
+<rect x="748" y="494" width="216" height="56" rx="10" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="1.5"/>
+<text x="770" y="529" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="18" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">9</text>
+<text x="796" y="529" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">단일 서버와 MSA</text>
+</svg>

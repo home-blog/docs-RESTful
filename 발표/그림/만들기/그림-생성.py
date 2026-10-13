@@ -95,6 +95,47 @@ def fig(*a, **k):
     return f
 
 
+# ---------------------------------------------------------------- 00-0 RESTful API란
+f = fig("00-0-RESTful-API란", "RESTful API란", 1240, 590,
+        "API는 프로그램끼리 요청과 응답을 주고받는 정해진 방법이고, REST는 자원·행동·결과를 URL·메서드·상태 코드로 표현하자는 원칙이며, 이를 잘 지킨 API가 RESTful API다.")
+CARDS = [
+    (40, "API", "Application Programming Interface", "line", "white", "ink",
+     ["프로그램끼리 요청과 응답을", "주고받는 정해진 방법"], None, "GET /api/v1/posts/42"),
+    (450, "REST", "Representational State Transfer", "line", "white", "ink",
+     ["HTTP를 그대로 살려 API를 설계하자는 원칙", "(2000년, Roy Fielding 논문)"],
+     [("자원", "URL"), ("행동", "HTTP 메서드"), ("결과", "상태 코드")], None),
+    (860, "RESTful API", "REST 원칙을 잘 지킨 API", "blue", "blueBg", "blue",
+     ["주소만 보고도", "무슨 일을 하는지 알 수 있다"], None, "DELETE /api/v1/posts/42 → 204"),
+]
+for (x, t, eb, st, bg, tc, body, rules, ex) in CARDS:
+    f.rect(x, 40, 340, 290, st, bg, rx=14)
+    f.text(x + 24, 88, t, 28, 700, tc, "start")
+    f.text(x + 24, 114, eb, 13, 500, "muted", "start", eb[0].isascii())
+    for i, line in enumerate(body):
+        f.text(x + 24, 156 + i * 26, line, 16, 500 if i == 0 else 400, "ink" if i == 0 else "muted", "start")
+    if rules:
+        for i, (a_, b_) in enumerate(rules):
+            y = 228 + i * 32
+            f.text(x + 24, y, a_, 16, 700, "ink", "start")
+            f.path([(x + 70, y - 5), (x + 104, y - 5)], "muted", sw=2)
+            f.text(x + 114, y, b_, 16, 700, "teal", "start")
+    if ex:
+        f.rect(x + 20, 262, 300, 44, "faint", "white", rx=8, sw=1.5)
+        f.text(x + 170, 290, ex, 14, 700, tc, mono=True)
+f.text(415, 196, "+", 40, 400, "muted")
+f.text(825, 196, "=", 40, 400, "muted")
+f.add(f'<line x1="40" y1="366" x2="1200" y2="366" stroke="{C["faint"]}" stroke-width="2"/>')
+f.text(40, 402, "오늘 다룰 순서", 18, 700, "ink", "start")
+AG = ["왜 요청을 보내나", "자원 중심 URL", "HTTP 메서드", "상태 코드", "응답·에러 형식",
+      "예외 처리·입력 검증", "페이징·검색·정렬", "API 문서", "단일 서버와 MSA"]
+for k, lab in enumerate(AG):
+    r, c = divmod(k, 5)
+    x = 40 + c * 236
+    y = 422 + r * 72
+    f.rect(x, y, 216, 56, "line", "white", rx=10, sw=1.5)
+    f.text(x + 22, y + 35, f"{k+1}", 18, 700, "blue", mono=True)
+    f.text(x + 48, y + 35, lab, 16, 600, "ink", "start")
+
 # ---------------------------------------------------------------- 00 왜 요청을 보내나
 f = fig("00-왜-요청을-보내나", "왜 요청을 보내나", 1240, 600,
         "화면에 보이는 데이터는 서버의 DB에 있으므로, 사용자의 동작 하나하나가 서버로 보내는 HTTP 요청 하나가 된다.")
