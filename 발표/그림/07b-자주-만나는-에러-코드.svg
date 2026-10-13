@@ -1,70 +1,70 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 700" width="1240" height="700" role="img" aria-label="실제로 자주 보는 에러 코드는 400, 401, 403, 404, 409와 500, 502, 503, 504이며, 코드마다 먼저 확인할 곳이 다르다.">
 <title>자주 만나는 에러 상태 코드</title>
-<defs><marker id="ah-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#15181D"/></marker><marker id="ah-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6B7280"/></marker><marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2E5BDB"/></marker><marker id="ah-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B3440"/></marker><marker id="ah-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2B3440"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#18794E"/></marker><marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B54708"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B42318"/></marker></defs>
-<rect x="0" y="0" width="1240" height="700" fill="#FFFFFF"/>
-<text x="40" y="46" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="600" fill="#6B7280" text-anchor="start" xml:space="preserve">코드</text>
-<text x="170" y="46" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="600" fill="#6B7280" text-anchor="start" xml:space="preserve">이름</text>
-<text x="430" y="46" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="600" fill="#6B7280" text-anchor="start" xml:space="preserve">언제 나오나 (블로그 API 예)</text>
-<text x="850" y="46" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="600" fill="#6B7280" text-anchor="start" xml:space="preserve">먼저 확인할 것</text>
-<line x1="30" y1="62" x2="1210" y2="62" stroke="#D3D8DF" stroke-width="2"/>
-<rect x="30" y="74" width="1180" height="56" rx="8" fill="#F6F7F9"/>
-<rect x="30" y="74" width="5" height="56" rx="2" fill="#B54708"/>
-<text x="48" y="109" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B54708" text-anchor="start" xml:space="preserve">400</text>
-<rect x="100" y="91" width="52" height="26" rx="13" fill="#FEF6EE" stroke="#B54708" stroke-width="1"/>
-<text x="126" y="109" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="13" font-weight="600" fill="#B54708" text-anchor="middle" xml:space="preserve">자주</text>
-<text x="170" y="107" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Bad Request</text>
-<text x="430" y="107" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">필수 값 누락, 형식 오류 (빈 제목, 깨진 JSON)</text>
-<text x="850" y="107" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">응답의 errors: 어느 필드가 틀렸나</text>
-<rect x="30" y="136" width="5" height="56" rx="2" fill="#B54708"/>
-<text x="48" y="171" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B54708" text-anchor="start" xml:space="preserve">401</text>
-<rect x="100" y="153" width="52" height="26" rx="13" fill="#FEF6EE" stroke="#B54708" stroke-width="1"/>
-<text x="126" y="171" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="13" font-weight="600" fill="#B54708" text-anchor="middle" xml:space="preserve">자주</text>
-<text x="170" y="169" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Unauthorized</text>
-<text x="430" y="169" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">인증 정보(JWT·세션)가 없거나 만료됨</text>
-<text x="850" y="169" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">Authorization 헤더·쿠키, 만료 시간</text>
-<rect x="30" y="198" width="1180" height="56" rx="8" fill="#F6F7F9"/>
-<rect x="30" y="198" width="5" height="56" rx="2" fill="#B54708"/>
-<text x="48" y="233" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B54708" text-anchor="start" xml:space="preserve">403</text>
-<text x="170" y="231" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Forbidden</text>
-<text x="430" y="231" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">로그인했지만 권한 없음 (남의 글 삭제)</text>
-<text x="850" y="231" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">사용자 역할, 자원 소유자</text>
-<rect x="30" y="260" width="5" height="56" rx="2" fill="#B54708"/>
-<text x="48" y="295" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B54708" text-anchor="start" xml:space="preserve">404</text>
-<rect x="100" y="277" width="52" height="26" rx="13" fill="#FEF6EE" stroke="#B54708" stroke-width="1"/>
-<text x="126" y="295" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="13" font-weight="600" fill="#B54708" text-anchor="middle" xml:space="preserve">자주</text>
-<text x="170" y="293" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Not Found</text>
-<text x="430" y="293" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">없는 자원 (/posts/99999), URL 오타</text>
-<text x="850" y="293" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">URL 경로와 id, 삭제된 데이터인지</text>
-<rect x="30" y="322" width="1180" height="56" rx="8" fill="#F6F7F9"/>
-<rect x="30" y="322" width="5" height="56" rx="2" fill="#B54708"/>
-<text x="48" y="357" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B54708" text-anchor="start" xml:space="preserve">409</text>
-<text x="170" y="355" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Conflict</text>
-<text x="430" y="355" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">중복 (같은 이메일로 가입), 동시 수정</text>
-<text x="850" y="355" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">유니크 값, 버전 필드</text>
-<line x1="30" y1="384" x2="1210" y2="384" stroke="#D3D8DF" stroke-width="1.5" stroke-dasharray="4 6"/>
-<rect x="30" y="384" width="5" height="56" rx="2" fill="#B42318"/>
-<text x="48" y="419" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B42318" text-anchor="start" xml:space="preserve">500</text>
-<rect x="100" y="401" width="52" height="26" rx="13" fill="#FEF3F2" stroke="#B42318" stroke-width="1"/>
-<text x="126" y="419" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="13" font-weight="600" fill="#B42318" text-anchor="middle" xml:space="preserve">자주</text>
-<text x="170" y="417" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Internal Server Error</text>
-<text x="430" y="417" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">처리하지 못한 예외 (NullPointerException 등)</text>
-<text x="850" y="417" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">서버 로그의 스택 트레이스</text>
-<rect x="30" y="446" width="1180" height="56" rx="8" fill="#F6F7F9"/>
-<rect x="30" y="446" width="5" height="56" rx="2" fill="#B42318"/>
-<text x="48" y="481" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B42318" text-anchor="start" xml:space="preserve">502</text>
-<text x="170" y="479" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Bad Gateway</text>
-<text x="430" y="479" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">게이트웨이가 뒤쪽 서버에서 잘못된 응답을 받음</text>
-<text x="850" y="479" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">뒤쪽 서비스가 떠 있나, 주소·포트</text>
-<rect x="30" y="508" width="5" height="56" rx="2" fill="#B42318"/>
-<text x="48" y="543" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B42318" text-anchor="start" xml:space="preserve">503</text>
-<text x="170" y="541" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Service Unavailable</text>
-<text x="430" y="541" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">과부하, 점검, 배포 중이라 처리 불가</text>
-<text x="850" y="541" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">서버 상태, 배포·재시작 중인지</text>
-<rect x="30" y="570" width="1180" height="56" rx="8" fill="#F6F7F9"/>
-<rect x="30" y="570" width="5" height="56" rx="2" fill="#B42318"/>
-<text x="48" y="605" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="24" font-weight="700" fill="#B42318" text-anchor="start" xml:space="preserve">504</text>
-<text x="170" y="603" font-family="'JetBrains Mono','D2Coding',Consolas,'Pretendard',monospace" font-size="16" font-weight="600" fill="#15181D" text-anchor="start" xml:space="preserve">Gateway Timeout</text>
-<text x="430" y="603" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#15181D" text-anchor="start" xml:space="preserve">뒤쪽 서버가 제한 시간 안에 응답 안 함</text>
-<text x="850" y="603" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="16" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">느린 쿼리, 타임아웃 설정</text>
-<text x="40" y="664" font-family="'Pretendard','Apple SD Gothic Neo','Malgun Gothic',sans-serif" font-size="15" font-weight="400" fill="#6B7280" text-anchor="start" xml:space="preserve">그 밖에:  405 Method Not Allowed (메서드 틀림) · 415 Unsupported Media Type (Content-Type 틀림) · 429 Too Many Requests (요청 과다)</text>
+<defs><marker id="ah-ink" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1C2230"/></marker><marker id="ah-muted" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5A6474"/></marker><marker id="ah-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#2459C2"/></marker><marker id="ah-teal" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#0D7468"/></marker><marker id="ah-violet" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5B45B8"/></marker><marker id="ah-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1B7F3B"/></marker><marker id="ah-orange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B55400"/></marker><marker id="ah-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#BF2A20"/></marker></defs>
+<rect x="0" y="0" width="1240" height="700" rx="18" fill="#FFFFFF"/>
+<text x="40" y="46" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#5A6474" text-anchor="start" xml:space="preserve">코드</text>
+<text x="170" y="46" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#5A6474" text-anchor="start" xml:space="preserve">이름</text>
+<text x="430" y="46" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#5A6474" text-anchor="start" xml:space="preserve">언제 나오나 (블로그 API 예)</text>
+<text x="850" y="46" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#5A6474" text-anchor="start" xml:space="preserve">먼저 확인할 것</text>
+<line x1="30" y1="62" x2="1210" y2="62" stroke="#B4BCC8" stroke-width="2"/>
+<rect x="30" y="74" width="1180" height="56" rx="8" fill="#F4F6F9"/>
+<rect x="30" y="74" width="5" height="56" rx="2" fill="#B55400"/>
+<text x="48" y="109" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">400</text>
+<rect x="100" y="91" width="52" height="26" rx="13" fill="#FCEFE0" stroke="#B55400" stroke-width="1.2"/>
+<text x="126" y="109" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="13" font-weight="700" fill="#B55400" text-anchor="middle" xml:space="preserve">자주</text>
+<text x="170" y="107" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Bad Request</text>
+<text x="430" y="107" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">필수 값 누락, 형식 오류 (빈 제목, 깨진 JSON)</text>
+<text x="850" y="107" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">응답의 errors: 어느 필드가 틀렸나</text>
+<rect x="30" y="136" width="5" height="56" rx="2" fill="#B55400"/>
+<text x="48" y="171" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">401</text>
+<rect x="100" y="153" width="52" height="26" rx="13" fill="#FCEFE0" stroke="#B55400" stroke-width="1.2"/>
+<text x="126" y="171" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="13" font-weight="700" fill="#B55400" text-anchor="middle" xml:space="preserve">자주</text>
+<text x="170" y="169" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Unauthorized</text>
+<text x="430" y="169" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">인증 정보(JWT·세션)가 없거나 만료됨</text>
+<text x="850" y="169" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">Authorization 헤더·쿠키, 만료 시간</text>
+<rect x="30" y="198" width="1180" height="56" rx="8" fill="#F4F6F9"/>
+<rect x="30" y="198" width="5" height="56" rx="2" fill="#B55400"/>
+<text x="48" y="233" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">403</text>
+<text x="170" y="231" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Forbidden</text>
+<text x="430" y="231" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">로그인했지만 권한 없음 (남의 글 삭제)</text>
+<text x="850" y="231" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">사용자 역할, 자원 소유자</text>
+<rect x="30" y="260" width="5" height="56" rx="2" fill="#B55400"/>
+<text x="48" y="295" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">404</text>
+<rect x="100" y="277" width="52" height="26" rx="13" fill="#FCEFE0" stroke="#B55400" stroke-width="1.2"/>
+<text x="126" y="295" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="13" font-weight="700" fill="#B55400" text-anchor="middle" xml:space="preserve">자주</text>
+<text x="170" y="293" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Not Found</text>
+<text x="430" y="293" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">없는 자원 (/posts/99999), URL 오타</text>
+<text x="850" y="293" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">URL 경로와 id, 삭제된 데이터인지</text>
+<rect x="30" y="322" width="1180" height="56" rx="8" fill="#F4F6F9"/>
+<rect x="30" y="322" width="5" height="56" rx="2" fill="#B55400"/>
+<text x="48" y="357" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">409</text>
+<text x="170" y="355" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Conflict</text>
+<text x="430" y="355" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">중복 (같은 이메일로 가입), 동시 수정</text>
+<text x="850" y="355" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">유니크 값, 버전 필드</text>
+<line x1="30" y1="384" x2="1210" y2="384" stroke="#B4BCC8" stroke-width="1.5" stroke-dasharray="4 6"/>
+<rect x="30" y="384" width="5" height="56" rx="2" fill="#BF2A20"/>
+<text x="48" y="419" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#BF2A20" text-anchor="start" xml:space="preserve">500</text>
+<rect x="100" y="401" width="52" height="26" rx="13" fill="#FBE8E6" stroke="#BF2A20" stroke-width="1.2"/>
+<text x="126" y="419" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="13" font-weight="700" fill="#BF2A20" text-anchor="middle" xml:space="preserve">자주</text>
+<text x="170" y="417" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Internal Server Error</text>
+<text x="430" y="417" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">처리하지 못한 예외 (NullPointerException 등)</text>
+<text x="850" y="417" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">서버 로그의 스택 트레이스</text>
+<rect x="30" y="446" width="1180" height="56" rx="8" fill="#F4F6F9"/>
+<rect x="30" y="446" width="5" height="56" rx="2" fill="#BF2A20"/>
+<text x="48" y="481" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#BF2A20" text-anchor="start" xml:space="preserve">502</text>
+<text x="170" y="479" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Bad Gateway</text>
+<text x="430" y="479" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">게이트웨이가 뒤쪽 서버에서 잘못된 응답을 받음</text>
+<text x="850" y="479" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">뒤쪽 서비스가 떠 있나, 주소·포트</text>
+<rect x="30" y="508" width="5" height="56" rx="2" fill="#BF2A20"/>
+<text x="48" y="543" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#BF2A20" text-anchor="start" xml:space="preserve">503</text>
+<text x="170" y="541" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Service Unavailable</text>
+<text x="430" y="541" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">과부하, 점검, 배포 중이라 처리 불가</text>
+<text x="850" y="541" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">서버 상태, 배포·재시작 중인지</text>
+<rect x="30" y="570" width="1180" height="56" rx="8" fill="#F4F6F9"/>
+<rect x="30" y="570" width="5" height="56" rx="2" fill="#BF2A20"/>
+<text x="48" y="605" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#BF2A20" text-anchor="start" xml:space="preserve">504</text>
+<text x="170" y="603" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Gateway Timeout</text>
+<text x="430" y="603" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">뒤쪽 서버가 제한 시간 안에 응답 안 함</text>
+<text x="850" y="603" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">느린 쿼리, 타임아웃 설정</text>
+<text x="40" y="664" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="15" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">그 밖에:  405 Method Not Allowed (메서드 틀림) · 415 Unsupported Media Type (Content-Type 틀림) · 429 Too Many Requests (요청 과다)</text>
 </svg>
