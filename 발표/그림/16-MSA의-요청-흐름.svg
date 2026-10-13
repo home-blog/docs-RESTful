@@ -10,7 +10,7 @@
 <text x="375" y="190" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="21" font-weight="700" fill="#0D7468" text-anchor="middle" xml:space="preserve">API Gateway</text>
 <text x="375" y="216" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="400" fill="#5A6474" text-anchor="middle" xml:space="preserve">외부 요청이 들어오는 단일 입구</text>
 <text x="262" y="262" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">① 인증</text>
-<text x="262" y="286" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">토큰 확인, 실패하면 401</text>
+<text x="262" y="286" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">JWT 확인, 실패하면 401</text>
 <text x="262" y="334" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">② 라우팅 (경로 → 서비스)</text>
 <text x="262" y="364" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="700" fill="#2459C2" text-anchor="start" xml:space="preserve">/posts/*/comments → comment</text>
 <text x="262" y="390" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">/posts/**         → post</text>

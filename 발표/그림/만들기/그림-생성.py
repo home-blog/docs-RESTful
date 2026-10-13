@@ -434,7 +434,7 @@ for x, t in COLS:
 f.add(f'<line x1="30" y1="62" x2="1210" y2="62" stroke="{C["line"]}" stroke-width="2"/>')
 ROWS = [
     ("400", "Bad Request", "필수 값 누락, 형식 오류 (빈 제목, 깨진 JSON)", "응답의 errors: 어느 필드가 틀렸나", "orange", True),
-    ("401", "Unauthorized", "토큰이 없거나 만료됨", "Authorization 헤더, 토큰 만료 시간", "orange", True),
+    ("401", "Unauthorized", "인증 정보(JWT·세션)가 없거나 만료됨", "Authorization 헤더·쿠키, 만료 시간", "orange", True),
     ("403", "Forbidden", "로그인했지만 권한 없음 (남의 글 삭제)", "사용자 역할, 자원 소유자", "orange", False),
     ("404", "Not Found", "없는 자원 (/posts/99999), URL 오타", "URL 경로와 id, 삭제된 데이터인지", "orange", True),
     ("409", "Conflict", "중복 (같은 이메일로 가입), 동시 수정", "유니크 값, 버전 필드", "orange", False),
@@ -481,7 +481,7 @@ f.path([(522, 135), (586, 135)], "green")
 f.text(554, 122, "예", 16, 700, "green")
 f.path([(842, 135), (906, 135)], "green")
 f.text(874, 122, "예", 16, 700, "green")
-for (cx, code, l1, l2) in [(400, "401 Unauthorized", "인증 실패", "토큰이 없거나 만료됨"),
+for (cx, code, l1, l2) in [(400, "401 Unauthorized", "인증 실패", "JWT·세션이 없거나 만료됨"),
                            (715, "403 Forbidden", "인가 실패", "글쓴이·관리자가 아님")]:
     f.path([(cx, 192), (cx, 266)], "orange")
     f.text(cx + 12, 236, "아니오", 15, 700, "orange", "start")
@@ -743,7 +743,7 @@ f.rect(250, 80, 720, 480, "teal", "white", rx=18)
 f.text(274, 112, "Spring Boot 애플리케이션 1개", 18, 700, "teal", "start")
 f.text(560, 112, "(서버 1대, 배포 단위 1개)", 15, 400, "muted", "start")
 f.rect(280, 132, 660, 46, "line", "soft", rx=10)
-f.rich(300, 162, [("① 인증 필터  ", "ink", 700), ("토큰 확인, 실패하면 401", "muted", 400)], 16)
+f.rich(300, 162, [("① 인증 필터  ", "ink", 700), ("JWT·세션 확인, 실패하면 401", "muted", 400)], 16)
 f.rect(280, 192, 660, 46, "line", "soft", rx=10)
 f.rich(300, 222, [("② URL 매핑  ", "ink", 700), ("경로와 메서드로 컨트롤러 선택", "muted", 400)], 16)
 for k, (c, path_, sv, hl) in enumerate([("PostController", "/posts/**", "PostService", False),
@@ -786,7 +786,7 @@ f.rect(240, 150, 270, 400, "teal", "tealBg")
 f.text(375, 190, "API Gateway", 21, 700, "teal")
 f.text(375, 216, "외부 요청이 들어오는 단일 입구", 14, 400, "muted")
 f.text(262, 262, "① 인증", 16, 700, "ink", "start")
-f.text(262, 286, "토큰 확인, 실패하면 401", 14, 400, "muted", "start")
+f.text(262, 286, "JWT 확인, 실패하면 401", 14, 400, "muted", "start")
 f.text(262, 334, "② 라우팅 (경로 → 서비스)", 16, 700, "ink", "start")
 for k, (r, hl) in enumerate([("/posts/*/comments → comment", True), ("/posts/**         → post", False),
                              ("/members/**       → member", False)]):
@@ -837,7 +837,7 @@ def msg(f, x1, x2, y, label, col="ink", dash=None, mono=True):
 
 msg(f, 130, 450, 140, "POST /api/v1/posts/42/comments", "blue")
 f.rect(470, 165, 190, 34, "teal", "white", rx=17, sw=1.5)
-f.text(565, 188, "토큰 확인 OK", 14, 600, "teal")
+f.text(565, 188, "JWT 확인 OK", 14, 600, "teal")
 msg(f, 450, 780, 240, "POST /api/v1/posts/42/comments", "blue")
 msg(f, 780, 1090, 300, "GET /api/v1/posts/42", "teal")
 f.rect(1100, 318, 130, 34, "line", "white", rx=8, sw=1.5)

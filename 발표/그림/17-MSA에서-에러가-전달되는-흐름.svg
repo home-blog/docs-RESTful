@@ -17,7 +17,7 @@
 <path d="M130,140 L444,140" fill="none" stroke="#2459C2" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-blue)"/>
 <text x="290.0" y="128" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="14" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">POST /api/v1/posts/42/comments</text>
 <rect x="470" y="165" width="190" height="34" rx="17" fill="#FFFFFF" stroke="#0D7468" stroke-width="1.5"/>
-<text x="565" y="188" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="600" fill="#0D7468" text-anchor="middle" xml:space="preserve">토큰 확인 OK</text>
+<text x="565" y="188" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="600" fill="#0D7468" text-anchor="middle" xml:space="preserve">JWT 확인 OK</text>
 <path d="M450,240 L774,240" fill="none" stroke="#2459C2" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-blue)"/>
 <text x="615.0" y="228" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="14" font-weight="700" fill="#2459C2" text-anchor="middle" xml:space="preserve">POST /api/v1/posts/42/comments</text>
 <path d="M780,300 L1084,300" fill="none" stroke="#0D7468" stroke-width="2.5" stroke-linejoin="round" marker-end="url(#ah-teal)"/>

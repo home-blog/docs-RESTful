@@ -20,8 +20,8 @@
 <rect x="100" y="153" width="52" height="26" rx="13" fill="#FCEFE0" stroke="#B55400" stroke-width="1.2"/>
 <text x="126" y="171" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="13" font-weight="700" fill="#B55400" text-anchor="middle" xml:space="preserve">자주</text>
 <text x="170" y="169" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="16" font-weight="600" fill="#1C2230" text-anchor="start" xml:space="preserve">Unauthorized</text>
-<text x="430" y="169" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">토큰이 없거나 만료됨</text>
-<text x="850" y="169" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">Authorization 헤더, 토큰 만료 시간</text>
+<text x="430" y="169" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#1C2230" text-anchor="start" xml:space="preserve">인증 정보(JWT·세션)가 없거나 만료됨</text>
+<text x="850" y="169" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">Authorization 헤더·쿠키, 만료 시간</text>
 <rect x="30" y="198" width="1180" height="56" rx="8" fill="#F4F6F9"/>
 <rect x="30" y="198" width="5" height="56" rx="2" fill="#B55400"/>
 <text x="48" y="233" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="24" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">403</text>
