@@ -64,6 +64,9 @@ def code(s, x, y, w, lines, size=14, dark=False, h=None):
     box = s.shapes.add_shape(MSO_SHAPE.RECTANGLE, cm(x), cm(y), cm(w), cm(h))
     box.fill.solid(); box.fill.fore_color.rgb = RGBColor(0x1E, 0x1E, 0x1E) if dark else LIGHT
     box.line.fill.background(); box.shadow.inherit = False
+    st = box._element.find("{http://schemas.openxmlformats.org/presentationml/2006/main}style")
+    if st is not None:                               # 테마 기본 그림자·테두리 참조를 없앤다
+        box._element.remove(st)
     tf = box.text_frame; tf.word_wrap = True; tf.vertical_anchor = MSO_ANCHOR.TOP
     tf.margin_left = tf.margin_right = cm(0.5); tf.margin_top = tf.margin_bottom = cm(0.35)
     for i, (ln, col) in enumerate(lines):
@@ -466,6 +469,104 @@ def _(s):
     text(s, 1.6, 9.4, 31, [[("다른 서비스의 에러는 그대로 넘기지 않고 내 API의 에러 형식으로 바꾼다", INK, 18)]])
 
 
+# ------------------------------------------------------------------ 스타일 (STYLE=vercel)
+# 기본 스타일로 다 그린 뒤, 색·글꼴·표·코드 상자를 Vercel DESIGN.md 값으로 바꿔 입힌다.
+from pptx.oxml.ns import qn
+from lxml import etree
+
+VERCEL = {"222222": "171717", "757575": "666666", "C62828": "EE0000", "1565C0": "0070F3", "2E7D32": "0070F3",
+          "E6E6E6": "EDEDED", "8BC34A": "50E3C2", "FFCA28": "F5A623", "EF5350": "FF4D4D", "9E9E9E": "888888"}
+SECTION = [(2, 2, "INTRO"), (3, 5, "01 · URL"), (6, 7, "02 · METHOD"), (8, 9, "03 · STATUS CODE"),
+           (10, 12, "04 · RESPONSE · ERROR"), (13, 14, "05 · EXCEPTION · VALIDATION"), (15, 17, "06 · PAGINATION"),
+           (18, 18, "07 · DOCS"), (19, 22, "08 · 글결"), (23, 23, "SUMMARY")]
+
+
+def _font(r, latin, ea="Pretendard"):
+    r.font.name = latin
+    rPr = r._r.get_or_add_rPr()
+    for old in rPr.findall(qn("a:ea")):
+        rPr.remove(old)
+    el = etree.SubElement(rPr, qn("a:ea")); el.set("typeface", ea)
+    latin_el = rPr.find(qn("a:latin"))
+    if latin_el is not None:
+        latin_el.addnext(el)
+
+
+def _recolor(r):
+    try:
+        rgb = str(r.font.color.rgb)
+    except AttributeError:
+        return
+    if rgb in VERCEL:
+        r.font.color.rgb = RGBColor.from_string(VERCEL[rgb])
+
+
+def _runs(shape):
+    if shape.has_text_frame:
+        for p in shape.text_frame.paragraphs:
+            yield from p.runs
+
+
+def _border(cell, bottom="EBEBEB"):
+    tcPr = cell._tc.get_or_add_tcPr()
+    for tag in ("a:lnL", "a:lnR", "a:lnT", "a:lnB"):
+        for old in tcPr.findall(qn(tag)):
+            tcPr.remove(old)
+    for i, tag in enumerate(("a:lnL", "a:lnR", "a:lnT", "a:lnB")):
+        ln = etree.Element(qn(tag)); ln.set("w", "9525")
+        if tag == "a:lnB":
+            f = etree.SubElement(ln, qn("a:solidFill")); c = etree.SubElement(f, qn("a:srgbClr")); c.set("val", bottom)
+        else:
+            etree.SubElement(ln, qn("a:noFill"))
+        tcPr.insert(i, ln)
+
+
+def apply_vercel():
+    n_main = len(SLIDES)
+    for n, s in enumerate(prs.slides, 1):
+        for sh in list(s.shapes):
+            if sh.has_table:
+                tbl = sh.table
+                for i, row in enumerate(tbl.rows):
+                    for c in row.cells:
+                        c.fill.solid(); c.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+                        _border(c, "A1A1A1" if i == 0 else "EBEBEB")
+                        for p in c.text_frame.paragraphs:
+                            for r in p.runs:
+                                mono = r.font.name == MONO
+                                if i == 0:
+                                    _font(r, "Geist Mono"); r.font.bold = False
+                                    r.font.size = Pt(r.font.size.pt - 3); r.font.color.rgb = RGBColor(0x66, 0x66, 0x66)
+                                else:
+                                    _font(r, "Geist Mono" if mono else "Geist"); _recolor(r)
+                continue
+            if sh.shape_type == 1 and sh.fill.type == 1:            # 코드 상자 (도형)
+                rgb = str(sh.fill.fore_color.rgb)
+                if rgb == "F3F3F3":
+                    sh.fill.fore_color.rgb = RGBColor(0xFA, 0xFA, 0xFA)
+                    sh.line.color.rgb = RGBColor(0xEB, 0xEB, 0xEB); sh.line.width = Pt(0.75)
+                elif rgb == "1E1E1E":
+                    sh.fill.fore_color.rgb = RGBColor(0x0A, 0x0A, 0x0A)
+                spPr = sh._element.spPr
+                if spPr.find(qn("a:effectLst")) is None:
+                    spPr.append(etree.Element(qn("a:effectLst")))
+            for r in _runs(sh):
+                mono = r.font.name == MONO
+                _font(r, "Geist Mono" if mono else "Geist")
+                _recolor(r)
+                if r.font.size and r.font.size.pt >= 28:              # 제목은 자간을 좁힌다
+                    r._r.get_or_add_rPr().set("spc", "-80" if r.font.size.pt < 40 else "-200")
+        label = "APPENDIX" if n > n_main else next((l for a, b, l in SECTION if a <= n <= b), None)
+        if label:
+            tf = s.shapes.add_textbox(cm(1.6), cm(0.35), cm(20), cm(0.7)).text_frame
+            tf.word_wrap = True; tf.paragraphs[0].alignment = PP_ALIGN.LEFT
+            r = tf.paragraphs[0].add_run(); r.text = label
+            r.font.size = Pt(11); r.font.color.rgb = RGBColor(0x88, 0x88, 0x88); _font(r, "Geist Mono")
+            r._r.get_or_add_rPr().set("spc", "100")
+            ln = s.shapes.add_connector(1, cm(1.6), cm(3.05), cm(SW - 1.6), cm(3.05))
+            ln.line.color.rgb = RGBColor(0xEB, 0xEB, 0xEB); ln.line.width = Pt(0.75)
+
+
 # ------------------------------------------------------------------ 만들기
 def secs(say):
     return round(len(say) / 5.5 / 5) * 5          # 말하는 속도 약 5.5자/초(공백 포함)로 어림
@@ -479,7 +580,9 @@ def build():
         num.alignment = PP_ALIGN.RIGHT
         r = num.add_run(); r.text = str(n); r.font.size = Pt(11); r.font.color.rgb = GRAY; r.font.name = KO
         s.notes_slide.notes_text_frame.text = say
-    out = os.path.join(TOP, "RESTful-API-설계.pptx")
+    if os.environ.get("STYLE") == "vercel":
+        apply_vercel()
+    out = os.environ.get("OUT") or os.path.join(TOP, "RESTful-API-설계.pptx")
     prs.save(out)
     return out
 
