@@ -35,9 +35,15 @@ fs.mkdirSync(OUT, { recursive: true });
   await p.setViewportSize({ width: 980, height: 900 });
   await open('index.html');
   await p.locator('#comment-create').locator('xpath=..').screenshot({ path: path.join(OUT, 'REST-Docs-03-댓글-쓰기-전체.png') });
-  // springdoc OpenAPI 문서 페이지(글결.API): md에 있는 약속 부분
-  await p.setViewportSize({ width: 1180, height: 900 });
-  await open('글결-API.html');
-  await p.locator('main').screenshot({ path: path.join(OUT, 'API-문서-첫-화면.png') });
+  // Swagger UI: REST Docs에 적힌 API로 만든 명세를 Swagger UI로 띄운다
+  await p.setViewportSize({ width: 1440, height: 1000 });
+  await open('swagger/index.html');
+  await p.waitForSelector('.opblock-summary');
+  await p.addStyleTag({ content: '.swagger-ui .topbar{display:none}' });
+  await p.screenshot({ path: path.join(OUT, 'Swagger-1-목록.png') });
+  const op = p.locator('#operations-글-post-create');
+  await op.locator('.opblock-summary').first().click();
+  await p.waitForTimeout(600);
+  await op.screenshot({ path: path.join(OUT, 'Swagger-2-글-쓰기.png') });
   await b.close();
 })();

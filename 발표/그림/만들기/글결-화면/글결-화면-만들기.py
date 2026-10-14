@@ -172,68 +172,157 @@ def excerpt(items):
     return out
 
 
-def api_page():
-    """원본/글결-API.md (springdoc OpenAPI 문서 페이지)를 같은 글로 HTML 한 장으로 만든다.
-    md에 API 목록 칸은 들어 있지 않아(화면에서 그려짐) 약속 부분까지만 만든다."""
-    import html as H
-    lines = open(os.path.join(HERE, "원본", "글결-API.md"), encoding="utf-8").read().splitlines()
-    code = lambda s: re.sub(r"`([^`]+)`", r"<code>\1</code>", H.escape(s))
-    bold = lambda s: re.sub(r"\*\*(.+?)\*\*", r"<b>\1</b>", s)
-    out, i, cards = [], 0, False
-    title = lines[0].strip()
-    while i < len(lines):
-        l = lines[i]
-        if l.startswith("## "):
-            if cards:
-                out.append("</div>")
-                cards = False
-            if l[3:].strip() == "API 목록":
-                out.append('<h2>API 목록</h2><div class="search"><span class="box">찾기</span>'
-                           '<span class="tag">🔒 로그인 세션 쿠키가 있어야 부를 수 있음</span>'
-                           '<span class="tag">🛡 CSRF 머리글에 CSRF 토큰을 실음</span></div>')
-                i += 1
-                while i < len(lines) and not lines[i].startswith("코드 저장소"):
-                    i += 1
-                continue
-            out.append(f"<h2>{H.escape(l[3:])}</h2>")
-            if "약속" in l:
-                out.append('<div class="cards">')
-                cards = True
-        elif l.startswith("### "):
-            if cards and out[-1] != '<div class="cards">':
-                out.append("</section>")
-            out.append(f'<section class="card"><h3>{H.escape(l[4:])}</h3>')
-        elif l.startswith("```"):
-            j = i + 1
-            while not lines[j].startswith("```"):
-                j += 1
-            out.append("<pre>" + H.escape("\n".join(lines[i + 1:j])) + "</pre>")
-            i = j
-        elif l.strip() and i > 0:
-            out.append(f"<p>{bold(code(l))}</p>")
-        i += 1
-        if cards and i < len(lines) and lines[i].startswith("## "):
-            out.append("</section>")
-    css = """body{margin:0;background:#f6f7f9;color:#1f2430;font-family:'Noto Sans KR',sans-serif}
-main{max-width:1180px;margin:0 auto;padding:36px 40px 28px}
-h1{font-size:34px;margin:0 0 10px;letter-spacing:-.5px}h1 span{color:#0d7468}
-main>p{color:#4a5262;font-size:16px;line-height:1.7;margin:0 0 6px}
-h2{font-size:21px;margin:30px 0 14px}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
-.card{min-width:0;background:#fff;border:1px solid #dfe3e9;border-radius:12px;padding:16px 20px}
-.card h3{font-size:16px;margin:0 0 8px;color:#0d7468}.card p{font-size:14.5px;line-height:1.7;margin:0 0 6px;color:#333a46}
-code{font-family:'JetBrains Mono',monospace;font-size:13px;background:#eef1f4;border-radius:4px;padding:1px 5px}
-pre{font-family:'JetBrains Mono',monospace;font-size:12.5px;white-space:pre-wrap!important;background:#1f2430;color:#e6eaf0;border-radius:8px;padding:12px 14px;margin:8px 0 0;white-space:pre}
-.search{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.box{flex:1;min-width:240px;background:#fff;border:1px solid #cdd3dc;border-radius:8px;padding:9px 14px;color:#8a92a0;font-size:14px}
-.tag{font-size:13px;background:#fff;border:1px solid #dfe3e9;border-radius:999px;padding:6px 12px;color:#4a5262}
-.note{font-size:14px;color:#4a5262;margin-top:16px}"""
-    name, _, rest = title.partition(".")
-    body = "\n".join(out).replace("<p>코드 저장소", '<p class="note">코드 저장소')
-    page = (f'<!doctype html><html lang="ko"><head><meta charset="utf-8"><title>{H.escape(title)}</title>'
-            f'<style>{css}</style></head><body><main><h1>{H.escape(name)}.<span>{H.escape(rest)}</span></h1>\n{body}</main></body></html>')
-    os.makedirs(os.path.join(HERE, "build", "html"), exist_ok=True)
-    open(os.path.join(HERE, "build", "html", "글결-API.html"), "w", encoding="utf-8").write(page)
+def _code(block):
+    """덩어리 본문에서 첫 코드 블록의 줄들"""
+    if not block:
+        return []
+    body, out, inside = block["body"], [], False
+    for l in body:
+        if l.startswith("```"):
+            if inside:
+                return out
+            inside = True
+            continue
+        if inside:
+            out.append(l)
+    return out
+
+
+def _table(block):
+    rows = [l for l in (block or {"body": []})["body"] if l.startswith("|")]
+    clean = lambda c: c.strip().strip("`").replace("\\~", "~").replace("\\`", "`")
+    return [[clean(c) for c in r.strip().strip("|").split(" | ")] for r in rows[2:]]
+
+
+def _json_after_blank(lines):
+    import json
+    if "" not in lines:
+        return None
+    text = "\n".join(lines[lines.index("") + 1:]).strip()
+    try:
+        return json.loads(text) if text else None
+    except ValueError:
+        return None
+
+
+TYPES = {"String": "string", "Number": "integer", "Boolean": "boolean", "Array": "array", "Object": "object"}
+
+
+def _schema(rows):
+    root = {"type": "object", "properties": {}}
+    for path, typ, desc in rows:
+        node = root
+        parts = path.split(".")
+        for k, part in enumerate(parts):
+            arr = part.endswith("[]")
+            name = part[:-2] if arr else part
+            last = k == len(parts) - 1
+            props = node.setdefault("properties", {})
+            if last and not (arr and typ == "Array" and False):
+                if arr:
+                    cur = props.setdefault(name, {"type": "array", "items": {"type": "string"}})
+                    cur["description"] = desc
+                    if typ != "Array":
+                        cur["items"] = {"type": TYPES.get(typ, "string")}
+                else:
+                    cur = props.setdefault(name, {})
+                    cur.update({"type": TYPES.get(typ, "string"), "description": desc})
+            else:
+                if arr:
+                    cur = props.setdefault(name, {"type": "array", "items": {"type": "object", "properties": {}}})
+                    cur["items"] = cur.get("items") if cur.get("items", {}).get("type") == "object" else {"type": "object", "properties": {}}
+                    node = cur["items"]
+                else:
+                    cur = props.setdefault(name, {"type": "object", "properties": {}})
+                    cur.setdefault("properties", {})
+                    cur["type"] = "object"
+                    node = cur
+    return root
+
+
+def openapi():
+    """REST Docs에 적힌 API로 OpenAPI 명세를 만든다 (Swagger UI 화면용). 61개 중 문서에 실린 것만."""
+    import json
+    spec = {"openapi": "3.0.1",
+            "info": {"title": "글결 API", "version": "0.5.2",
+                     "description": "여러 사람이 각자 블로그를 쓰고 한곳에서 둘러보는 멀티 블로그 서비스 **글결**의 서버 API입니다."},
+            "servers": [{"url": "https://geulgyeol.java21.net", "description": "개발 서버"}],
+            "tags": [], "paths": {}}
+    group = None
+    extra = {"post-create": ("400", "error-validation"), "post-read": ("404", "error-not-found")}
+    for b in BLOCKS:
+        if b["level"] == 2:
+            title = re.sub(r"^\d+\.\s*", "", b["title"])
+            group = None if b["anchor"] in ("overview", "errors") else title
+            if group:
+                desc = " ".join(l for l in b["body"] if l.strip())
+                spec["tags"].append({"name": group, **({"description": desc} if desc else {})})
+            continue
+        if b["level"] != 3 or not group:
+            continue
+        a = b["anchor"]
+        req = _code(BY.get(a + "_http_request")) or _code(BY.get(a + "_curl_request"))
+        if req[0].startswith("$ curl"):
+            m = re.search(r"'https?://[^/]+([^']+)'.*-X (\w+)", req[0])
+            path, method = m.group(1), m.group(2)
+            body = re.search(r"-d '(.*)'", "\n".join(req), re.S)
+            body = json.loads(body.group(1)) if body else None
+        else:
+            method, path = req[0].split()[:2]
+            body = _json_after_blank(req)
+        tpl = next((l[len("Table 1. "):] for l in (BY.get(a + "_path_parameters") or {"body": []})["body"] if l.startswith("Table 1. ")), path.split("?")[0])
+        op = {"tags": [group], "summary": re.sub(r"^[\d.]+\s*", "", b["title"]), "operationId": a}
+        desc = " ".join(l for l in b["body"] if l.strip())
+        if desc:
+            op["description"] = desc
+        params = []
+        for name, d in _table(BY.get(a + "_path_parameters")):
+            params.append({"name": name, "in": "path", "required": True, "description": d, "schema": {"type": "integer"}})
+        for name, d in _table(BY.get(a + "_query_parameters")):
+            params.append({"name": name, "in": "query", "required": name == "q", "description": d,
+                           "schema": {"type": "integer" if name in ("page", "categoryId") else "string"}})
+        for name, d in _table(BY.get(a + "_request_headers")):
+            params.append({"name": name, "in": "header", "required": True, "description": d, "schema": {"type": "string"}})
+        if params:
+            op["parameters"] = params
+        rf = _table(BY.get(a + "_request_fields"))
+        if rf:
+            op["requestBody"] = {"required": True, "content": {"application/json": {"schema": _schema(rf), **({"example": body} if body else {})}}}
+        res = _code(BY.get(a + "_http_response"))
+        if not res and BY.get(a + "_curl_request"):
+            res = []
+        code, reason = (res[0].split()[1], " ".join(res[0].split()[2:])) if res else ("200", "OK")
+        r = {"description": reason}
+        rs = _table(BY.get(a + "_response_fields"))
+        ex = _json_after_blank(res) if res else None
+        if rs or ex is not None:
+            r["content"] = {"application/json": {**({"schema": _schema(rs)} if rs else {}), **({"example": ex} if ex is not None else {})}}
+        op["responses"] = {code: r}
+        if a in extra:
+            c, e = extra[a]
+            er = _code(BY.get(e + "_http_response"))
+            op["responses"][c] = {"description": re.sub(r"^[\d.]+\s*", "", BY[e]["title"]),
+                                  "content": {"application/json": {"schema": _schema(_table(BY.get(e + "_response_fields"))), "example": _json_after_blank(er)}}}
+        spec["paths"].setdefault(tpl, {})[method.lower()] = op
+    return spec
+
+
+def swagger_page():
+    import json
+    out = os.path.join(HERE, "build", "html", "swagger")
+    os.makedirs(out, exist_ok=True)
+    dist = os.path.join(HERE, "node_modules", "swagger-ui-dist")
+    for f in ("swagger-ui.css", "swagger-ui-bundle.js"):
+        shutil.copy(os.path.join(dist, f), out)
+    spec = openapi()
+    open(os.path.join(out, "openapi.json"), "w", encoding="utf-8").write(json.dumps(spec, ensure_ascii=False, indent=1))
+    open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(f"""<!doctype html><html lang="ko"><head><meta charset="utf-8">
+<title>Swagger UI</title><link rel="stylesheet" href="swagger-ui.css">
+<style>body{{margin:0}} .swagger-ui, .swagger-ui .info .title, .swagger-ui .opblock-tag {{font-family:'Noto Sans KR',sans-serif}}</style></head>
+<body><div id="swagger-ui"></div><script src="swagger-ui-bundle.js"></script>
+<script>window.ui = SwaggerUIBundle({{spec: {json.dumps(spec, ensure_ascii=False)}, dom_id: '#swagger-ui', docExpansion: 'list',
+  defaultModelsExpandDepth: -1, tryItOutEnabled: false, deepLinking: true}});</script></body></html>""")
+    return len([1 for p in spec["paths"].values() for _ in p])
 
 
 if __name__ == "__main__":
@@ -242,5 +331,5 @@ if __name__ == "__main__":
     open(os.path.join(SRC, "index.adoc"), "w", encoding="utf-8").write("\n".join(full_doc()) + "\n")
     for name, items in EXCERPTS.items():
         open(os.path.join(SRC, f"발췌-{name}.adoc"), "w", encoding="utf-8").write("\n".join(excerpt(items)) + "\n")
-    api_page()
+    print("swagger api", swagger_page())
     print("adoc", len(EXCERPTS) + 1)

@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "글결 문서 화면 찍기용 (Swagger UI)",
+  "devDependencies": {
+    "swagger-ui-dist": "5.17.14"
+  }
+}
