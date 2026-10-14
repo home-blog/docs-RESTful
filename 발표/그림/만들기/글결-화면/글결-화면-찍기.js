@@ -41,6 +41,7 @@ fs.mkdirSync(OUT, { recursive: true });
   await p.waitForSelector('.opblock-summary');
   await p.addStyleTag({ content: '.swagger-ui .topbar{display:none}' });
   await p.screenshot({ path: path.join(OUT, 'Swagger-1-목록.png') });
+  await p.setViewportSize({ width: 860, height: 1000 });
   const op = p.locator('#operations-글-post-create');
   await op.locator('.opblock-summary').first().click();
   await p.waitForTimeout(600);
