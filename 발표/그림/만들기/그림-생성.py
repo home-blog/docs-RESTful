@@ -340,11 +340,11 @@ rows = [
     (0, "/api/v1", "/posts", "글 목록 (복수형 명사)"),
     (1, "/api/v1/posts", "/42", "42번 글 하나"),
     (2, "/api/v1/posts/42", "/comments", "42번 글의 댓글 목록"),
-    (0, "/api/v1/comments", "/7", "7번 댓글 하나"),
+    (3, "/api/v1/posts/42/comments", "/7", "그중 7번 댓글"),
     (0, "/api/v1", "/members", "회원 목록"),
     (1, "/api/v1/members", "/me", "나 (로그인한 회원)"),
 ]
-ys = [70, 128, 186, 256, 326, 384]
+ys = [70, 128, 186, 244, 320, 378]
 X0, STEP, SZ = 60, 40, 22
 for i, ((ind, pre, seg, desc), y) in enumerate(zip(rows, ys)):
     x = X0 + ind * STEP
@@ -355,13 +355,12 @@ for i, ((ind, pre, seg, desc), y) in enumerate(zip(rows, ys)):
     end = x + tw(pre + seg, SZ, True)
     f.add(f'<line x1="{end+14}" y1="{y-7}" x2="{606}" y2="{y-7}" stroke="{C["faint"]}" stroke-width="2" stroke-dasharray="2 6"/>')
     f.text(620, y, desc, 20, 500, "ink", "start")
-f.add(f'<path d="M880,54 H896 V264 H880" fill="none" stroke="{C["orange"]}" stroke-width="2.5"/>')
-f.text(912, 120, "관계는 슬래시로", 19, 700, "orange", "start")
-f.text(912, 148, "id로 정해지면 끊기", 19, 700, "orange", "start")
-f.text(912, 174, "(그래서 보통 2단계)", 16, 400, "muted", "start")
-f.text(912, 214, "댓글 번호는 전체에서 하나", 15, 400, "muted", "start")
-f.rich(912, 238, [("/comments/7", "teal", 700, True), (" 로 충분", "muted", 400)], 15)
-f.rich(912, 262, [("아님 ", "muted", 400), ("/posts/42/comments/7", "red", 500, True)], 15)
+f.add(f'<path d="M880,54 H896 V258 H880" fill="none" stroke="{C["orange"]}" stroke-width="2.5"/>')
+f.text(912, 128, "관계는 슬래시로", 19, 700, "orange", "start")
+f.text(912, 156, "자원 두 개까지", 19, 700, "orange", "start")
+f.text(912, 182, "(글 → 댓글)", 16, 400, "muted", "start")
+f.text(912, 222, "피하기: 자원 세 개 이상", 15, 400, "muted", "start")
+f.text(912, 246, "/members/3/posts/42/comments/7", 13, 500, "red", "start", mono=True)
 f.add(f'<line x1="40" y1="430" x2="1160" y2="430" stroke="{C["faint"]}" stroke-width="2"/>')
 f.text(60, 476, "경로와 쿼리", 20, 700, "ink", "start")
 f.rich(60, 532, [("/api/v1/posts", "ink", 400, True), ("/42", "teal", 700, True)], 22)
