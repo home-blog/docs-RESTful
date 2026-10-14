@@ -29,7 +29,9 @@
 <text x="912" y="156" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="19" font-weight="700" fill="#B55400" text-anchor="start" xml:space="preserve">자원 두 개까지</text>
 <text x="912" y="182" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">(글 → 댓글)</text>
 <text x="912" y="222" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="15" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">피하기: 자원 세 개 이상</text>
-<text x="912" y="246" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#BF2A20" text-anchor="start" xml:space="preserve">/members/3/posts/42/comments/7</text>
+<text x="912" y="246" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#BF2A20" text-anchor="start" xml:space="preserve">/members/{memberId}/posts/{postId}</text>
+<text x="912" y="266" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#BF2A20" text-anchor="start" xml:space="preserve">  /comments/{commentId}</text>
+<text x="912" y="292" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="14" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">→ id 세 개를 모두 알아야 호출</text>
 <line x1="40" y1="430" x2="1160" y2="430" stroke="#E3E7ED" stroke-width="2"/>
 <text x="60" y="476" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="20" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">경로와 쿼리</text>
 <text x="60" y="532" font-size="22" text-anchor="start" xml:space="preserve"><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="400" fill="#1C2230">/api/v1/posts</tspan><tspan font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-weight="700" fill="#0D7468">/42</tspan></text>

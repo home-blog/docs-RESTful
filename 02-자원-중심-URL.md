@@ -68,8 +68,8 @@ URL은 대소문자를 구분할 수 있어서 헷갈려요. 밑줄(_)은 링크
 ### ④ 중첩은 자원 두 개까지 (2단계)
 
 ```text
-✅ /posts/42/comments/7                 글 → 댓글 (2단계)
-❌ /members/3/posts/42/comments/7       회원 → 글 → 댓글 (3단계)
+✅ /posts/{postId}/comments/{commentId}                       글 → 댓글 (2단계)
+❌ /members/{memberId}/posts/{postId}/comments/{commentId}   회원 → 글 → 댓글 (3단계)
 ```
 
 자원이 세 개 이상 이어지면 앞의 id를 모두 알아야 부를 수 있고, 서버도 단계마다 짝이 맞는지 확인해야 해요. **너무 깊으면 주소가 길고 바꾸기 어려워집니다.**
