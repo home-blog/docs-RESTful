@@ -95,40 +95,43 @@ def fig(*a, **k):
     return f
 
 
-# ---------------------------------------------------------------- 00-0 RESTful API란
-f = fig("00-0-RESTful-API란", "RESTful API란", 1240, 370,
-        "API는 프로그램끼리 요청과 응답을 주고받는 방법으로 형식이 자유롭고, REST는 자원·행동·결과를 URL·메서드·상태 코드로 표현하자는 원칙이며, 이를 잘 지킨 API가 RESTful API다.")
-CARDS = [
-    (40, "API", "Application Programming Interface", "line", "white", "ink",
-     ["프로그램끼리 요청과 응답을", "주고받는 방법 (형식은 자유)"], None, None),
-    (450, "REST", "Representational State Transfer", "line", "white", "ink",
-     ["HTTP를 그대로 살려", "API를 설계하자는 원칙"],
-     [("자원", "URL"), ("행동", "HTTP 메서드"), ("결과", "상태 코드")], None),
-    (860, "RESTful API", "REST 원칙을 잘 지킨 API", "blue", "blueBg", "blue",
-     ["주소만 보고도", "무슨 일을 하는지 알 수 있다"], None, "DELETE /api/v1/posts/42 → 204"),
-]
-for (x, t, eb, st, bg, tc, body, rules, ex) in CARDS:
-    f.rect(x, 40, 340, 290, st, bg, rx=14)
-    f.text(x + 24, 88, t, 28, 700, tc, "start")
-    f.text(x + 24, 114, eb, 13, 500, "muted", "start", eb[0].isascii())
-    for i, line in enumerate(body):
-        f.text(x + 24, 156 + i * 26, line, 16, 500 if i == 0 else 400, "ink" if i == 0 else "muted", "start")
-    if rules:
-        for i, (a_, b_) in enumerate(rules):
-            y = 228 + i * 32
-            f.text(x + 24, y, a_, 16, 700, "ink", "start")
-            f.path([(x + 70, y - 5), (x + 104, y - 5)], "muted", sw=2)
-            f.text(x + 114, y, b_, 16, 700, "teal", "start")
-    if ex:
-        f.rect(x + 20, 262, 300, 44, "faint", "white", rx=8, sw=1.5)
-        f.text(x + 170, 290, ex, 14, 700, tc, mono=True)
-f.text(64, 230, "같은 '42번 글 삭제'도 제각각", 13, 700, "muted", "start")
-f.rect(60, 240, 300, 72, "faint", "white", rx=8, sw=1.5)
-f.text(76, 266, "POST /deletePost.do?no=42", 13, 600, "red", "start", True)
-f.text(76, 294, 'POST /api {"action":"delete"}', 13, 600, "red", "start", True)
-f.text(884, 250, "같은 '42번 글 삭제'는 하나로", 13, 700, "muted", "start")
-f.text(415, 196, "+", 40, 400, "muted")
-f.text(825, 196, "=", 40, 400, "muted")
+# ---------------------------------------------------------------- 00-0 API와 RESTful API
+f = fig("00-0-API와-RESTful-API", "API와 RESTful API", 1240, 560,
+        "웹·앱·관리자 페이지·다른 서비스가 같은 API를 쓰는데, API는 형식이 자유로워 제각각일 수 있으므로, REST 원칙(자원은 URL, 행동은 메서드, 결과는 상태 코드)으로 통일한 것이 RESTful API다.")
+f.text(620, 40, "같은 API를 쓰는 쪽", 15, 700, "muted")
+for k, (n, sub) in enumerate([("웹 브라우저", "React · Vue"), ("모바일 앱", "iOS · Android"), ("관리자 페이지", "운영팀 화면"), ("다른 서비스", "외부 · 사내 시스템")]):
+    x = 170 + k * 230
+    f.rect(x, 56, 210, 60, "blue", "blueBg", rx=10)
+    f.text(x + 105, 82, n, 16, 700, "blue")
+    f.text(x + 105, 104, sub, 12, 400, "muted")
+    f.add(f'<line x1="{x+105}" y1="118" x2="{x+105}" y2="136" stroke="{C["line"]}" stroke-width="2"/>')
+f.add(f'<path d="M275,136 H965 M620,136 V150" fill="none" stroke="{C["line"]}" stroke-width="2"/>')
+f.path([(620, 150), (620, 168)], "muted")
+# 왼쪽: 형식이 자유로운 API
+f.rect(40, 176, 500, 344, "line", "white", rx=14)
+f.text(64, 216, "API", 26, 700, "ink", "start")
+f.text(64, 244, "프로그램끼리 요청과 응답을 주고받는 방법 (형식은 자유)", 14, 400, "muted", "start")
+f.text(64, 284, "같은 '42번 글 삭제'를 만든 사람마다", 14, 700, "muted", "start")
+f.rect(60, 296, 460, 118, "faint", "soft", rx=8, sw=1.5)
+for i, t in enumerate(["POST /deletePost.do?no=42", "GET  /post/remove?id=42", 'POST /api {"action":"delete","id":42}']):
+    f.text(78, 326 + i * 32, t, 14, 600, "red", "start", True)
+f.text(64, 452, "쓰는 쪽은 API마다", 16, 700, "red", "start")
+f.text(64, 478, "문서를 찾거나 물어봐야 한다", 16, 700, "red", "start")
+# 가운데: REST 원칙
+f.path([(548, 348), (692, 348)], "ink", sw=3)
+f.text(620, 330, "REST로 통일", 16, 700, "ink")
+for i, (a_, b_) in enumerate([("자원", "URL"), ("행동", "메서드"), ("결과", "상태 코드")]):
+    f.rich(620, 386 + i * 26, [(a_ + " → ", "muted", 600), (b_, "teal", 700)], 14, "middle")
+# 오른쪽: RESTful API
+f.rect(700, 176, 500, 344, "blue", "blueBg", rx=14)
+f.text(724, 216, "RESTful API", 26, 700, "blue", "start")
+f.text(724, 244, "REST 원칙으로 형식을 통일한 API", 14, 400, "muted", "start")
+f.text(724, 284, "같은 '42번 글 삭제'는 하나로", 14, 700, "muted", "start")
+f.rect(720, 296, 460, 118, "blue", "white", rx=8, sw=1.5)
+f.text(744, 344, "DELETE /api/v1/posts/42", 20, 700, "blue", "start", True)
+f.text(744, 382, "→ 204 No Content", 16, 700, "green", "start", True)
+f.text(724, 452, "주소만 보고도", 16, 700, "blue", "start")
+f.text(724, 478, "무슨 일인지 알 수 있다", 16, 700, "blue", "start")
 
 # ---------------------------------------------------------------- 00 왜 요청을 보내나
 f = fig("00-왜-요청을-보내나", "왜 요청을 보내나", 1240, 600,
@@ -156,31 +159,6 @@ for i, (act, m, url, work, res) in enumerate(IR):
 f.rect(40, 470, 1160, 100, "faint", "soft", rx=14)
 f.text(620, 510, "화면에 보이는 글 · 댓글 · 회원 정보는 사용자 기기가 아니라 서버의 DB에 있다", 19, 700, "ink")
 f.text(620, 544, "그래서 화면은 데이터가 필요할 때마다 서버에 요청을 보내 데이터를 받아 오거나 바꾼다", 17, 400, "muted")
-
-# ---------------------------------------------------------------- 00b 여러 클라이언트가 같은 API를 쓴다
-f = fig("00b-여러-클라이언트가-같은-API를-쓴다", "여러 클라이언트가 같은 API를 쓴다", 1240, 590,
-        "웹, 모바일 앱, 관리자 페이지, 다른 서비스가 모두 같은 API 서버를 호출하므로, 누구나 예측할 수 있는 공통 규칙이 필요하다.")
-CL = [("웹 브라우저", "React · Vue"), ("모바일 앱", "iOS · Android"), ("관리자 페이지", "운영팀이 쓰는 화면"), ("다른 서비스", "외부 파트너 · 사내 시스템")]
-for i, (n, sub) in enumerate(CL):
-    y = 40 + i * 104
-    f.rect(40, y, 270, 82, "blue", "blueBg", rx=12)
-    f.text(175, y + 36, n, 19, 700, "blue")
-    f.text(175, y + 62, sub, 14, 400, "muted")
-    f.path([(312, y + 41), (420, y + 41), (420, 245), (496, 245)] if i < 2 else [(312, y + 41), (420, y + 41), (420, 245)], "blue", arrow=(i == 0), sw=2.5)
-f.path([(420, 245), (496, 245)], "blue")
-f.text(430, 228, "HTTP 요청", 14, 700, "blue", "start")
-f.rect(500, 130, 320, 230, "teal", "tealBg")
-f.text(660, 172, "API 서버", 22, 700, "teal")
-f.text(660, 198, "하나의 API를 모두에게 제공", 14, 400, "muted")
-for k, t in enumerate(["GET    /api/v1/posts", "POST   /api/v1/posts", "GET    /api/v1/posts/42", "DELETE /api/v1/posts/42"]):
-    f.text(530, 238 + k * 28, t, 14, 500, "ink", "start", True)
-f.path([(822, 245), (936, 245)], "violet")
-f.rect(940, 175, 250, 140, "violet", "violetBg")
-f.text(1065, 236, "DB", 22, 700, "violet")
-f.text(1065, 266, "글 · 댓글 · 회원", 15, 400, "muted")
-f.rect(40, 470, 1150, 96, "ink", "white", rx=14)
-f.text(615, 508, "API를 만드는 사람과 쓰는 사람이 다르다", 19, 700, "ink")
-f.rich(615, 542, [("그래서 문서를 일일이 묻지 않아도 예측할 수 있는 공통 규칙이 필요하다  →  ", "muted", 400), ("REST", "teal", 700)], 17, "middle")
 
 # ---------------------------------------------------------------- 01 클라이언트와 서버
 f = fig("01-클라이언트와-서버", "클라이언트와 서버", 1200, 530,
