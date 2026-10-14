@@ -247,6 +247,58 @@ f.path([(772, 158), (830, 158)], "muted", sw=3)
 f.rect(250, 350, 700, 58, "line", "soft", rx=29)
 f.text(600, 387, "읽는 법: “42번 글을 지웠고, 잘 끝났다”", 22, 500)
 
+# ---------------------------------------------------------------- 04-0 동사 URL의 문제
+f = fig("04-0-동사-URL의-문제", "동사 URL의 문제", 1240, 650,
+        "URL에 동사를 넣으면 같은 글인데도 기능마다 주소가 늘어나고 이름도 사람마다 달라지지만, REST로 만들면 주소 하나에 메서드만 바뀌고 누가 만들어도 같은 모양이 된다.")
+
+
+def url_rows(f, x, y, rows, size=16):
+    for i, (spans, note) in enumerate(rows):
+        yy = y + i * 32
+        f.rich(x, yy, [(t, c, 700 if c in ("red", "blue", "teal") else 400, True) for t, c in spans], size)
+        f.text(x + 520, yy, note, 13, 500, "muted", "end")
+
+
+PANELS = [
+    (30, "1. 기능마다 주소가 늘어난다", "42번 글 하나를 다루는 API",
+     [([("GET  /", "muted"), ("get", "red"), ("Post?id=42", "ink")], "조회"),
+      ([("POST /", "muted"), ("update", "red"), ("Post?id=42", "ink")], "수정"),
+      ([("POST /", "muted"), ("delete", "red"), ("Post?id=42", "ink")], "삭제"),
+      ([("POST /", "muted"), ("updatePostTitle", "red"), ("?id=42", "ink")], "제목만 수정")],
+     "같은 글인데 주소가 4개, 기능이 늘수록 계속 늘어남",
+     [([("GET    ", "blue"), ("/posts/42", "teal")], "조회"),
+      ([("PATCH  ", "blue"), ("/posts/42", "teal")], "수정 (제목만 보내면 제목만)"),
+      ([("DELETE ", "blue"), ("/posts/42", "teal")], "삭제")],
+     "주소는 하나, 메서드만 바뀜"),
+    (630, "2. 이름이 사람마다 다르다", "같은 '하나 조회'를 세 사람이 만들면",
+     [([("A  /", "muted"), ("get", "red"), ("Post?", "ink"), ("id", "red"), ("=42", "ink")], "글"),
+      ([("B  /", "muted"), ("fetch", "red"), ("Comment?", "ink"), ("no", "red"), ("=7", "ink")], "댓글"),
+      ([("C  /", "muted"), ("select", "red"), ("Member.do?", "ink"), ("mid", "red"), ("=3", "ink")], "회원")],
+     "동사도 파라미터 이름도 제각각, 매번 물어봐야 함",
+     [([("GET ", "blue"), ("/posts/42", "teal")], "글"),
+      ([("GET ", "blue"), ("/comments/7", "teal")], "댓글"),
+      ([("GET ", "blue"), ("/members/3", "teal")], "회원")],
+     "누가 만들어도 같은 모양, 하나를 알면 나머지도 짐작"),
+]
+for (x, title, sub, bad, bad_note, good, good_note) in PANELS:
+    f.rect(x, 30, 580, 540, "line", "white", rx=14)
+    f.text(x + 24, 68, title, 20, 700, "ink", "start")
+    f.text(x + 24, 94, sub, 14, 400, "muted", "start")
+    f.text(x + 24, 132, "동사 URL", 14, 700, "red", "start")
+    h = 24 + 32 * len(bad)
+    f.rect(x + 20, 142, 540, h, "faint", "soft", rx=8, sw=1.5)
+    url_rows(f, x + 36, 170, bad)
+    f.text(x + 24, 142 + h + 26, bad_note, 14, 700, "red", "start")
+    yb = 142 + h + 50
+    f.path([(x + 290, yb - 12), (x + 290, yb + 14)], "muted")
+    f.text(x + 24, yb + 40, "REST", 14, 700, "blue", "start")
+    h2 = 24 + 32 * len(good)
+    f.rect(x + 20, yb + 50, 540, h2, "blue", "blueBg", rx=8, sw=1.5)
+    url_rows(f, x + 36, yb + 78, good)
+    f.text(x + 24, yb + 50 + h2 + 26, good_note, 14, 700, "blue", "start")
+f.rect(30, 588, 1180, 46, "faint", "soft", rx=12)
+f.rich(620, 618, [("행동은 ", "ink", 500), ("HTTP 메서드", "blue", 700), ("가 맡고, URL은 ", "ink", 500), ("명사로 자원만", "teal", 700), (" 가리킨다", "ink", 500)], 17, "middle")
+
 # ---------------------------------------------------------------- 04a 동사 URL과 자원 URL 비교
 f = fig("04a-동사-URL과-자원-URL", "동사 URL과 자원 URL", 1240, 650,
         "URL에 동사를 넣는 대신, 행동은 HTTP 메서드로 표현하고 URL은 명사로 자원만 가리킨다.")
