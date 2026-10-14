@@ -375,6 +375,62 @@ f.rich(60, 672, [("소문자 + 하이픈  ", "ink", 700), ("/blog-categories", "
 f.rich(640, 672, [("/api/v1", "teal", 700, True), (" = 버전.  구조가 바뀌면 ", "ink", 500),
                   ("/api/v2", "teal", 700, True), ("를 따로 연다", "ink", 500)], 17)
 
+# ---------------------------------------------------------------- 04c 위 id가 필요한 경우
+f = fig("04c-위-id가-필요한-경우", "위 id가 필요한 경우", 1240, 620,
+        "댓글은 id로 찾으면 한 줄이 나오고 그 줄에 글 번호가 들어 있어 서버가 위 id를 알아내므로 /comments/7로 충분하고, GitHub 이슈는 번호가 저장소마다 다시 시작해 두 줄이 나오므로 저장소를 주소에 넣어야 한다.")
+
+
+def db_table(x, y, cols, rows, hl, hl_fill, hl_col):
+    """cols: [(헤더, 폭)], rows: [[값...]], hl: 강조할 행 번호들"""
+    w = sum(c[1] for c in cols)
+    H = 34 * (len(rows) + 1)
+    f.add(f'<clipPath id="tbl-{x}"><rect x="{x}" y="{y}" width="{w}" height="{H}" rx="8"/></clipPath>')
+    f.add(f'<g clip-path="url(#tbl-{x})"><rect x="{x}" y="{y}" width="{w}" height="{H}" fill="{C["white"]}"/>')
+    f.add(f'<rect x="{x}" y="{y}" width="{w}" height="34" fill="{C["soft"]}"/>')
+    for r in hl:
+        f.add(f'<rect x="{x}" y="{y+34*(r+1)}" width="{w}" height="34" fill="{C[hl_fill]}"/>')
+    f.add('</g>')
+    cx = x
+    for i, (h, cw) in enumerate(cols):
+        f.text(cx + 14, y + 23, h, 14, 700, "muted", "start", True)
+        for r, row in enumerate(rows):
+            on = r in hl
+            f.text(cx + 14, y + 34 * (r + 1) + 23, row[i], 15, 700 if on else 400, hl_col if on else "ink", "start", i < len(cols) - 1)
+        cx += cw
+        if i < len(cols) - 1:
+            f.add(f'<line x1="{cx}" y1="{y}" x2="{cx}" y2="{y+34*(len(rows)+1)}" stroke="{C["faint"]}" stroke-width="1.5"/>')
+    for r in range(len(rows)):
+        yy = y + 34 * (r + 1)
+        f.add(f'<line x1="{x}" y1="{yy}" x2="{x+w}" y2="{yy}" stroke="{C["faint"]}" stroke-width="1.5"/>')
+    f.add(f'<rect x="{x}" y="{y}" width="{w}" height="{H}" rx="8" fill="none" stroke="{C["line"]}" stroke-width="1.5"/>')
+
+
+for px, col, bg, head, url, cols, rows, hl, q, res, c1, c2 in [
+    (40, "teal", "tealBg", "블로그 댓글", "GET /comments/7",
+     [("id", 90), ("post_id", 130), ("content", 292)],
+     [["6", "99", "잘 봤습니다"], ["7", "42", "감사합니다"], ["8", "99", "궁금한 점이…"]], [1],
+     "SELECT * FROM comments WHERE id = 7", "→ 한 줄. 그 줄에 post_id = 42도 있음",
+     "글 번호는 서버가 알아낸다", "→ 주소에서 빼도 된다"),
+    (640, "orange", "orangeBg", "GitHub 이슈", "GET /repos/react/issues/12",
+     [("repo", 170), ("number", 120), ("title", 222)],
+     [["spring-boot", "1", "첫 이슈"], ["spring-boot", "12", "로그인 오류"], ["react", "12", "화면 깨짐"]], [1, 2],
+     "SELECT * FROM issues WHERE number = 12", "→ 두 줄. 어느 것인지 모름",
+     "저장소는 클라이언트가 알려 줘야 한다", "→ 주소에 꼭 넣는다"),
+]:
+    f.rect(px, 30, 560, 470, col, "white", rx=14)
+    f.text(px + 24, 72, head, 22, 700, col, "start")
+    f.text(px + 536, 72, url, 15, 700, col, "end", True)
+    db_table(px + 24, 96, cols, rows, hl, bg, col)
+    f.rect(px + 24, 254, 512, 44, "faint", "soft", rx=8, sw=1.5)
+    f.text(px + 40, 282, q, 14, 600, "ink", "start", True)
+    f.text(px + 24, 336, res, 17, 700, "ink", "start")
+    f.rect(px + 24, 364, 512, 112, col, bg, rx=10, sw=1.5)
+    f.text(px + 280, 410, c1, 19, 700, col)
+    f.text(px + 280, 446, c2, 19, 700, col)
+f.rect(40, 524, 1160, 70, "faint", "soft", rx=12)
+f.rich(620, 567, [("위 id를 서버가 스스로 알아낼 수 있으면 ", "ink", 500), ("빼도 되고", "teal", 700),
+                  (", 알아낼 수 없으면 ", "ink", 500), ("주소에 넣는다", "orange", 700)], 19, "middle")
+
 # ---------------------------------------------------------------- 05 메서드별 결과
 f = fig("05-메서드별-결과", "메서드별로 달라지는 결과", 1280, 690,
         "같은 42번 글에 메서드만 바꾸면 결과가 달라진다. PUT은 통째로 교체해 안 보낸 본문이 사라지고, PATCH는 보낸 제목만 고친다.")
