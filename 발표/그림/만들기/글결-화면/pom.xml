@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 글결 API 문서(adoc)를 Spring REST Docs와 같은 Asciidoctor로 HTML로 만든다.
+     python3 글결-화면-만들기.py && mvn -q -f pom.xml asciidoctor:process-asciidoc -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>presentation</groupId>
+  <artifactId>geulgyeol-docs-screens</artifactId>
+  <version>1</version>
+  <packaging>pom</packaging>
+  <build>
+    <directory>${project.basedir}/build/target</directory>
+    <plugins>
+      <plugin>
+        <groupId>org.asciidoctor</groupId>
+        <artifactId>asciidoctor-maven-plugin</artifactId>
+        <version>2.2.6</version>
+        <configuration>
+          <sourceDirectory>${project.basedir}/build/src/docs/asciidoc</sourceDirectory>
+          <outputDirectory>${project.basedir}/build/html</outputDirectory>
+          <backend>html</backend>
+          <attributes><attribute-missing>skip</attribute-missing></attributes>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
