@@ -1,0 +1,8 @@
+{
+  "private": true,
+  "description": "발표 PPT 생성 (pptxgenjs)",
+  "dependencies": {
+    "pptxgenjs": "3.12.0",
+    "sharp": "0.33.5"
+  }
+}
