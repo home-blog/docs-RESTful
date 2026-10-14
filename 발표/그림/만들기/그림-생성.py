@@ -96,7 +96,7 @@ def fig(*a, **k):
 
 
 # ---------------------------------------------------------------- 00-0 RESTful API란
-f = fig("00-0-RESTful-API란", "RESTful API란", 1240, 590,
+f = fig("00-0-RESTful-API란", "RESTful API란", 1240, 370,
         "API는 프로그램끼리 요청과 응답을 주고받는 방법으로 형식이 자유롭고, REST는 자원·행동·결과를 URL·메서드·상태 코드로 표현하자는 원칙이며, 이를 잘 지킨 API가 RESTful API다.")
 CARDS = [
     (40, "API", "Application Programming Interface", "line", "white", "ink",
@@ -129,17 +129,6 @@ f.text(76, 294, 'POST /api {"action":"delete"}', 13, 600, "red", "start", True)
 f.text(884, 250, "같은 '42번 글 삭제'는 하나로", 13, 700, "muted", "start")
 f.text(415, 196, "+", 40, 400, "muted")
 f.text(825, 196, "=", 40, 400, "muted")
-f.add(f'<line x1="40" y1="366" x2="1200" y2="366" stroke="{C["faint"]}" stroke-width="2"/>')
-f.text(40, 402, "오늘 다룰 순서", 18, 700, "ink", "start")
-AG = ["왜 요청을 보내나", "자원 중심 URL", "HTTP 메서드", "상태 코드", "응답·에러 형식",
-      "예외 처리·입력 검증", "페이징·검색·정렬", "API 문서", "단일 서버와 MSA"]
-for k, lab in enumerate(AG):
-    r, c = divmod(k, 5)
-    x = 40 + c * 236
-    y = 422 + r * 72
-    f.rect(x, y, 216, 56, "line", "white", rx=10, sw=1.5)
-    f.text(x + 22, y + 35, f"{k+1}", 18, 700, "blue", mono=True)
-    f.text(x + 48, y + 35, lab, 16, 600, "ink", "start")
 
 # ---------------------------------------------------------------- 00 왜 요청을 보내나
 f = fig("00-왜-요청을-보내나", "왜 요청을 보내나", 1240, 600,
