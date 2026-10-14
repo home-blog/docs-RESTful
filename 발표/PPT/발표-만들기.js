@@ -393,7 +393,7 @@ async function build() {
   }
   {
     const t = "목록 응답에는 페이지 정보를 같이";
-    const s = content(t, "05 · PAGINATION", say(t) + ` 직접 재 보니 같은 데이터에서 20개를 가져오는 건 ${BENCH.page_query_ms}ms였는데, 전체 개수를 세는 COUNT는 ${Math.round(BENCH.count_query_ms)}ms가 걸렸습니다.`,
+    const s = content(t, "05 · PAGINATION", say(t) + ` 직접 재 보니, 글 20개를 가져오는 데는 ${BENCH.page_query_ms}ms였는데 전체 개수를 세는 데는 ${Math.round(BENCH.count_query_ms)}ms가 걸렸습니다.`,
       "왼쪽은 응답 예시, 오른쪽 차트는 SQLite 100만 행에서 직접 잰 값 (차트를 두 번 누르면 숫자를 고칠 수 있다)");
     codeWindow(s, X, Y0, 5.6, 4.65, [["{", null], ['  "content": [', K.amber], ['    { "id": 43, "title": "부산 맛집" },', null], ['    { "id": 42, "title": "제주 여행" }, …', null],
       ["  ],", K.amber], ['  "page": {', K.amber], ['    "number": 0,', null], ['    "size": 20,', null], ['    "totalElements": 57,', null], ['    "totalPages": 3', null],
@@ -419,8 +419,8 @@ async function build() {
   }
   {
     const t = "직접 재 보면: 뒤로 갈수록 오프셋만 느려진다";
-    const sayText = `실제로 재 봤습니다. SQLite에 글 100만 개를 넣고 20개씩 가져왔더니, 오프셋은 1쪽에서 ${BENCH.offset_ms[0]}ms였던 게 5만 쪽에서는 ${Math.round(BENCH.offset_ms[BENCH.offset_ms.length - 1])}ms로 늘었습니다. 앞의 행을 전부 읽고 버리기 때문입니다. `
-      + "커서는 어느 위치든 거의 0에 가까운 시간으로 일정했습니다. 숫자는 환경마다 다르지만, 뒤로 갈수록 오프셋만 느려진다는 경향은 같습니다.";
+    const sayText = `실제로 재 봤습니다. SQLite에 글 100만 개를 넣고 20개씩 가져왔습니다. 오프셋은 1쪽에서 ${BENCH.offset_ms[0]}ms였는데, 5만 쪽에서는 ${Math.round(BENCH.offset_ms[BENCH.offset_ms.length - 1])}ms로 늘었습니다. 앞의 데이터를 전부 읽고 버리기 때문입니다. `
+      + "커서는 어느 위치에서나 거의 0에 가깝게 일정했습니다. 숫자는 환경마다 다르지만, 뒤로 갈수록 오프셋만 느려진다는 건 같습니다.";
     const s = content(t, "05 · PAGINATION", sayText, "SQLite 100만 행에서 직접 잰 값. 차트를 두 번 누르면 숫자를 고칠 수 있다");
     badge(s, X + W - 1.3, 0.42, "직접 측정");
     const labels = BENCH.pages.map((p) => `${p.toLocaleString("en-US")}쪽`);
