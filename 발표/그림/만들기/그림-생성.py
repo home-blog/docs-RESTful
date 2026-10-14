@@ -97,10 +97,10 @@ def fig(*a, **k):
 
 # ---------------------------------------------------------------- 00-0 RESTful API란
 f = fig("00-0-RESTful-API란", "RESTful API란", 1240, 590,
-        "API는 프로그램끼리 요청과 응답을 주고받는 정해진 방법이고, REST는 자원·행동·결과를 URL·메서드·상태 코드로 표현하자는 원칙이며, 이를 잘 지킨 API가 RESTful API다.")
+        "API는 프로그램끼리 요청과 응답을 주고받는 방법으로 형식이 자유롭고, REST는 자원·행동·결과를 URL·메서드·상태 코드로 표현하자는 원칙이며, 이를 잘 지킨 API가 RESTful API다.")
 CARDS = [
     (40, "API", "Application Programming Interface", "line", "white", "ink",
-     ["프로그램끼리 요청과 응답을", "주고받는 정해진 방법"], None, "GET /api/v1/posts/42"),
+     ["프로그램끼리 요청과 응답을", "주고받는 방법 (형식은 자유)"], None, None),
     (450, "REST", "Representational State Transfer", "line", "white", "ink",
      ["HTTP를 그대로 살려", "API를 설계하자는 원칙"],
      [("자원", "URL"), ("행동", "HTTP 메서드"), ("결과", "상태 코드")], None),
@@ -122,6 +122,11 @@ for (x, t, eb, st, bg, tc, body, rules, ex) in CARDS:
     if ex:
         f.rect(x + 20, 262, 300, 44, "faint", "white", rx=8, sw=1.5)
         f.text(x + 170, 290, ex, 14, 700, tc, mono=True)
+f.text(64, 230, "같은 '42번 글 삭제'도 제각각", 13, 700, "muted", "start")
+f.rect(60, 240, 300, 72, "faint", "white", rx=8, sw=1.5)
+f.text(76, 266, "POST /deletePost.do?no=42", 13, 600, "red", "start", True)
+f.text(76, 294, 'POST /api {"action":"delete"}', 13, 600, "red", "start", True)
+f.text(884, 250, "같은 '42번 글 삭제'는 하나로", 13, 700, "muted", "start")
 f.text(415, 196, "+", 40, 400, "muted")
 f.text(825, 196, "=", 40, 400, "muted")
 f.add(f'<line x1="40" y1="366" x2="1200" y2="366" stroke="{C["faint"]}" stroke-width="2"/>')
