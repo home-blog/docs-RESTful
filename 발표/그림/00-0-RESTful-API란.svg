@@ -12,8 +12,8 @@
 <rect x="450" y="40" width="340" height="290" rx="14" fill="#FFFFFF" stroke="#B4BCC8" stroke-width="2"/>
 <text x="474" y="88" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="28" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">REST</text>
 <text x="474" y="114" font-family="'JetBrains Mono','D2Coding',Consolas,'Noto Sans KR',monospace" font-size="13" font-weight="500" fill="#5A6474" text-anchor="start" xml:space="preserve">Representational State Transfer</text>
-<text x="474" y="156" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="500" fill="#1C2230" text-anchor="start" xml:space="preserve">HTTP를 그대로 살려 API를 설계하자는 원칙</text>
-<text x="474" y="182" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">(2000년, Roy Fielding 논문)</text>
+<text x="474" y="156" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="500" fill="#1C2230" text-anchor="start" xml:space="preserve">HTTP를 그대로 살려</text>
+<text x="474" y="182" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="400" fill="#5A6474" text-anchor="start" xml:space="preserve">API를 설계하자는 원칙</text>
 <text x="474" y="228" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#1C2230" text-anchor="start" xml:space="preserve">자원</text>
 <path d="M520,223 L554,223" fill="none" stroke="#5A6474" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah-muted)"/>
 <text x="564" y="228" font-family="'Noto Sans KR','Malgun Gothic','Apple SD Gothic Neo',sans-serif" font-size="16" font-weight="700" fill="#0D7468" text-anchor="start" xml:space="preserve">URL</text>

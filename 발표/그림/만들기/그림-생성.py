@@ -102,7 +102,7 @@ CARDS = [
     (40, "API", "Application Programming Interface", "line", "white", "ink",
      ["프로그램끼리 요청과 응답을", "주고받는 정해진 방법"], None, "GET /api/v1/posts/42"),
     (450, "REST", "Representational State Transfer", "line", "white", "ink",
-     ["HTTP를 그대로 살려 API를 설계하자는 원칙", "(2000년, Roy Fielding 논문)"],
+     ["HTTP를 그대로 살려", "API를 설계하자는 원칙"],
      [("자원", "URL"), ("행동", "HTTP 메서드"), ("결과", "상태 코드")], None),
     (860, "RESTful API", "REST 원칙을 잘 지킨 API", "blue", "blueBg", "blue",
      ["주소만 보고도", "무슨 일을 하는지 알 수 있다"], None, "DELETE /api/v1/posts/42 → 204"),
