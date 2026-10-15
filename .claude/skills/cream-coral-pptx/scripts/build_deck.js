@@ -218,6 +218,55 @@ function chart(s, x, y, w, h, b) {
   s.addChart(types[t], data, o);
 }
 
+// 흐름도: 상자를 가로로 잇고(→), 위로 성공 경로, 아래로 실패 화살표가 한 상자(sink)에 모이고, 거기서 처음 상자로 돌아간다.
+// { kind:"flow", nodes:[{title, sub, fill:"dark"}], success:{from, label}, drops:[{from, lines:[...], status}], sink:{title, code, sub}, back:"에러 응답" }
+function flow(s, b, x, y, w) {
+  const n = b.nodes.length, gap = 0.45, nw = (w - gap * (n - 1)) / n, nh = b.nodeH || 1.15;
+  const top = y + 0.55, bottom = top + nh, sinkY = bottom + (b.dropH || 1.15), sinkH = 0.95;
+  const nx = (i) => x + i * (nw + gap), cx = (i) => nx(i) + nw / 2;
+  const line = (x1, y1, x2, y2, o = {}) => s.addShape(pres.ShapeType.line, { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1),
+    flipH: x2 < x1, flipV: y2 < y1, line: { color: o.color || K.muted, width: o.width || 1.5, endArrowType: o.arrow === false ? undefined : "triangle" }, objectName: "flow-line" });
+  let k = 0;
+  b.nodes.forEach((nd, i) => {
+    const st = s._slideObjects.length, dark = nd.fill === "dark";
+    card(s, nx(i), top, nw, nh, dark ? K.dark : K.card, "flow-node");
+    const L = [[[nd.title, { size: 17, bold: true, color: dark ? "onDark" : "ink" }]]];
+    if (nd.sub) L.push([[nd.sub, { size: 14, color: dark ? "onDarkSoft" : "muted", mono: !!nd.mono }]]);
+    text(s, nx(i) + 0.1, top, nw - 0.2, nh, L, { align: "center", valign: "middle", gap: 2, name: "flow-node-text" });
+    if (i < n - 1) line(nx(i) + nw + 0.05, top + nh / 2, nx(i + 1) - 0.05, top + nh / 2);
+    markChild(s, st, k++);
+  });
+  if (b.success) {
+    const st = s._slideObjects.length, f = b.success.from, py = y + 0.25;
+    line(cx(f), top, cx(f), py, { arrow: false }); line(cx(f), py, cx(0), py, { arrow: false }); line(cx(0), py, cx(0), top - 0.02);
+    text(s, cx(0) + 0.15, y - 0.12, cx(f) - cx(0) - 0.3, 0.32, [[[b.success.label, { size: 14, color: "muted" }]]], { align: "center", name: "flow-success" });
+    markChild(s, st, k++);
+  }
+  (b.drops || []).forEach((d) => {
+    const st = s._slideObjects.length, ax = cx(d.from) + (d.dx || 0);
+    line(ax, bottom + 0.03, ax, sinkY - 0.03, { color: K.error });
+    const L = (d.lines || []).map((t) => (Array.isArray(t) ? t : [[t, { size: 14, color: "body" }]]));
+    if (d.status) L.push([[d.status, { size: 15, bold: true, color: "error" }]]);
+    const lw = d.width || (nw + gap) / 2 - 0.2;   // 오른쪽 끝 상자는 글을 화살표 왼쪽에 둔다 (옆 글과 겹치지 않는 폭)
+    const left = d.side === "left" || (d.side !== "right" && d.from === n - 1);
+    text(s, left ? ax - 0.12 - lw : ax + 0.12, bottom + 0.12, lw, sinkY - bottom - 0.2, L, { gap: 0, align: left ? "right" : "left", name: "flow-drop" });
+    markChild(s, st, k++);
+  });
+  if (b.sink) {
+    const st = s._slideObjects.length, sx = nx(1), sw = nx(n - 1) + nw - sx;
+    card(s, sx, sinkY, sw, sinkH, K.dark, "flow-sink");
+    text(s, sx + 0.35, sinkY, sw - 0.7, sinkH, [[[b.sink.title, { size: 18, bold: true, color: "onDark" }], ["   " + (b.sink.code || ""), { size: 15, mono: true, color: "amber" }]],
+      ...(b.sink.sub ? [[[b.sink.sub, { size: 14, color: "onDarkSoft" }]]] : [])], { valign: "middle", gap: 2, name: "flow-sink-text" });
+    if (b.back) {
+      const my = sinkY + sinkH / 2;
+      line(sx - 0.03, my, cx(0), my, { arrow: false, color: K.ink }); line(cx(0), my, cx(0), bottom + 0.03, { color: K.ink });
+      text(s, cx(0) + 0.12, my - 0.36, sx - cx(0) - 0.2, 0.32, [[[b.back, { size: 14, color: "ink" }]]], { name: "flow-back" });
+    }
+    markChild(s, st, k++);
+  }
+  return sinkY + sinkH - y;
+}
+
 // ------------------------------------------------------------------ 블록 배치 (위에서 아래로 쌓고, row는 옆으로)
 function estimate(b, w) {
   if (b.h) return b.h;
@@ -231,6 +280,7 @@ function estimate(b, w) {
     case "chart": return 4.2;
     case "image": return 4.8;
     case "badge": return 0.34;
+    case "flow": return b.h || 4.0;
     case "hero": { const sz = b.size || 36; return (sz / 72) * 1.5 + (b.items.some((it) => it.sub) ? 0.95 : 0.6); }
     case "row": { const n = b.cols.length; const cw = (w - GAP * (n - 1)) / n; return Math.max(...b.cols.map((c) => estimate(c, cw))); }
     default: return 0.5;
@@ -267,6 +317,7 @@ async function place(s, b, x, y, w, room) {
     case "chart": chart(s, x, y, w, h, b); return h;
     case "image": return imageCols(s, rel(b.path), b.cuts, x + (b.indent || 0), y, w - (b.indent || 0), Math.min(b.h || room, room), b.marks, b.frame !== false);
     case "badge": badge(s, x, y, b.text); return 0.34;
+    case "flow": return flow(s, b, x, y, w);
     case "hero": {
       // items: [{text, label, sub, color}] 를 가로로 늘어놓고 전체를 가운데 정렬
       let sz = b.size || 36;
@@ -410,6 +461,15 @@ function planBlock(plan, b, names) {
   };
   const childOf = (k) => names.filter((nm) => new RegExp(`c${k}(m\\d+)?-\\d+$`).test(nm));
   if (b.kind === "row" && !b.animEach) { b.cols.forEach((c, k) => planBlock(plan, { ...c, anim: c.anim || b.anim }, childOf(k))); return; }
+  if (b.kind === "flow") {
+    const nodeCount = b.nodes.length + (b.success ? 1 : 0), drops = (b.drops || []).length;
+    push(b.anim || "auto", names.filter((nm) => { const m = /c(\d+)(m\d+)?-\d+$/.exec(nm); return m && +m[1] < nodeCount; }));
+    const keyIdx = (key) => key === "sink" ? nodeCount + drops : nodeCount + key;
+    (b.clicks || [...Array(drops).keys(), "sink"]).forEach((step) => {
+      push("click", (Array.isArray(step) ? step : [step]).flatMap((key) => childOf(keyIdx(key))));
+    });
+    return;
+  }
   const kids = b.cols || b.items;
   if (b.animEach && kids) {
     push(b.anim === "click" ? "click" : "auto", names.filter((nm) => !/c\d+(m\d+)?-\d+$/.test(nm)));

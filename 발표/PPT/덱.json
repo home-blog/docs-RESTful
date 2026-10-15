@@ -1452,116 +1452,314 @@
   },
   {
    "eyebrow": "04 · EXCEPTION · VALIDATION",
-   "title": "전역 예외 처리와 입력 검증",
+   "title": "요청이 지나가는 길, 예외가 모이는 곳",
    "blocks": [
     {
-     "kind": "table",
-     "colW": [
-      3.0,
-      4.0,
-      4.9
+     "kind": "flow",
+     "h": 4.65,
+     "nodes": [
+      {
+       "title": "클라이언트",
+       "sub": "브라우저 · 앱"
+      },
+      {
+       "title": "① 입력 검증",
+       "sub": "@Valid · DTO",
+       "mono": false
+      },
+      {
+       "title": "② 컨트롤러",
+       "sub": "try-catch 없음"
+      },
+      {
+       "title": "③ 서비스",
+       "sub": "업무 규칙 검사"
+      },
+      {
+       "title": "④ DB",
+       "sub": "읽기 · 쓰기"
+      }
      ],
-     "size": 16,
-     "rowH": 0.6,
-     "colorCol": {
-      "2": "error"
+     "success": {
+      "from": 2,
+      "label": "성공하면 200 · 201 · 204"
      },
-     "rows": [
-      [
-       "요청이 지나가는 순서",
-       "하는 일",
-       "실패하면"
-      ],
-      [
-       "① 입력 검증 (@Valid)",
-       "요청 DTO의 형식 검사",
-       "형식 오류 (빈 제목) → 400"
-      ],
-      [
-       "② 컨트롤러",
-       "요청 받고 넘기기 (try-catch 없음)",
-       "—"
-      ],
-      [
-       "③ 서비스",
-       "업무 규칙 검사",
-       "글 없음 404 · 중복 제목 409 · 권한 없음 403"
-      ],
-      [
-       "④ DB",
-       "읽기 · 쓰기",
-       "예상 못 한 오류 → 500 + 로그"
-      ]
-     ]
+     "drops": [
+      {
+       "from": 1,
+       "lines": [
+        "형식 오류",
+        "(빈 제목)"
+       ],
+       "status": "→ 400"
+      },
+      {
+       "from": 3,
+       "lines": [
+        "글 없음",
+        "중복 제목"
+       ],
+       "status": "→ 404 · 409",
+       "width": 1.35
+      },
+      {
+       "from": 4,
+       "lines": [
+        "예상 못 한",
+        "오류 (로그)"
+       ],
+       "status": "→ 500",
+       "dx": 0.5,
+       "width": 1.05
+      }
+     ],
+     "sink": {
+      "title": "전역 예외 처리기",
+      "code": "@RestControllerAdvice",
+      "sub": "어디서 던진 예외든 여기서 받아, 팀이 정한 에러 형식으로 바꾼다"
+     },
+     "back": "에러 응답",
+     "clicks": [
+      0,
+      1,
+      "sink",
+      2
+     ],
+     "nodeH": 1.35,
+     "dropH": 1.35
     },
     {
      "kind": "text",
      "size": 17,
      "color": "body",
      "lines": [
-      "성공하면 200 · 201 · 204로 응답하고, 실패는 어디서 났든 예외로 던진다"
-     ]
-    },
-    {
-     "kind": "callout",
-     "text": "던진 예외는 @RestControllerAdvice 한곳에 모여 같은 형식으로 응답한다",
-     "size": 20,
-     "anim": "click"
+      [
+       [
+        "컨트롤러 · 서비스는  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "에러 응답을 만들지 않고 예외를 던지기만 한다",
+        {}
+       ]
+      ]
+     ],
+     "anim": "with"
     }
    ],
-   "notes": "요청은 입력 검증, 컨트롤러, 서비스, DB 순서로 처리되고, 성공하면 바로 응답이 나갑니다. 실패는 두 종류입니다. 제목이 비었다처럼 값만 보면 아는 건 맨 앞의 입력 검증에서 400으로 돌려보냅니다. 글이 없다, 제목이 중복이다처럼 DB를 봐야 아는 건 서비스에서 예외를 던집니다. 던진 예외는 호출한 쪽으로 거꾸로 올라가서, 결국 전역 예외 처리기 한 곳에 모입니다. 여기서 상태 코드와 앞에서 본 공통 에러 형식으로 바꿔 응답합니다. 예상 못 한 예외는 로그를 남기고 500으로 답합니다."
+   "notes": "요청은 입력 검증, 컨트롤러, 서비스, DB 순서로 처리되고, 성공하면 바로 응답이 나갑니다. 실패는 두 종류입니다. 제목이 비었다처럼 값만 보면 아는 건 맨 앞의 입력 검증에서 400으로 돌려보냅니다. 글이 없다, 제목이 중복이다처럼 DB를 봐야 아는 건 서비스에서 예외를 던집니다. 던진 예외는 호출한 쪽으로 거꾸로 올라가서, 결국 전역 예외 처리기 한 곳에 모입니다. 여기서 상태 코드와 앞에서 정한 공통 에러 형식으로 바꿔 응답합니다. 예상 못 한 예외는 로그를 남기고 500으로 답합니다.",
+   "valign": "center"
   },
   {
    "eyebrow": "04 · EXCEPTION · VALIDATION",
-   "title": "코드로 보면",
+   "title": "@Valid: 규칙은 DTO에 적고, 검사는 Spring이",
+   "valign": "center",
    "blocks": [
     {
-     "kind": "code",
-     "label": "요청 DTO: 규칙을 적어 두면 컨트롤러에 들어오기 전에 검사 (실패하면 400)",
-     "size": 14,
-     "lines": [
-      "public record CreatePostRequest(",
-      [
-       "    @NotBlank @Size(max = 100) String title,",
-       "amber"
-      ],
-      [
-       "    @NotBlank String content) {}",
-       "amber"
-      ]
+     "kind": "row",
+     "widths": [
+      1,
+      1
+     ],
+     "animEach": true,
+     "cols": [
+      {
+       "kind": "code",
+       "label": "요청 DTO: 칸마다 규칙을 적는다",
+       "size": 14,
+       "lines": [
+        "record CreatePostRequest(",
+        [
+         "    @NotBlank @Size(max = 100)",
+         "amber"
+        ],
+        "    String title,      // 필수, 100자까지",
+        "",
+        [
+         "    @NotBlank",
+         "amber"
+        ],
+        "    String content     // 필수",
+        ") {}"
+       ]
+      },
+      {
+       "kind": "code",
+       "label": "컨트롤러: 매개변수 앞에 @Valid",
+       "size": 14,
+       "lines": [
+        "@PostMapping",
+        "public ResponseEntity<PostResponse> create(",
+        [
+         "        @Valid @RequestBody",
+         "amber"
+        ],
+        "        CreatePostRequest req) {",
+        "    // 여기까지 왔다면 이미 검사를 통과",
+        "    ...",
+        "}"
+       ]
+      }
      ]
     },
     {
      "kind": "code",
-     "label": "전역 예외 처리기 (요약): 모든 예외를 한 곳에서 상태 코드 + 공통 에러 형식으로",
+     "label": "제목을 비워서 보내면",
      "size": 14,
+     "anim": "click",
      "lines": [
       [
-       "@RestControllerAdvice",
-       "amber"
+       "$ curl -X POST /api/v1/posts -d '{\"title\": \"\", \"content\": \"부산 맛집 후기\"}'",
+       "teal"
       ],
-      "class GlobalExceptionHandler {",
       [
-       "    @ExceptionHandler(ApiException.class)                    // 업무 예외 → 404, 409, 403",
-       "onDark"
-      ],
-      "    ProblemDetail handle(ApiException e) { ... }",
-      [
-       "    @ExceptionHandler(MethodArgumentNotValidException.class) // @Valid 실패 → 400 + 틀린 필드",
-       "onDark"
-      ],
-      "    ProblemDetail handleInvalid(...) { ... }",
-      [
-       "    @ExceptionHandler(Exception.class)                       // 예상 못 한 예외 → 로그 + 500",
-       "onDark"
-      ],
-      "    ProblemDetail handleUnknown(Exception e) { ... }",
-      "}"
-     ],
-     "anim": "click"
+       "→ 컨트롤러 코드가 실행되기 전에 막히고, MethodArgumentNotValidException이 던져진다",
+       "errorOnDark"
+      ]
+     ]
     }
    ],
-   "notes": "코드로 보면 두 장면입니다. 위는 요청 DTO에 검증 규칙을 적은 것이고, 아래가 전역 예외 처리기입니다. 예외 종류마다 어떤 응답을 줄지 한 곳에 적어 두니, 컨트롤러마다 try-catch를 쓸 필요가 없고 에러 형식도 항상 같습니다. 화면에서 이미 검사했더라도 서버 검증은 생략하지 않습니다. API는 curl이나 Postman으로 화면 없이도 호출할 수 있기 때문입니다."
+   "notes": "Spring에서는 입력값 검증을 @Valid로 쉽게 할 수 있습니다. 먼저 요청 DTO의 칸마다 규칙을 적습니다. 제목은 비면 안 되고 100자까지, 본문도 비면 안 됩니다. 그리고 컨트롤러 매개변수 앞에 @Valid를 붙입니다. 이제 제목을 비워서 보내면, 컨트롤러 코드가 실행되기도 전에 Spring이 막고 MethodArgumentNotValidException이라는 예외를 던집니다."
+  },
+  {
+   "eyebrow": "04 · EXCEPTION · VALIDATION",
+   "title": "처리기가 없으면: Spring 기본 에러 응답",
+   "badge": "예제 서버 실제 응답",
+   "screen": "예제 서버에서 입력값 처리기만 뺀 상태로 같은 요청을 보낸 실제 응답 (오른쪽은 일부 생략)",
+   "blocks": [
+    {
+     "kind": "row",
+     "widths": [
+      1,
+      1.55
+     ],
+     "animEach": true,
+     "h": 4.75,
+     "cols": [
+      {
+       "kind": "code",
+       "label": "기본값: 어느 칸이 틀렸는지 없다",
+       "size": 13,
+       "lines": [
+        [
+         "HTTP/1.1 400",
+         "errorOnDark"
+        ],
+        "",
+        "{",
+        "  \"timestamp\": \"2026-10-15T14:11…\",",
+        "  \"status\": 400,",
+        "  \"error\": \"Bad Request\",",
+        "  \"path\": \"/api/v1/posts\"",
+        "}",
+        "",
+        [
+         "→ 화면은 무엇을 고쳐야 할지 모른다",
+         "onDarkSoft"
+        ]
+       ]
+      },
+      {
+       "kind": "code",
+       "label": "자세히 켜면: 너무 길고 복잡하다 (일부 생략)",
+       "size": 13,
+       "lines": [
+        [
+         "HTTP/1.1 400",
+         "errorOnDark"
+        ],
+        "{",
+        "  \"status\": 400, \"error\": \"Bad Request\",",
+        "  \"message\": \"Validation failed for object=…\",",
+        "  \"errors\": [ {",
+        "    \"codes\": [ \"NotBlank.createPostRequest.title\",",
+        "               \"NotBlank.title\", … ],",
+        "    \"arguments\": [ { \"codes\": [ … ], … } ],",
+        [
+         "    \"defaultMessage\": \"must not be blank\",",
+         "amber"
+        ],
+        "    \"objectName\": \"createPostRequest\",",
+        [
+         "    \"field\": \"title\",",
+         "amber"
+        ],
+        "    \"rejectedValue\": \"\",",
+        "    \"bindingFailure\": false,",
+        "    \"code\": \"NotBlank\"",
+        "  } ],",
+        "  \"path\": \"/api/v1/posts\"",
+        "}"
+       ]
+      }
+     ]
+    }
+   ],
+   "notes": "이 예외를 따로 처리하지 않으면 Spring이 기본 에러 응답을 보냅니다. 왼쪽이 기본값인데, 400과 Bad Request만 있고 어느 칸이 왜 틀렸는지가 없습니다. 설정으로 자세히 보이게 하면 오른쪽처럼 됩니다. 이번에는 너무 길고 복잡해서 화면에서 쓰기 어렵고, 우리 팀이 정한 형식과도 다릅니다."
+  },
+  {
+   "eyebrow": "04 · EXCEPTION · VALIDATION",
+   "title": "처리기가 있으면: 팀 형식으로 짧게",
+   "badge": "예제 서버 실제 코드 · 응답",
+   "screen": "예제 프로젝트 GlobalExceptionHandler (줄임)와 같은 요청의 실제 응답",
+   "blocks": [
+    {
+     "kind": "row",
+     "widths": [
+      1.45,
+      1
+     ],
+     "animEach": true,
+     "h": 4.95,
+     "cols": [
+      {
+       "kind": "code",
+       "label": "GlobalExceptionHandler.java (줄임)",
+       "size": 13,
+       "lines": [
+        [
+         "@RestControllerAdvice",
+         "amber"
+        ],
+        "class GlobalExceptionHandler {",
+        "",
+        [
+         "@ExceptionHandler(MethodArgumentNotValidException.class)",
+         "amber"
+        ],
+        "ResponseEntity<ProblemDetail> handleInvalid(…) {",
+        [
+         "  // 틀린 칸 이름과 이유만 뽑는다",
+         "onDarkSoft"
+        ],
+        "  errors = [ { field, reason }, … ]",
+        "  body.setProperty(\"code\", \"INVALID_INPUT\");",
+        "  body.setProperty(\"errors\", errors);",
+        "  return ResponseEntity.badRequest().body(body);",
+        "}",
+        "",
+        [
+         "@ExceptionHandler(ApiException.class)   // 404 · 409",
+         "amber"
+        ],
+        "ResponseEntity<ProblemDetail> handleApi(…) { … }",
+        "}"
+       ]
+      },
+      {
+       "kind": "http",
+       "file": "실제-응답/post-400-처리기.txt",
+       "cmd": "curl -X POST /api/v1/posts",
+       "label": "같은 요청의 응답",
+       "size": 13,
+       "keep": []
+      }
+     ]
+    }
+   ],
+   "notes": "그래서 전역 예외 처리기에서 이 예외를 받아 팀이 정한 형식으로 바꿉니다. 틀린 칸 이름과 이유만 뽑아 errors에 담고, code는 INVALID_INPUT으로 정했습니다. 같은 요청인데 응답이 이렇게 짧고 분명해집니다. 서비스에서 던지는 글 없음, 중복 같은 예외도 같은 처리기에서 같은 모양으로 바뀝니다. 화면에서 이미 검사했더라도 서버 검증은 생략하지 않습니다. API는 curl이나 Postman으로 화면 없이도 호출할 수 있기 때문입니다."
   },
   {
    "type": "section",

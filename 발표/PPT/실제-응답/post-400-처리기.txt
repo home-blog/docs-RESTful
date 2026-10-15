@@ -1,0 +1,7 @@
+HTTP/1.1 400 
+Content-Type: application/problem+json
+Transfer-Encoding: chunked
+Date: Thu, 15 Oct 2026 14:11:09 GMT
+Connection: close
+
+{"type":"about:blank","title":"잘못된 요청입니다","status":400,"detail":"입력값을 확인해 주세요.","instance":"/api/v1/posts","code":"INVALID_INPUT","errors":[{"field":"title","reason":"must not be blank"}]}

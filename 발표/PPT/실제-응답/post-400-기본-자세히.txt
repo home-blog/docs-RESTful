@@ -1,0 +1,7 @@
+HTTP/1.1 400 
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Thu, 15 Oct 2026 14:11:09 GMT
+Connection: close
+
+{"timestamp":"2026-10-15T14:11:09.622+00:00","status":400,"error":"Bad Request","message":"Validation failed for object='createPostRequest'. Error count: 1","errors":[{"codes":["NotBlank.createPostRequest.title","NotBlank.title","NotBlank.java.lang.String","NotBlank"],"arguments":[{"codes":["createPostRequest.title","title"],"arguments":null,"defaultMessage":"title","code":"title"}],"defaultMessage":"must not be blank","objectName":"createPostRequest","field":"title","rejectedValue":"","bindingFailure":false,"code":"NotBlank"}],"path":"/api/v1/posts"}
