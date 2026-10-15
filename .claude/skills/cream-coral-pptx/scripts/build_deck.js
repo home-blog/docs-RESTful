@@ -248,6 +248,7 @@ async function place(s, b, x, y, w, room) {
     case "cards": {
       const n = b.items.length, cw = (w - GAP * (n - 1)) / n;
       b.items.forEach((it, i) => {
+        const st = s._slideObjects.length;
         const cx = x + i * (cw + GAP);
         card(s, cx, y, cw, h, it.fill === "dark" ? K.dark : K.card);
         const dark = it.fill === "dark";
@@ -257,6 +258,7 @@ async function place(s, b, x, y, w, room) {
         if (it.code) lines.push([[it.code, { mono: true, size: it.codeSize || 14, color: dark ? "amber" : it.accent ? "coralText" : "ink" }]]);
         (it.body || []).forEach((l) => lines.push(typeof l === "string" ? [[l, { size: it.bodySize || 15, color: dark ? "onDarkSoft" : "body" }]] : l));
         text(s, cx + 0.3, y + 0.25, cw - 0.6, h - 0.4, lines, { gap: 5 });
+        markChild(s, st, i);
       });
       return h;
     }
@@ -274,12 +276,14 @@ async function place(s, b, x, y, w, room) {
       while (total > w && sz > 16) { sz -= 2; total = b.items.reduce((a, it) => a + widthOf(it, sz), 0) + gx * (b.items.length - 1); }
       let cx = x + (w - total) / 2;
       const th = (sz / 72) * 1.5;
-      b.items.forEach((it) => {
+      b.items.forEach((it, i) => {
+        const st = s._slideObjects.length;
         const iw = widthOf(it, sz);
         text(s, cx, y, iw, th, [[[it.text, { mono: true, size: sz, color: it.color || "ink" }]]], { valign: "bottom", align: "center", name: "hero-text" });
         if (it.label) text(s, cx, y + th + 0.12, iw, 0.4, [[[it.label, { size: 18, bold: true, color: "ink" }]]], { align: "center", name: "hero-label" });
         if (it.sub) text(s, cx, y + th + 0.5, iw, 0.35, [[[it.sub, { size: 15, color: "muted" }]]], { align: "center", name: "hero-sub" });
         cx += iw + gx;
+        markChild(s, st, i);
       });
       return th + (b.items.some((it) => it.sub) ? 0.95 : 0.6);
     }
@@ -290,7 +294,9 @@ async function place(s, b, x, y, w, room) {
         const cw = (w - GAP * (n - 1)) * (ratios[i] / sum);
         // 옆 칸끼리 높이를 맞춘다 (가장 큰 칸 기준)
         const col = { ...b.cols[i], h: b.cols[i].h || b.h || estimate(b, w) };
+        const st = s._slideObjects.length;
         used = Math.max(used, await place(s, col, cx, y, cw, room));
+        markChild(s, st, i);
         cx += cw + GAP;
       }
       return used;
@@ -312,11 +318,17 @@ async function addContent(sl, n, sectionTitle, spare) {
     const total = (sl.blocks || []).reduce((a, b, i, arr) => a + estimate(b, W) + (i < arr.length - 1 ? (b.gapAfter ?? GAP) : 0), 0);
     y = Math.max(Y0, Y0 + (BOTTOM - Y0 - total) / 2 - 0.15);
   }
-  for (const b of sl.blocks || []) {
+  const morph = (sl.transition || "") === "morph" || sl.morphNames;  // 모핑으로 이어질 슬라이드끼리 같은 이름을 쓴다
+  const plan = newPlan(sl);
+  for (const [bi, b] of (sl.blocks || []).entries()) {
+    const st = s._slideObjects.length;
     if (estimate(b, W) > BOTTOM - y + 0.02) WARN.push(`${n}번 '${sl.title}': '${b.kind}' 블록이 남은 높이(${(BOTTOM - y).toFixed(2)}in)보다 커서 줄여 그렸습니다. 블록을 줄이거나 슬라이드를 나누세요.`);
     const used = await place(s, b, X, y, W, BOTTOM - y);
+    tagRange(s, st, `${morph ? "!!" : ""}b${bi}`);
+    planBlock(plan, b, s._slideObjects.slice(st).map((o) => o.options.objectName));
     y += used + (b.gapAfter ?? GAP);
   }
+  ANIM[n - 1] = plan;
   if (y - GAP > BOTTOM + 0.02) WARN.push(`${n}번 '${sl.title}': 내용이 아래 여백(7.0in)을 넘습니다 (y=${(y - GAP).toFixed(2)}). 블록을 줄이거나 나누세요.`);
   return s;
 }
@@ -335,7 +347,9 @@ async function build() {
       if (sl.subtitle) s.addText(sl.subtitle, { placeholder: "body" });
       if (sl.meta) s.addText(sl.meta, { placeholder: "meta" });
       if (sl.terminal) { const th = Math.max(1.3, sl.terminal.length * 0.32 + 0.8); codeWindow(s, 7.55, 3.3 - th / 2, 5.07, th, codeLines(sl.terminal), { label: sl.terminalLabel || "터미널", size: 15 }); }
+      ANIM[n - 1] = newPlan(sl);
     } else if (sl.type === "section") {
+      ANIM[n - 1] = newPlan(sl);
       s = pres.addSlide({ masterName: "섹션", sectionTitle: section });
       s.addText(sl.num || "", { placeholder: "num" });
       s.addText(sl.title, { placeholder: "title" });
@@ -343,11 +357,15 @@ async function build() {
     } else if (sl.type === "closing") {
       s = pres.addSlide({ masterName: "마무리", sectionTitle: section });
       s.addText(sl.title || "정리", { placeholder: "title" });
+      const plan = newPlan(sl);
       (sl.rows || []).forEach(([k, v], i) => {
-        const y = Y0 + i * 0.68;
+        const y = Y0 + i * 0.68, st = s._slideObjects.length;
         text(s, X, y, 2.4, 0.5, [[[k, { size: 20, color: "coral" }]]]);
         text(s, X + 2.5, y, W - 2.5, 0.5, [[[v, { size: 20, color: "onDark" }]]]);
+        tagRange(s, st, `r${i}`);
+        planBlock(plan, { anim: "auto" }, s._slideObjects.slice(st).map((o) => o.options.objectName));
       });
+      ANIM[n - 1] = plan;
       if ((sl.rows || []).length > 7) WARN.push(`${n}번 마무리: 줄이 ${sl.rows.length}개입니다. 7개 이하를 권장합니다.`);
     } else {
       s = await addContent(sl, n, section, spare);
@@ -356,6 +374,99 @@ async function build() {
     s.addNotes(sl.notes || "");
     NOTES.push({ title: sl.type === "section" ? `[섹션] ${sl.title}` : sl.title, notes: sl.notes || "", screen: sl.screen || "", spare });
   }
+}
+
+// ------------------------------------------------------------------ 애니메이션
+// pptxgenjs는 화면 전환 · 애니메이션을 쓰지 못한다. 블록마다 도형 이름을 붙여 두고, 저장한 뒤 슬라이드 XML에 직접 넣는다.
+//   spec.animate: true      → 블록이 슬라이드 시작과 함께 차례로 살짝 떠오르며 나타난다 (클릭 없음)
+//   block.anim: "click"     → 클릭하면 나타난다   "with" → 바로 앞 클릭과 함께   "none" → 처음부터 보인다
+//   block.animEach: true    → row 칸 · cards 카드 · hero 항목을 하나씩 클릭으로 (항목에 anim: "with"면 앞 항목과 함께)
+//   image.marks             → 표시(①②③)를 하나씩 클릭으로
+//   transition: "fade"(기본) | "morph" | "none"   (spec 전체 또는 슬라이드마다). morph 슬라이드는 같은 이름의 도형끼리 이어진다.
+const ANIM = [];
+const DUR = 450, STAGGER = 110;
+function newPlan(sl) {
+  const transition = sl.transition || SPEC.transition || (SPEC.animate ? "fade" : "none");
+  const off = !SPEC.animate || sl.anim === false || transition === "morph";
+  return { transition, off, auto: [], clicks: [] };
+}
+function markChild(s, start, k) { for (let i = start; i < s._slideObjects.length; i++) if (s._slideObjects[i]._cc === undefined) s._slideObjects[i]._cc = k; }
+function tagRange(s, start, prefix) {
+  for (let i = start, k = 0; i < s._slideObjects.length; i++, k++) {
+    const o = s._slideObjects[i];
+    o.options = o.options || {};
+    const m = /^mark-(\d+)-/.exec(o.options.objectName || "");
+    const child = (o._cc !== undefined ? `c${o._cc}` : "") + (m ? `m${m[1]}` : "");
+    o.options.objectName = `${prefix}${child}-${k}`;
+  }
+}
+function planBlock(plan, b, names) {
+  if (plan.off || b.anim === "none" || !names.length) return;
+  const push = (mode, list) => {
+    if (!list.length) return;
+    if (mode === "click") plan.clicks.push([...list]);
+    else if (mode === "with" && plan.clicks.length) plan.clicks[plan.clicks.length - 1].push(...list);
+    else plan.auto.push([...list]);
+  };
+  const childOf = (k) => names.filter((nm) => new RegExp(`c${k}(m\\d+)?-\\d+$`).test(nm));
+  if (b.kind === "row" && !b.animEach) { b.cols.forEach((c, k) => planBlock(plan, { ...c, anim: c.anim || b.anim }, childOf(k))); return; }
+  const kids = b.cols || b.items;
+  if (b.animEach && kids) {
+    push(b.anim === "click" ? "click" : "auto", names.filter((nm) => !/c\d+(m\d+)?-\d+$/.test(nm)));
+    kids.forEach((kid, k) => push(kid.anim || "click", childOf(k)));
+    return;
+  }
+  if (b.marks && b.marks.length) {
+    push(b.anim || "auto", names.filter((nm) => !/m\d+-\d+$/.test(nm)));
+    b.marks.forEach((m, i) => push(m.anim || "click", names.filter((nm) => new RegExp(`m${i}-\\d+$`).test(nm))));
+    return;
+  }
+  push(b.anim || "auto", names);
+}
+function transitionXml(t) {
+  if (t === "fade") return '<p:transition spd="med"><p:fade/></p:transition>';
+  if (t === "morph") return '<mc:AlternateContent xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"><mc:Choice xmlns:p159="http://schemas.microsoft.com/office/powerpoint/2015/09/main" Requires="p159"><p:transition spd="slow" xmlns:p14="http://schemas.microsoft.com/office/powerpoint/2010/main" p14:dur="900"><p159:morph option="byObject"/></p:transition></mc:Choice><mc:Fallback><p:transition spd="slow"><p:fade/></p:transition></mc:Fallback></mc:AlternateContent>';
+  return "";
+}
+function timingXml(plan, idOf, kindOf) {
+  let id = 3;
+  const tgt = (sp) => `<p:tgtEl><p:spTgt spid="${sp}"/></p:tgtEl>`;
+  const anim = (sp, attr, from, to) => `<p:anim calcmode="lin" valueType="num"><p:cBhvr><p:cTn id="${id++}" dur="${DUR}" fill="hold"/>${tgt(sp)}<p:attrNameLst><p:attrName>${attr}</p:attrName></p:attrNameLst></p:cBhvr><p:tavLst><p:tav tm="0"><p:val><p:strVal val="${from}"/></p:val></p:tav><p:tav tm="100000"><p:val><p:strVal val="${to}"/></p:val></p:tav></p:tavLst></p:anim>`;
+  const eff = (sp, node, delay) => {
+    let x = `<p:par><p:cTn id="${id++}" presetID="42" presetClass="entr" presetSubtype="0" fill="hold" grpId="0" nodeType="${node}"><p:stCondLst><p:cond delay="${delay}"/></p:stCondLst><p:childTnLst>`;
+    x += `<p:set><p:cBhvr><p:cTn id="${id++}" dur="1" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst></p:cTn>${tgt(sp)}<p:attrNameLst><p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to><p:strVal val="visible"/></p:to></p:set>`;
+    x += `<p:animEffect transition="in" filter="fade"><p:cBhvr><p:cTn id="${id++}" dur="${DUR}"/>${tgt(sp)}</p:cBhvr></p:animEffect>`;
+    x += anim(sp, "ppt_x", "#ppt_x", "#ppt_x") + anim(sp, "ppt_y", "#ppt_y+0.03", "#ppt_y");
+    return x + "</p:childTnLst></p:cTn></p:par>";
+  };
+  const used = [];
+  const ids = (list) => list.map((nm) => idOf[nm]).filter((v) => v !== undefined);
+  const group = (units, auto) => {
+    let x = `<p:par><p:cTn id="${id++}" fill="hold"><p:stCondLst><p:cond delay="indefinite"/>${auto ? '<p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond>' : ""}</p:stCondLst><p:childTnLst>`;
+    x += `<p:par><p:cTn id="${id++}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst><p:childTnLst>`;
+    let first = true;
+    units.forEach((u, j) => ids(u).forEach((sp) => {
+      x += eff(sp, first ? (auto ? "afterEffect" : "clickEffect") : "withEffect", auto ? j * STAGGER : 0);
+      first = false; used.push(sp);
+    }));
+    return x + "</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>";
+  };
+  let body = "";
+  if (plan.auto.length) body += group(plan.auto, true);
+  plan.clicks.forEach((c) => { body += group([c], false); });
+  if (!used.length) return "";
+  const bld = [...new Set(used)].map((sp) => kindOf[sp] === "sp" ? `<p:bldP spid="${sp}" grpId="0" animBg="1"/>`
+    : kindOf[sp] === "graphicFrame" ? `<p:bldGraphic spid="${sp}" grpId="0"><p:bldAsOne/></p:bldGraphic>` : "").join("");
+  return `<p:timing><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek"><p:cTn id="2" dur="indefinite" nodeType="mainSeq"><p:childTnLst>${body}</p:childTnLst></p:cTn><p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond></p:nextCondLst></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>${bld ? `<p:bldLst>${bld}</p:bldLst>` : ""}</p:timing>`;
+}
+function patchSlide(xml, plan) {
+  // pptxgenjs의 표 id는 다른 도형과 겹칠 수 있다 → 슬라이드 안에서 id를 다시 매긴다
+  let next = 2;
+  xml = xml.replace(/<p:cNvPr id="\d+"/g, (m, off) => (off === xml.indexOf("<p:cNvPr") ? '<p:cNvPr id="1"' : `<p:cNvPr id="${next++}"`));
+  const idOf = {}, kindOf = {};
+  for (const m of xml.matchAll(/<p:(sp|pic|graphicFrame)>\s*<p:nv\w+>\s*<p:cNvPr id="(\d+)" name="([^"]*)"/g)) { idOf[m[3]] = m[2]; kindOf[m[2]] = m[1]; }
+  const add = transitionXml(plan.transition) + (plan.off ? "" : timingXml(plan, idOf, kindOf));
+  return add ? xml.replace("</p:clrMapOvr>", "</p:clrMapOvr>" + add) : xml;
 }
 
 // ------------------------------------------------------------------ 테마 색 · 한글 글꼴 쓰기
@@ -378,13 +489,18 @@ async function patchTheme(file) {
     fontBlock("minorFont", FONTS.body);
     zip.file(name, xml);
   }
+  for (let i = 0; i < ANIM.length; i++) {
+    const name = `ppt/slides/slide${i + 1}.xml`;
+    if (!ANIM[i] || !zip.file(name)) continue;
+    zip.file(name, patchSlide(await zip.file(name).async("string"), ANIM[i]));
+  }
   fs.writeFileSync(file, await zip.generateAsync({ type: "nodebuffer", compression: "DEFLATE" }));
 }
 
 // ------------------------------------------------------------------ 대본
 function script(file) {
   const cps = SPEC.charsPerSecond || 5.5;                       // 한국어 발표 속도(공백 포함 글자/초) 어림
-  const secs = (t) => Math.max(5, Math.round(t.length / cps / 5) * 5);
+  const secs = (t) => (t.length < 40 ? Math.max(2, Math.ceil(t.length / cps)) : Math.max(5, Math.round(t.length / cps / 5) * 5));
   const mm = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
   const main = NOTES.filter((x) => !x.spare), spare = NOTES.filter((x) => x.spare);
   const total = main.reduce((a, x) => a + secs(x.notes), 0);

@@ -84,6 +84,10 @@ python3 <이 스킬>/scripts/render_preview.py deck.pptx   # → deck-preview/sl
 - 고치고 다시 만들고 다시 렌더합니다. 문제가 없을 때까지.
 - 렌더 결과 한글이 다른 글꼴로 보이면 그 PC에 글꼴이 없는 것입니다(아래 글꼴 참고). 배치 검사에는 큰 문제가 없지만, 가능하면 글꼴을 설치하고 봅니다.
 
+### 7-1. 사용자 검토는 이미지로 먼저
+
+사용자가 원하면 PPT 파일을 바로 넘기지 말고, 렌더한 슬라이드를 4~8장씩 묶은 이미지로 먼저 보여 주고 확인을 받는다. 확인이 끝나면 애니메이션까지 넣어 PPT로 만든다. 애니메이션은 이미지에 안 보이므로 어떤 슬라이드에서 무엇이 나타나는지 말로 함께 적는다.
+
 ### 8. 전달
 
 `.pptx`와 대본 `.md`를 사용자에게 보내고(SendUserFile 등), 짧게 알립니다: 본 · 예비 장 수, 대본 기준 예상 시간, 차트 숫자의 출처(측정/사용자 데이터/예시), 사용자가 직접 확인할 것(글꼴 설치, 재구성 화면).
@@ -112,7 +116,7 @@ python3 <이 스킬>/scripts/render_preview.py deck.pptx   # → deck-preview/sl
 
 - `scripts/build_deck.js` — 엔진. 스펙 → .pptx + 대본
 - `scripts/render_preview.py` — .pptx → PDF → 슬라이드 PNG + 4장 묶음
-- `references/spec-format.md` — 스펙 형식 (슬라이드 · 블록 · 색 이름 · 높이)
+- `references/spec-format.md` — 스펙 형식 (슬라이드 · 블록 · 색 이름 · 높이 · 글꼴 굵기 · 애니메이션)
 - `references/design-system.md` — 디자인 시스템 전체 (색 · 대비 · 글꼴 · 격자 · 구성 요소 · 레이아웃 · PowerPoint 설정)
 - `assets/example-spec.json`, `assets/example/get-404.txt` — 예시 스펙과 그 스펙이 쓰는 실제 `curl -i` 응답
 

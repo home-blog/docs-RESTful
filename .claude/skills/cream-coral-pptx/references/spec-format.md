@@ -126,3 +126,33 @@
 - 엔진이 블록 높이를 어림해서, 남은 높이보다 크면 **줄여서 그리고 경고**를 냅니다. 경고가 나오면 블록을 줄이거나 슬라이드를 나눕니다.
 - 어림 높이: text = 줄 수 × 글자 크기, table = 행 수 × 0.42in(16pt), code = 줄 수 × 0.23in(13pt) + 0.8, cards 2.1, callout 0.95, chart 4.2, image 4.8. `h`로 직접 정할 수 있습니다.
 - 어림은 PowerPoint의 줄바꿈을 모릅니다. 긴 문장이 두 줄로 넘어가면 실제로 더 길어지므로 **반드시 렌더해서 눈으로 확인**합니다.
+
+## 6. 추가 기능
+
+### 글꼴 굵기
+
+```json
+"fonts": { "head": "Pretendard", "headBold": true, "body": "Pretendard SemiBold", "bold": "Pretendard", "mono": "JetBrains Mono" }
+```
+- 정적 Pretendard는 Bold가 따로 "Pretendard Bold"라는 이름이 **아니라** "Pretendard"의 굵게 스타일이다. 그래서 제목은 `head: "Pretendard"` + `headBold: true`.
+- 본문이 "Pretendard SemiBold"처럼 굵기별 패밀리면, 본문 안 굵은 글자에 그대로 굵게를 켜면 가짜 굵게가 된다. `bold: "Pretendard"`를 주면 굵은 조각은 그 글꼴의 진짜 Bold로 바뀐다.
+- 글꼴 이름이 맞는지는 `fc-list : family style | grep -i 글꼴` 로 확인한다.
+
+### 배치
+
+- 슬라이드 `valign: "center"`: 내용이 적은 슬라이드의 블록 묶음을 세로 가운데로.
+- `hero` 블록: `{ "kind": "hero", "size": 40, "items": [{ "text": "DELETE", "label": "어떻게 (행동)", "sub": "HTTP 메서드", "color": "coralText" }] }` — 큰 고정폭 글자를 가로로 늘어놓고 아래에 이름표.
+- `image` 블록: `indent`(왼쪽 들여쓰기, 표시 번호 자리), `frame: false`(얇은 테두리 끄기), `marks: [{ x, y, w, h, text }]`(그림 안 영역을 비율로 감싸고 왼쪽에 번호). 영역 비율은 화면을 찍을 때 DOM에서 재서 넣는다 (`발표/그림/만들기/글결-화면/글결-요청응답-찍기.js` 참고).
+- `cards` 항목의 `code`는 기본 잉크색, `accent: true`일 때만 코랄.
+
+### 화면 전환 · 애니메이션
+
+```json
+"animate": true, "transition": "fade"
+```
+- `animate: true`면 본문 블록이 슬라이드 시작과 함께 차례로 살짝 떠오르며 나타난다 (클릭 없음). 마무리 슬라이드는 줄마다.
+- 블록 `anim`: `"click"`(클릭하면 나타남) · `"with"`(바로 앞 클릭과 함께) · `"none"`(처음부터 보임).
+- 블록 `animEach: true`: `row`의 칸, `cards`의 카드, `hero`의 항목을 하나씩 클릭으로. 항목에 `anim: "with"`면 앞 항목과 함께.
+- `image.marks`는 표시마다 클릭 하나 (①→②→③).
+- 슬라이드 `transition`: `"fade"`(기본) · `"morph"` · `"none"`. 모핑으로 이어질 슬라이드들에는 모두 `morphNames: true`를 줘서 같은 블록 순서 = 같은 도형 이름이 되게 한다 (모핑은 PowerPoint 2019 / 365, 그 밖에서는 페이드로 대체).
+- LibreOffice 렌더(미리보기)에는 애니메이션이 보이지 않는다. 대신 슬라이드 XML의 `p:timing`이 실제 도형 id를 가리키는지 검사한다.
