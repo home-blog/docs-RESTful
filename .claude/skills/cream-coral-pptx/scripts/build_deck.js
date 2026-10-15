@@ -161,7 +161,7 @@ function table(s, x, y, w, b) {
   s.addTable(data, { x, y, w, colW, rowH, objectName: "table" });
   return b.rows.length * rowH + 0.05;
 }
-async function imageCols(s, file, cuts, x, y, maxW, maxH) {
+async function imageCols(s, file, cuts, x, y, maxW, maxH, marks = [], frame = true) {
   const meta = await sharp(file).metadata();
   const edges = [0, ...(cuts || []).map((c) => Math.round(meta.height * c)), meta.height];
   const parts = edges.slice(1).map((b, i) => ({ top: edges[i], height: b - edges[i] }));
@@ -175,7 +175,15 @@ async function imageCols(s, file, cuts, x, y, maxW, maxH) {
     await sharp(file).extract({ left: 0, top: p.top, width: meta.width, height: p.height }).toFile(f);
     const w = meta.width * k, h = p.height * k;
     s.addImage({ path: f, x: px, y, w, h, objectName: "screenshot" });
-    s.addShape(pres.ShapeType.rect, { x: px, y, w, h, fill: { type: "none" }, line: { color: K.hair, width: 0.75 }, objectName: "screenshot-frame" });
+    if (frame) s.addShape(pres.ShapeType.rect, { x: px, y, w, h, fill: { type: "none" }, line: { color: K.hair, width: 0.75 }, objectName: "screenshot-frame" });
+    // marks: 그림 안의 영역(비율 x·y·w·h)을 얇은 테두리로 감싸고, 왼쪽 여백에 번호를 단다 (한 칸짜리 그림에서만)
+    if (parts.length === 1) (marks || []).forEach((m, i) => {
+      const bx = px + m.x * w - 0.07, by = y + m.y * h - 0.015, bw = m.w * w + 0.14, bh = m.h * h + 0.03;
+      s.addShape(pres.ShapeType.roundRect, { x: bx, y: by, w: bw, h: bh, rectRadius: 0.06, fill: { type: "none" }, line: { color: K.ink, width: 1.5 }, objectName: `mark-${i}-box` });
+      const d = 0.3, cx = px - d - 0.12, cy = by + bh / 2 - d / 2;
+      s.addShape(pres.ShapeType.ellipse, { x: cx, y: cy, w: d, h: d, fill: { color: K.dark }, objectName: `mark-${i}-dot` });
+      s.addText(m.text || String(i + 1), { x: cx, y: cy, w: d, h: d, fontSize: 13, bold: true, color: K.onDark, align: "center", valign: "middle", margin: 0, isTextBox: true, fontFace: FONTS.bold || undefined, objectName: `mark-${i}-num` });
+    });
     px += w + gap; used = Math.max(used, h);
   }
   return used;
@@ -255,7 +263,7 @@ async function place(s, b, x, y, w, room) {
     case "callout": card(s, x, y, w, h, K.coral, "callout-coral");
       text(s, x + 0.4, y, w - 0.8, h, [[[b.text, { size: b.size || 22, bold: true, color: "ink" }]]], { valign: "middle" }); return h;
     case "chart": chart(s, x, y, w, h, b); return h;
-    case "image": return imageCols(s, rel(b.path), b.cuts, x, y, w, Math.min(b.h || room, room));
+    case "image": return imageCols(s, rel(b.path), b.cuts, x + (b.indent || 0), y, w - (b.indent || 0), Math.min(b.h || room, room), b.marks, b.frame !== false);
     case "badge": badge(s, x, y, b.text); return 0.34;
     case "hero": {
       // items: [{text, label, sub, color}] 를 가로로 늘어놓고 전체를 가운데 정렬
