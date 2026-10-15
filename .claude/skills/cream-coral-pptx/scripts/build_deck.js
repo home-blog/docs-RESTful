@@ -57,7 +57,7 @@ const SERIES = ["CC785C", "141413", "A9583E", "6C6A64", "E8A55A", "5DB8A6"];
 const X = 0.71, W = 11.91, Y0 = 1.73, BOTTOM = 7.0, GAP = 0.25;
 
 // ------------------------------------------------------------------ 레이아웃 (references/design-system.md 6)
-const ph = (name, type, o) => ({ placeholder: { options: { name, type, align: "left", valign: "top", margin: 0, ...o }, text: "" } });
+const ph = (name, type, o) => ({ placeholder: { options: { name, type, align: "left", valign: "top", margin: 0, ...(type === "title" && FONTS.headBold ? { bold: true } : {}), ...o }, text: "" } });
 pres.defineSlideMaster({ title: "표지", background: { color: K.canvas }, objects: [
   ph("title", "title", { x: X, y: 2.35, w: 6.3, h: 1.9, fontSize: 54, color: K.ink, valign: "bottom" }),
   ph("body", "body", { x: X, y: 4.45, w: 6.3, h: 0.9, fontSize: 20, color: K.muted }),
@@ -67,7 +67,7 @@ pres.defineSlideMaster({ title: "표지-넓게", background: { color: K.canvas }
   ph("body", "body", { x: X, y: 4.4, w: W, h: 0.9, fontSize: 20, color: K.muted }),
   ph("meta", "body", { x: X, y: 6.35, w: W, h: 0.4, fontSize: 14, color: K.muted })] });
 pres.defineSlideMaster({ title: "섹션", background: { color: K.dark }, objects: [
-  ph("num", "body", { x: X, y: 2.1, w: 3, h: 1.1, fontSize: 60, fontFace: "+mj-lt", color: K.coral, valign: "bottom" }),
+  ph("num", "body", { x: X, y: 2.1, w: 3, h: 1.1, fontSize: 60, fontFace: "+mj-lt", color: K.coral, valign: "bottom", ...(FONTS.headBold ? { bold: true } : {}) }),
   ph("title", "title", { x: X, y: 3.35, w: 11, h: 1.0, fontSize: 40, color: K.canvas }),
   ph("body", "body", { x: X, y: 4.5, w: 11, h: 0.6, fontSize: 20, color: K.onDarkSoft })] });
 pres.defineSlideMaster({ title: "본문", background: { color: K.canvas }, objects: [
@@ -86,6 +86,9 @@ function runs(lines, d) {
     segs.forEach(([t, so], j) => {
       const o = { color: color(so.color, d.color), fontSize: so.size || d.size, bold: !!(so.bold ?? d.bold), italic: !!so.italic };
       if (so.mono || d.mono) o.fontFace = FONTS.mono;
+      // 본문 글꼴이 굵기별 패밀리(예: Pretendard SemiBold)면 거기에 bold를 켜면 가짜 굵게가 된다.
+      // fonts.bold(예: Pretendard)로 바꾸고 bold는 그대로 두면 그 패밀리의 진짜 Bold 파일이 쓰인다.
+      else if (o.bold && FONTS.bold) o.fontFace = FONTS.bold;
       if (j === segs.length - 1 && i < lines.length - 1) o.breakLine = true;
       out.push({ text: String(t), options: o });
     });
@@ -220,6 +223,7 @@ function estimate(b, w) {
     case "chart": return 4.2;
     case "image": return 4.8;
     case "badge": return 0.34;
+    case "hero": { const sz = b.size || 36; return (sz / 72) * 1.5 + (b.items.some((it) => it.sub) ? 0.95 : 0.6); }
     case "row": { const n = b.cols.length; const cw = (w - GAP * (n - 1)) / n; return Math.max(...b.cols.map((c) => estimate(c, cw))); }
     default: return 0.5;
   }
@@ -242,7 +246,7 @@ async function place(s, b, x, y, w, room) {
         const lines = [];
         if (it.kicker) lines.push([[it.kicker, { size: 15, color: it.kickerColor || (dark ? "onDarkSoft" : "muted") }]]);
         if (it.title) lines.push([[it.title, { size: it.titleSize || 22, bold: it.bold !== false, color: dark ? "onDark" : "ink" }]]);
-        if (it.code) lines.push([[it.code, { mono: true, size: it.codeSize || 14, color: dark ? "amber" : "coralText" }]]);
+        if (it.code) lines.push([[it.code, { mono: true, size: it.codeSize || 14, color: dark ? "amber" : it.accent ? "coralText" : "ink" }]]);
         (it.body || []).forEach((l) => lines.push(typeof l === "string" ? [[l, { size: it.bodySize || 15, color: dark ? "onDarkSoft" : "body" }]] : l));
         text(s, cx + 0.3, y + 0.25, cw - 0.6, h - 0.4, lines, { gap: 5 });
       });
@@ -253,6 +257,24 @@ async function place(s, b, x, y, w, room) {
     case "chart": chart(s, x, y, w, h, b); return h;
     case "image": return imageCols(s, rel(b.path), b.cuts, x, y, w, Math.min(b.h || room, room));
     case "badge": badge(s, x, y, b.text); return 0.34;
+    case "hero": {
+      // items: [{text, label, sub, color}] 를 가로로 늘어놓고 전체를 가운데 정렬
+      let sz = b.size || 36;
+      const gx = b.gap ?? 0.45;
+      const widthOf = (it, z) => Math.max([...it.text].length * (z / 72) * 0.62, it.label ? [...it.label].length * 0.26 : 0, it.sub ? [...it.sub].length * 0.2 : 0) + 0.1;
+      let total = b.items.reduce((a, it) => a + widthOf(it, sz), 0) + gx * (b.items.length - 1);
+      while (total > w && sz > 16) { sz -= 2; total = b.items.reduce((a, it) => a + widthOf(it, sz), 0) + gx * (b.items.length - 1); }
+      let cx = x + (w - total) / 2;
+      const th = (sz / 72) * 1.5;
+      b.items.forEach((it) => {
+        const iw = widthOf(it, sz);
+        text(s, cx, y, iw, th, [[[it.text, { mono: true, size: sz, color: it.color || "ink" }]]], { valign: "bottom", align: "center", name: "hero-text" });
+        if (it.label) text(s, cx, y + th + 0.12, iw, 0.4, [[[it.label, { size: 18, bold: true, color: "ink" }]]], { align: "center", name: "hero-label" });
+        if (it.sub) text(s, cx, y + th + 0.5, iw, 0.35, [[[it.sub, { size: 15, color: "muted" }]]], { align: "center", name: "hero-sub" });
+        cx += iw + gx;
+      });
+      return th + (b.items.some((it) => it.sub) ? 0.95 : 0.6);
+    }
     case "row": {
       const n = b.cols.length, ratios = b.widths || b.cols.map(() => 1), sum = ratios.reduce((a, c) => a + c, 0);
       let cx = x, used = 0;
@@ -278,6 +300,10 @@ async function addContent(sl, n, sectionTitle, spare) {
   s.addText(sl.title, { placeholder: "title" });
   if (sl.badge) badge(s, X + W - (0.3 + [...sl.badge].reduce((a, ch) => a + (/[ㄱ-힝]/.test(ch) ? 0.17 : 0.09), 0)), 0.42, sl.badge);
   let y = Y0;
+  if (sl.valign === "center") {
+    const total = (sl.blocks || []).reduce((a, b, i, arr) => a + estimate(b, W) + (i < arr.length - 1 ? (b.gapAfter ?? GAP) : 0), 0);
+    y = Math.max(Y0, Y0 + (BOTTOM - Y0 - total) / 2 - 0.15);
+  }
   for (const b of sl.blocks || []) {
     if (estimate(b, W) > BOTTOM - y + 0.02) WARN.push(`${n}번 '${sl.title}': '${b.kind}' 블록이 남은 높이(${(BOTTOM - y).toFixed(2)}in)보다 커서 줄여 그렸습니다. 블록을 줄이거나 슬라이드를 나누세요.`);
     const used = await place(s, b, X, y, W, BOTTOM - y);
@@ -300,7 +326,7 @@ async function build() {
       s.addText(sl.title, { placeholder: "title" });
       if (sl.subtitle) s.addText(sl.subtitle, { placeholder: "body" });
       if (sl.meta) s.addText(sl.meta, { placeholder: "meta" });
-      if (sl.terminal) codeWindow(s, 7.55, 2.45, 5.07, 2.6, codeLines(sl.terminal), { label: sl.terminalLabel || "터미널", size: 15 });
+      if (sl.terminal) { const th = Math.max(1.3, sl.terminal.length * 0.32 + 0.8); codeWindow(s, 7.55, 3.3 - th / 2, 5.07, th, codeLines(sl.terminal), { label: sl.terminalLabel || "터미널", size: 15 }); }
     } else if (sl.type === "section") {
       s = pres.addSlide({ masterName: "섹션", sectionTitle: section });
       s.addText(sl.num || "", { placeholder: "num" });
