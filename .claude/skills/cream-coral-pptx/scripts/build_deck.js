@@ -425,8 +425,13 @@ async function build() {
       s = await addContent(sl, n, section, spare);
     }
     if (!sl.notes) WARN.push(`${n}번 '${sl.title}': 발표자 노트(notes)가 없습니다.`);
-    s.addNotes(sl.notes || "");
-    NOTES.push({ title: sl.type === "section" ? `[섹션] ${sl.title}` : sl.title, notes: sl.notes || "", screen: sl.screen || "", spare });
+    // 대사 속 [클릭: 설명] → [▶ 클릭 1 · 설명]. 애니메이션 클릭 수와 맞는지 확인한다.
+    let cue = 0;
+    const notes = (sl.notes || "").replace(/\[클릭(?::\s*([^\]]*))?\]/g, (m, what) => `[▶ 클릭 ${++cue}${what ? " · " + what.trim() : ""}]`);
+    const clicks = ANIM[n - 1] && !ANIM[n - 1].off ? ANIM[n - 1].clicks.length : 0;
+    if (cue !== clicks) WARN.push(`${n}번 '${sl.title}': 애니메이션 클릭은 ${clicks}번인데 대사의 [클릭] 표시는 ${cue}개입니다.`);
+    s.addNotes(notes);
+    NOTES.push({ title: sl.type === "section" ? `[섹션] ${sl.title}` : sl.title, notes, clicks, screen: sl.screen || "", spare });
   }
 }
 
@@ -563,7 +568,8 @@ async function patchTheme(file) {
 // ------------------------------------------------------------------ 대본
 function script(file) {
   const cps = SPEC.charsPerSecond || 5.5;                       // 한국어 발표 속도(공백 포함 글자/초) 어림
-  const secs = (t) => (t.length < 40 ? Math.max(2, Math.ceil(t.length / cps)) : Math.max(5, Math.round(t.length / cps / 5) * 5));
+  const plain = (t) => t.replace(/\[▶[^\]]*\]\s*/g, "");
+  const secs = (t0) => { const t = plain(t0); return (t.length < 40 ? Math.max(2, Math.ceil(t.length / cps)) : Math.max(5, Math.round(t.length / cps / 5) * 5)); };
   const mm = (t) => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
   const main = NOTES.filter((x) => !x.spare), spare = NOTES.filter((x) => x.spare);
   const total = main.reduce((a, x) => a + secs(x.notes), 0);
@@ -573,11 +579,17 @@ function script(file) {
          "## 시간 배분 (대사 길이로 어림)", "", "| # | 슬라이드 | 시간 | 누적 |", "|---|---|---|---|");
   let t = 0;
   main.forEach((x, i) => { t += secs(x.notes); L.push(`| ${i + 1} | ${x.title} | ${mm(secs(x.notes))} | ${mm(t)} |`); });
-  L.push("", `> 합계 약 ${Math.floor(total / 60)}분 ${total % 60}초. 섹션 슬라이드는 한 문장만 하고 넘긴다.`, "", "---", "");
-  main.forEach((x, i) => { L.push(`## ${i + 1}. ${x.title} (${mm(secs(x.notes))})`, ""); if (x.screen) L.push(`*화면: ${x.screen}*`, ""); L.push(`> ${x.notes}`, "", "---", ""); });
+  L.push("", `> 합계 약 ${Math.floor(total / 60)}분 ${total % 60}초. 섹션 슬라이드는 한 문장만 하고 넘긴다.`, "",
+         "> 대사 속 **[▶ 클릭 n · 무엇]** 자리에서 클릭하면 그 내용이 나타난다. 슬라이드의 클릭을 다 쓴 뒤 한 번 더 누르면 다음 장(⏭)으로 넘어간다. 표시가 없는 슬라이드는 내용이 저절로 나타나니 대사가 끝나면 바로 넘긴다.", "", "---", "");
+  const bold = (t) => t.replace(/\[▶[^\]]*\]/g, (m) => `**${m}**`);
+  main.forEach((x, i) => {
+    L.push(`## ${i + 1}. ${x.title} (${mm(secs(x.notes))}${x.clicks ? ` · 클릭 ${x.clicks}번` : ""})`, "");
+    if (x.screen) L.push(`*화면: ${x.screen}*`, "");
+    L.push(`> ${bold(x.notes)}`, "", `⏭ 다음 장`, "", "---", "");
+  });
   if (spare.length) {
     L.push("## 예비 슬라이드 (맨 뒤, 질문이 나오면)", "");
-    spare.forEach((x, i) => L.push(`### ${main.length + i + 1}. ${x.title}`, "", ...(x.screen ? [`*${x.screen}*`, ""] : []), `> ${x.notes}`, ""));
+    spare.forEach((x, i) => L.push(`### ${main.length + i + 1}. ${x.title}`, "", ...(x.screen ? [`*${x.screen}*`, ""] : []), `> ${bold(x.notes)}`, ""));
   }
   if (SPEC.qa && SPEC.qa.length) L.push("## 질문 대비", "", "| 질문 | 짧은 답 |", "|---|---|", ...SPEC.qa.map(([q, a]) => `| ${q} | ${a} |`), "");
   L.push("## 발표 전 체크", "", `- [ ] 발표 PC에 ${FONTS.head} · ${FONTS.body} · ${FONTS.mono} 가 있는지 확인 (없으면 설치하거나 파일 › 옵션 › 저장 › 파일의 글꼴 포함)`,
