@@ -222,7 +222,8 @@ function chart(s, x, y, w, h, b) {
 // { kind:"flow", nodes:[{title, sub, fill:"dark"}], success:{from, label}, drops:[{from, lines:[...], status}], sink:{title, code, sub}, back:"에러 응답" }
 function flow(s, b, x, y, w) {
   const n = b.nodes.length, gap = 0.45, nw = (w - gap * (n - 1)) / n, nh = b.nodeH || 1.15;
-  const top = y + 0.55, bottom = top + nh, sinkY = bottom + (b.dropH || 1.15), sinkH = 0.95;
+  const rows = (b.sink && b.sink.rows) || [];
+  const top = y + 0.55, bottom = top + nh, sinkY = bottom + (b.dropH || 1.15), sinkH = rows.length ? 0.62 + rows.length * 0.3 : 0.95;
   const nx = (i) => x + i * (nw + gap), cx = (i) => nx(i) + nw / 2;
   const line = (x1, y1, x2, y2, o = {}) => s.addShape(pres.ShapeType.line, { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1),
     flipH: x2 < x1, flipV: y2 < y1, line: { color: o.color || K.muted, width: o.width || 1.5, endArrowType: o.arrow === false ? undefined : "triangle" }, objectName: "flow-line" });
@@ -256,7 +257,9 @@ function flow(s, b, x, y, w) {
     const st = s._slideObjects.length, sx = nx(1), sw = nx(n - 1) + nw - sx;
     card(s, sx, sinkY, sw, sinkH, K.dark, "flow-sink");
     text(s, sx + 0.35, sinkY, sw - 0.7, sinkH, [[[b.sink.title, { size: 18, bold: true, color: "onDark" }], ["   " + (b.sink.code || ""), { size: 15, mono: true, color: "amber" }]],
-      ...(b.sink.sub ? [[[b.sink.sub, { size: 14, color: "onDarkSoft" }]]] : [])], { valign: "middle", gap: 2, name: "flow-sink-text" });
+      ...(b.sink.sub ? [[[b.sink.sub, { size: 14, color: "onDarkSoft" }]]] : []),
+      // rows: [["예외 이름", "→ 상태 코드"], …] 처리기 안에서 어떤 예외가 어떤 응답이 되는지
+      ...rows.map(([e, r]) => [[e, { size: /[가-힣]/.test(e) ? 14 : 13, mono: !/[가-힣]/.test(e), color: "onDark" }], ["   " + r, { size: 14, color: "amber" }]])], { valign: "middle", gap: 2, name: "flow-sink-text" });
     if (b.back) {
       const my = sinkY + sinkH / 2;
       line(sx - 0.03, my, cx(0), my, { arrow: false, color: K.ink }); line(cx(0), my, cx(0), bottom + 0.03, { color: K.ink });
