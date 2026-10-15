@@ -1,0 +1,2045 @@
+{
+ "title": "RESTful API 설계",
+ "author": "이재웅",
+ "output": "../RESTful-API-설계.pptx",
+ "script": "../발표-흐름-15분.md",
+ "meta": {
+  "일시": "2026-10-16(금) 13:30",
+  "발표자": "이재웅(AIGJ_01_012)",
+  "대상": "비전공자, 신입 개발자",
+  "핵심 메시지": "자원은 URL로, 행동은 메서드로, 결과는 상태 코드로. 그러면 처음 보는 사람도 API를 읽을 수 있다.",
+  "만들기": "`cd 발표/PPT && node ../../.claude/skills/cream-coral-pptx/scripts/build_deck.js 덱.json` (이 파일의 대사와 PPT 발표자 노트는 `PPT/덱.json`에서 같이 나온다)"
+ },
+ "qa": [
+  [
+   "모든 서비스가 REST를 쓰나요?",
+   "가장 흔하지만 전부는 아님. GraphQL, 서버끼리는 gRPC, 실시간은 WebSocket도 함께 씀"
+  ],
+  [
+   "조회인데 조건이 너무 많으면?",
+   "예외적으로 POST /posts/search + 바디로 받기도 함"
+  ],
+  [
+   "page는 0부터? 1부터?",
+   "Spring 기본은 0, 팀에서 정해 문서에 적음 (글결은 1부터)"
+  ],
+  [
+   "(글결) 권한이 없는데 왜 403이 아니라 404인가요?",
+   "403을 주면 그 비공개 글이 있다는 사실이 드러남. 있는지조차 모르게 없는 것과 같은 404로 답함"
+  ],
+  [
+   "(글결) CSRF 토큰은 왜 보내나요?",
+   "세션 쿠키는 브라우저가 자동으로 붙여서, 다른 사이트가 사용자 몰래 요청을 보낼 수 있음. GET이 아닌 요청은 쿠키와 머리글의 토큰이 같아야 처리"
+  ],
+  [
+   "(글결) 세션과 JWT는 뭐가 다른가요?",
+   "세션은 서버가 로그인 상태를 들고 있어 로그아웃·만료를 서버에서 바로 끊을 수 있음. JWT는 서버가 상태를 들지 않아 서버를 늘리기 쉽지만, 발급한 토큰을 중간에 끊기 어려움. 글결을 세션으로 정한 이유는 발표자가 직접 답함"
+  ],
+  [
+   "정렬 필드는 왜 제한하나요?",
+   "인덱스 없는 컬럼 정렬은 DB를 느리게 하고, 노출하면 안 되는 필드로 정보를 추측할 수 있음"
+  ],
+  [
+   "/comments/7처럼 쓰는 곳도 있던데요?",
+   "둘 다 씀. /posts/42/comments/7은 소속이 주소에 보이고, /comments/7은 댓글 id만으로 부를 수 있음. 팀이 하나로 정함"
+  ],
+  [
+   "2단계를 넘으면 안 되나요?",
+   "기본값일 뿐. GitHub 이슈처럼 번호가 저장소마다 1부터 다시 매겨지면 /repos/{저장소}/issues/12처럼 위 id가 꼭 필요해서 깊어짐"
+  ],
+  [
+   "(글결) v1은 언제 v2로 바꾸나요?",
+   "글결은 칸을 더하는 변경은 v1 그대로, 칸을 빼거나 뜻을 바꿀 때만 v2를 염. 웹만 쓰면 꼭 필요하진 않지만 앱이나 외부가 쓰게 되면 필요"
+  ],
+  [
+   "v2를 만들면 v1은?",
+   "한동안 같이 운영하다가 대부분 옮겨 가면 v1을 종료함"
+  ],
+  [
+   "OpenAPI와 Swagger는 같은 건가요?",
+   "OpenAPI는 문서 형식, Swagger UI는 그 문서를 보여 주는 화면"
+  ],
+  [
+   "운영 서버에서도 Swagger가 열리나요?",
+   "보통 개발·테스트 서버에서만 열고 운영에서는 끄거나 로그인 뒤에 둠"
+  ]
+ ],
+ "slides": [
+  {
+   "type": "cover",
+   "section": "시작",
+   "title": "RESTful API 설계",
+   "subtitle": "주소만 봐도 무슨 일인지 아는 API 만들기",
+   "meta": "이재웅 · 2026.10.16",
+   "notes": "안녕하세요, 이재웅입니다. 오늘은 RESTful API를 어떻게 설계하는지 이야기하고, 마지막에 제가 만든 프로젝트의 실제 API 문서와 에러 형식을 보여 드리겠습니다."
+  },
+  {
+   "eyebrow": "INTRO",
+   "title": "API와 RESTful API",
+   "blocks": [
+    {
+     "kind": "text",
+     "size": 18,
+     "lines": [
+      [
+       [
+        "같은 API를 쓰는 쪽   ",
+        {
+         "color": "muted"
+        }
+       ],
+       [
+        "웹 브라우저 · 모바일 앱 · 관리자 페이지 · 다른 서비스",
+        {}
+       ]
+      ]
+     ]
+    },
+    {
+     "kind": "row",
+     "cols": [
+      {
+       "kind": "code",
+       "label": "API: 형식이 자유라 같은 '42번 글 삭제'도 제각각",
+       "size": 17,
+       "lines": [
+        [
+         "POST /deletePost.do?no=42",
+         "errorOnDark"
+        ],
+        [
+         "GET  /post/remove?id=42",
+         "errorOnDark"
+        ],
+        [
+         "POST /api  {\"action\":\"delete\",\"id\":42}",
+         "errorOnDark"
+        ],
+        "",
+        [
+         "→ 쓰는 쪽은 API마다 문서를 찾거나 물어봐야 한다",
+         "onDarkSoft"
+        ]
+       ]
+      },
+      {
+       "kind": "code",
+       "label": "RESTful API: REST 원칙으로 형식을 통일",
+       "size": 17,
+       "lines": [
+        [
+         "DELETE /api/v1/posts/42",
+         "amber"
+        ],
+        [
+         "→ 204 No Content",
+         "success"
+        ],
+        "",
+        "",
+        [
+         "→ 주소만 보고도 무슨 일인지 알 수 있다",
+         "onDarkSoft"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 22,
+     "bold": true,
+     "lines": [
+      "자원 → URL   ·   행동 → HTTP 메서드   ·   결과 → 상태 코드"
+     ]
+    }
+   ],
+   "notes": "API는 프로그램끼리 요청과 응답을 주고받는 방법입니다. 우리가 만드는 API는 웹, 모바일 앱, 관리자 페이지, 다른 서비스가 모두 같이 씁니다. 그런데 API는 형식이 정해져 있지 않아서, 같은 \"42번 글 삭제\"도 만든 사람마다 왼쪽처럼 제각각일 수 있습니다. 그러면 쓰는 쪽은 API마다 문서를 찾거나 물어봐야 합니다. 그래서 REST라는 원칙으로 형식을 통일합니다. 자원은 URL로, 행동은 HTTP 메서드로, 결과는 상태 코드로 표현합니다. 이렇게 만든 API가 RESTful API입니다. DELETE /api/v1/posts/42 한 줄만 봐도 42번 글을 삭제한다는 걸 알 수 있습니다. 그럼 먼저, 이런 요청을 왜 보내는지부터 보겠습니다."
+  },
+  {
+   "eyebrow": "INTRO",
+   "title": "왜 요청을 보내나",
+   "blocks": [
+    {
+     "kind": "table",
+     "colW": [
+      3.0,
+      3.4,
+      3.0,
+      2.5
+     ],
+     "mono": [
+      1,
+      3
+     ],
+     "size": 17,
+     "rowH": 0.62,
+     "rows": [
+      [
+       "사용자가 화면에서 하는 일",
+       "클라이언트가 보내는 요청",
+       "서버가 하는 일",
+       "응답"
+      ],
+      [
+       "블로그 첫 화면을 연다",
+       "GET /api/v1/posts",
+       "DB에서 글 목록 조회",
+       "200 + 글 목록"
+      ],
+      [
+       "42번 글을 누른다",
+       "GET /api/v1/posts/42",
+       "42번 글 조회",
+       "200 + 글 내용"
+      ],
+      [
+       "글을 쓰고 저장한다",
+       "POST /api/v1/posts",
+       "DB에 새 글 저장",
+       "201 + 새 글 주소"
+      ],
+      [
+       "내 글을 삭제한다",
+       "DELETE /api/v1/posts/42",
+       "DB에서 42번 글 삭제",
+       "204"
+      ]
+     ]
+    },
+    {
+     "kind": "inline",
+     "mono": false,
+     "color": "ink",
+     "size": 18,
+     "text": "화면에 보이는 글 · 댓글 · 회원 정보는 사용자 기기가 아니라 서버의 DB에 있다"
+    }
+   ],
+   "notes": "웹이나 앱 화면에 보이는 글, 댓글, 회원 정보는 사용자 기기가 아니라 서버의 DB에 있습니다. 그래서 화면은 데이터가 필요할 때마다 서버에 요청을 보냅니다. 첫 화면을 열면 글 목록을 조회하는 GET이, 저장 버튼을 누르면 글을 만드는 POST가 나갑니다. 사용자의 동작 하나가 HTTP 요청 하나입니다."
+  },
+  {
+   "eyebrow": "INTRO",
+   "title": "클라이언트와 서버",
+   "blocks": [
+    {
+     "kind": "cards",
+     "h": 2.2,
+     "items": [
+      {
+       "kicker": "① 요청을 보낸다  ·  ④ 응답을 받는다",
+       "title": "클라이언트",
+       "body": [
+        "브라우저 · 앱"
+       ]
+      },
+      {
+       "kicker": "API",
+       "title": "서버",
+       "body": [
+        "Spring Boot",
+        "요청을 처리한다"
+       ],
+       "fill": "dark"
+      },
+      {
+       "kicker": "② 조회 · 저장  ·  ③ 결과",
+       "title": "데이터베이스",
+       "body": [
+        "글 · 댓글 · 회원",
+        "데이터를 저장한다"
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "요청  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "메서드 + 주소 + 헤더 + 바디",
+        {}
+       ]
+      ],
+      [
+       [
+        "응답  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "상태 코드 + 헤더 + 바디",
+        {}
+       ]
+      ]
+     ]
+    },
+    {
+     "kind": "callout",
+     "text": "클라이언트는 DB를 직접 열지 않고, 항상 API를 거친다",
+     "size": 22
+    }
+   ],
+   "notes": "구조로 보면 클라이언트가 요청을 보내고, 서버가 DB를 조회하거나 저장한 뒤 응답합니다. 클라이언트는 DB에 직접 접근하지 않고 항상 API를 거칩니다. 요청에는 메서드, 주소, 헤더, 바디가 들어 있고, 응답으로는 상태 코드, 헤더, 바디가 돌아옵니다."
+  },
+  {
+   "eyebrow": "INTRO",
+   "title": "REST 세 줄 약속",
+   "blocks": [
+    {
+     "kind": "cards",
+     "h": 2.8,
+     "items": [
+      {
+       "kicker": "어떻게 (행동)",
+       "code": "DELETE",
+       "codeSize": 32,
+       "body": [
+        "HTTP 메서드"
+       ],
+       "bodySize": 18
+      },
+      {
+       "kicker": "무엇 (자원)",
+       "code": "/api/v1/posts/42",
+       "codeSize": 24,
+       "body": [
+        "URL"
+       ],
+       "bodySize": 18
+      },
+      {
+       "kicker": "결과",
+       "code": "204 No Content",
+       "codeSize": 24,
+       "body": [
+        "상태 코드"
+       ],
+       "bodySize": 18
+      }
+     ]
+    },
+    {
+     "kind": "inline",
+     "mono": false,
+     "color": "ink",
+     "size": 22,
+     "text": "읽는 법: “42번 글을 지웠고, 잘 끝났다”"
+    }
+   ],
+   "notes": "요청 한 줄을 REST로 읽으면 이렇습니다. DELETE는 행동, /api/v1/posts/42는 자원, 204는 결과입니다. 이제 이 세 부분을 URL, 메서드, 상태 코드 순서로 보겠습니다."
+  },
+  {
+   "section": "01 자원 중심 URL",
+   "eyebrow": "01 · URL",
+   "title": "URL에 동사를 넣으면 생기는 두 가지 문제",
+   "blocks": [
+    {
+     "kind": "row",
+     "cols": [
+      {
+       "kind": "code",
+       "label": "1. 기능마다 주소가 늘어난다 (42번 글 하나)",
+       "size": 17,
+       "lines": [
+        [
+         "GET  /getPost?id=42",
+         "errorOnDark"
+        ],
+        [
+         "POST /updatePost?id=42",
+         "errorOnDark"
+        ],
+        [
+         "POST /deletePost?id=42",
+         "errorOnDark"
+        ],
+        [
+         "POST /updatePostTitle?id=42",
+         "errorOnDark"
+        ],
+        "",
+        [
+         "REST: 주소는 하나, 메서드만 바뀜",
+         "onDarkSoft"
+        ],
+        [
+         "GET    /posts/42",
+         "amber"
+        ],
+        [
+         "PATCH  /posts/42",
+         "amber"
+        ],
+        [
+         "DELETE /posts/42",
+         "amber"
+        ]
+       ]
+      },
+      {
+       "kind": "code",
+       "label": "2. 이름이 사람마다 다르다 (같은 '하나 조회')",
+       "size": 17,
+       "lines": [
+        [
+         "A  /getPost?id=42",
+         "errorOnDark"
+        ],
+        [
+         "B  /fetchComment?no=7",
+         "errorOnDark"
+        ],
+        [
+         "C  /selectMember.do?mid=3",
+         "errorOnDark"
+        ],
+        "",
+        "",
+        [
+         "REST: 누가 만들어도 같은 모양",
+         "onDarkSoft"
+        ],
+        [
+         "GET /posts/42",
+         "amber"
+        ],
+        [
+         "GET /comments/7",
+         "amber"
+        ],
+        [
+         "GET /members/3",
+         "amber"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "callout",
+     "text": "행동은 HTTP 메서드가 맡고, URL은 명사로 자원만 가리킨다",
+     "size": 22
+    }
+   ],
+   "notes": "먼저 URL입니다. URL에 동사를 넣으면 두 가지 문제가 생깁니다. 첫째, 같은 42번 글인데도 getPost, updatePost, deletePost처럼 기능마다 주소가 하나씩 늘어납니다. 그러면 쓰는 쪽은 찾아야 할 주소가 계속 늘고, 만드는 쪽은 같은 검증과 권한 확인을 주소마다 따로 걸어야 해서 하나만 빠뜨려도 버그나 보안 구멍이 됩니다. 둘째, 이름이 사람마다 다릅니다. 같은 조회를 누구는 getPost, 누구는 fetchComment, 누구는 selectMember.do라고 짓고, 파라미터 이름도 id, no, mid로 제각각입니다. 그래서 행동은 메서드에 맡기고 URL은 명사로 자원만 가리킵니다. 그러면 /posts/42 하나에 메서드만 바꿔 조회, 수정, 삭제를 하고, 댓글은 /comments/7, 회원은 /members/3처럼 누가 만들어도 같은 모양이 됩니다."
+  },
+  {
+   "eyebrow": "01 · URL",
+   "title": "동사 URL을 메서드 + 명사 URL로",
+   "blocks": [
+    {
+     "kind": "table",
+     "colW": [
+      2.3,
+      5.6,
+      4.0
+     ],
+     "mono": [
+      1,
+      2
+     ],
+     "colorCol": {
+      "1": "error"
+     },
+     "size": 15,
+     "rowH": 0.52,
+     "rows": [
+      [
+       "하는 일",
+       "동사가 들어간 URL",
+       "메서드 + 명사 URL"
+      ],
+      [
+       "글 목록 조회",
+       "GET  /getPosts",
+       "GET    /posts"
+      ],
+      [
+       "글 작성",
+       "POST /createPost",
+       "POST   /posts"
+      ],
+      [
+       "42번 글 조회",
+       "GET  /getPost?id=42",
+       "GET    /posts/42"
+      ],
+      [
+       "42번 글 수정",
+       "POST /updatePost?id=42",
+       "PATCH  /posts/42"
+      ],
+      [
+       "42번 글 삭제",
+       "GET  /deletePost?id=42",
+       "DELETE /posts/42"
+      ],
+      [
+       "42번 글의 댓글 조회",
+       "GET  /getCommentsByPostId?postId=42",
+       "GET    /posts/42/comments"
+      ]
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "GET으로 삭제하면 안 된다  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "크롤러 · 링크 미리보기는 사용자가 누르지 않아도 GET을 보낸다 → 공유만 해도 지워질 수 있다",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "자주 쓰는 기능을 바꿔 보면 이렇습니다. 동사는 빠지고, 같은 주소에 메서드만 달라집니다. 특히 삭제를 GET으로 만들면 안 됩니다. GET은 데이터를 바꾸지 않는 요청으로 정의되어 있어서, 검색 엔진 크롤러나 메신저의 링크 미리보기는 사용자가 누르지 않아도 GET을 보냅니다. 삭제 URL을 메신저로 보내기만 해도 글이 지워질 수 있습니다."
+  },
+  {
+   "eyebrow": "01 · URL",
+   "title": "명사 URL은 계층으로, 보여 주는 방식은 쿼리로",
+   "blocks": [
+    {
+     "kind": "table",
+     "colW": [
+      6.2,
+      5.7
+     ],
+     "mono": [
+      0
+     ],
+     "size": 16,
+     "rowH": 0.45,
+     "rows": [
+      [
+       "주소",
+       "뜻"
+      ],
+      [
+       "/api/v1/posts",
+       "글 목록 (복수형 명사)"
+      ],
+      [
+       "/api/v1/posts/42",
+       "42번 글 하나"
+      ],
+      [
+       "/api/v1/posts/42/comments",
+       "42번 글의 댓글 목록"
+      ],
+      [
+       "/api/v1/posts/42/comments/7",
+       "그중 7번 댓글 (관계는 자원 두 개까지)"
+      ],
+      [
+       "/api/v1/members/me",
+       "나 (로그인한 회원)"
+      ]
+     ]
+    },
+    {
+     "kind": "cards",
+     "h": 1.25,
+     "items": [
+      {
+       "kicker": "누구냐 → 경로",
+       "code": "/api/v1/posts/42",
+       "codeSize": 17
+      },
+      {
+       "kicker": "어떻게 보여 줄까 → 쿼리 (? 뒤)",
+       "code": "/api/v1/posts?sort=createdAt,desc&size=20",
+       "codeSize": 14
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 16,
+     "color": "body",
+     "gap": 4,
+     "lines": [
+      [
+       [
+        "피하기  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "/members/{memberId}/posts/{postId}/comments/{commentId}",
+        {
+         "mono": true,
+         "color": "error"
+        }
+       ],
+       [
+        "  id 세 개를 모두 알아야 호출",
+        {}
+       ]
+      ],
+      [
+       [
+        "소문자 + 하이픈  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "/blog-categories",
+        {
+         "mono": true
+        }
+       ],
+       [
+        "   ·   ",
+        {}
+       ],
+       [
+        "/api/v1",
+        {
+         "mono": true
+        }
+       ],
+       [
+        " = 버전 (구조가 바뀌면 /api/v2를 따로 연다)",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "명사 URL은 계층으로 짭니다. 글 목록은 /posts, 42번 글은 /posts/42, 그 글의 댓글은 /posts/42/comments, 그중 7번 댓글은 /posts/42/comments/7입니다. 중첩은 이렇게 글과 댓글, 자원 두 개까지를 기본으로 합니다. /members/{memberId}/posts/{postId}/comments/{commentId}처럼 더 이어지면 회원, 글, 댓글 id 세 개를 모두 알아야 해서 피합니다. 어떤 자원인지는 경로에, 정렬이나 개수처럼 보여 주는 방식은 물음표 뒤 쿼리에 둡니다. URL은 소문자와 하이픈으로 쓰고, 앞의 /api/v1은 버전입니다. 응답 구조를 크게 바꿔야 할 때 예전 앱이 깨지지 않도록 /api/v2를 따로 열기 위해 붙여 둡니다."
+  },
+  {
+   "section": "02 HTTP 메서드와 상태 코드",
+   "eyebrow": "02 · METHOD",
+   "title": "같은 42번 글에 메서드만 바꾸면",
+   "blocks": [
+    {
+     "kind": "table",
+     "colW": [
+      1.2,
+      5.4,
+      2.1,
+      3.2
+     ],
+     "mono": [
+      0,
+      1
+     ],
+     "size": 14,
+     "rowH": 0.66,
+     "rows": [
+      [
+       "메서드",
+       "요청",
+       "결과",
+       "전 → 후"
+      ],
+      [
+       "GET",
+       "GET /posts/42",
+       "읽기만 한다",
+       "데이터는 그대로"
+      ],
+      [
+       "POST",
+       "POST /posts  {\"title\": \"부산 맛집\"}",
+       "새로 만든다",
+       "41, 42 → 41, 42, 43 (201 + 새 글 주소)"
+      ],
+      [
+       "PUT",
+       "PUT /posts/42  {\"title\": \"제주 여행 후기\"}",
+       "통째로 교체한다",
+       "제목 바뀜, 본문은 비어 있음"
+      ],
+      [
+       "PATCH",
+       "PATCH /posts/42  {\"title\": \"제주 여행 후기\"}",
+       "보낸 칸만 고친다",
+       "제목만 바뀜, 본문은 그대로"
+      ],
+      [
+       "DELETE",
+       "DELETE /posts/42",
+       "지운다",
+       "42번 글 없음 (204 No Content)"
+      ]
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "멱등  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "GET · PUT · DELETE는 여러 번 보내도 결과가 같고, POST는 보낼 때마다 하나씩 생긴다",
+        {}
+       ]
+      ],
+      [
+       [
+        "그래서  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "글쓰기 버튼은 한 번 누르면 막아 두고, 결제처럼 중요한 POST는 중복 요청을 막는다",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "다음은 메서드입니다. 같은 42번 글에 메서드만 바꿔 보내면 결과가 이렇게 달라집니다. GET은 조회, POST는 생성, DELETE는 삭제입니다. 헷갈리는 건 PUT과 PATCH입니다. 둘 다 제목만 보냈는데, PUT은 자원 전체를 교체해서 안 보낸 본문이 비워질 수 있고, PATCH는 보낸 필드만 바꿉니다. 그래서 일부 수정에는 PATCH를 씁니다. 하나 더, PUT과 DELETE는 여러 번 보내도 결과가 같지만, POST는 보낼 때마다 글이 하나씩 생깁니다. 그래서 글쓰기 버튼은 한 번 누르면 막아 두고, 결제처럼 중요한 POST는 중복 요청을 막는 처리를 합니다."
+  },
+  {
+   "eyebrow": "02 · STATUS CODE",
+   "title": "결과는 상태 코드로",
+   "blocks": [
+    {
+     "kind": "cards",
+     "h": 2.7,
+     "items": [
+      {
+       "kicker": "성공",
+       "title": "2xx",
+       "titleSize": 28,
+       "code": "200 · 201 · 204",
+       "codeSize": 13,
+       "body": [
+        "요청한 작업이 처리됨"
+       ]
+      },
+      {
+       "kicker": "리다이렉트",
+       "title": "3xx",
+       "titleSize": 28,
+       "code": "301 · 302 · 304",
+       "codeSize": 13,
+       "body": [
+        "다른 주소로 이동 (API에선 드묾)"
+       ]
+      },
+      {
+       "kicker": "클라이언트 오류",
+       "title": "4xx",
+       "titleSize": 28,
+       "code": "400 · 401 · 403 · 404 · 409",
+       "codeSize": 13,
+       "body": [
+        "요청을 고쳐서 다시 보내야 함"
+       ]
+      },
+      {
+       "kicker": "서버 오류",
+       "title": "5xx",
+       "titleSize": 28,
+       "code": "500 · 502 · 503 · 504",
+       "codeSize": 13,
+       "body": [
+        "서버 쪽 문제, 잠시 후 재시도"
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "code",
+     "label": "하지 말 것: 실패인데 200",
+     "size": 17,
+     "lines": [
+      [
+       "HTTP/1.1 200 OK",
+       "success"
+      ],
+      "{ \"success\": false, \"message\": \"글이 없습니다\" }",
+      "",
+      [
+       "→ 모니터링 · 재시도 · 캐시는 상태 코드만 보고 성공으로 처리한다",
+       "errorOnDark"
+      ]
+     ]
+    }
+   ],
+   "notes": "결과는 상태 코드로 알립니다. 첫 자리로 종류가 나뉩니다. 2xx는 성공, 3xx는 리다이렉트, 4xx는 요청한 쪽 문제, 5xx는 서버 문제입니다. API에서는 주로 2xx, 4xx, 5xx를 씁니다. 하지 말아야 할 게 하나 있습니다. 실패했는데 200 OK에 success: false를 담아 보내는 방식입니다. 모니터링, 프론트엔드의 에러 처리, 자동 재시도, 캐시는 바디를 읽지 않고 상태 코드만 봅니다. 그래서 실패를 200으로 주면 장애가 나도 알림이 오지 않고, 화면에는 저장 완료가 뜹니다. 세밀한 구분이 필요하면 상태 코드는 그대로 두고, 바디에 에러 코드를 따로 담습니다. 이건 바로 다음에 보겠습니다."
+  },
+  {
+   "eyebrow": "02 · STATUS CODE",
+   "title": "자주 만나는 에러 코드",
+   "blocks": [
+    {
+     "kind": "table",
+     "status": 0,
+     "mono": [
+      1
+     ],
+     "colW": [
+      1.5,
+      3.0,
+      4.3,
+      3.1
+     ],
+     "size": 14,
+     "rowH": 0.42,
+     "rows": [
+      [
+       "코드",
+       "이름",
+       "언제 나오나 (블로그 API 예)",
+       "먼저 확인할 것"
+      ],
+      [
+       "400  자주",
+       "Bad Request",
+       "필수 값 누락, 형식 오류 (빈 제목, 깨진 JSON)",
+       "응답의 errors: 어느 필드가 틀렸나"
+      ],
+      [
+       "401  자주",
+       "Unauthorized",
+       "인증 정보(JWT · 세션)가 없거나 만료됨",
+       "Authorization 헤더 · 쿠키, 만료 시간"
+      ],
+      [
+       "403",
+       "Forbidden",
+       "로그인했지만 권한 없음 (남의 글 삭제)",
+       "사용자 역할, 자원 소유자"
+      ],
+      [
+       "404  자주",
+       "Not Found",
+       "없는 자원 (/posts/99999), URL 오타",
+       "URL 경로와 id, 삭제된 데이터인지"
+      ],
+      [
+       "409",
+       "Conflict",
+       "중복 (같은 이메일로 가입), 동시 수정",
+       "유니크 값, 버전 필드"
+      ],
+      [
+       "500  자주",
+       "Internal Server Error",
+       "처리하지 못한 예외 (NullPointerException 등)",
+       "서버 로그의 스택 트레이스"
+      ],
+      [
+       "502",
+       "Bad Gateway",
+       "게이트웨이가 뒤쪽 서버에서 잘못된 응답을 받음",
+       "뒤쪽 서비스가 떠 있나, 주소 · 포트"
+      ],
+      [
+       "503",
+       "Service Unavailable",
+       "과부하, 점검, 배포 중이라 처리 불가",
+       "서버 상태, 배포 · 재시작 중인지"
+      ],
+      [
+       "504",
+       "Gateway Timeout",
+       "뒤쪽 서버가 제한 시간 안에 응답 안 함",
+       "느린 쿼리, 타임아웃 설정"
+      ]
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 14,
+     "color": "muted",
+     "lines": [
+      "그 밖에: 405 Method Not Allowed (메서드 틀림) · 415 Unsupported Media Type (Content-Type 틀림) · 429 Too Many Requests (요청 과다)"
+     ]
+    }
+   ],
+   "notes": "실무에서 에러가 나면 대부분 이 아홉 개 중 하나입니다. 가장 자주 보는 건 400, 401, 404, 500입니다. 400은 값이 빠졌거나 형식이 틀린 경우, 404는 자원이 없거나 URL이 틀린 경우, 500은 서버가 처리하지 못한 예외라 서버 로그를 봐야 합니다. 헷갈리는 401과 403은 실패한 단계가 다릅니다. 401은 JWT나 세션이 없거나 만료되어 누구인지 모르는 경우, 403은 누구인지는 알지만 권한이 없는 경우입니다. 502, 503, 504는 게이트웨이 뒤의 서버에 문제가 있을 때 나옵니다."
+  },
+  {
+   "section": "03 공통 응답과 에러 형식",
+   "eyebrow": "03 · RESPONSE · ERROR",
+   "title": "응답과 에러 형식을 하나로",
+   "screen": "왼쪽 통일 전 → 오른쪽 통일 후 (예제 서버의 실제 404 응답)",
+   "blocks": [
+    {
+     "kind": "row",
+     "cols": [
+      {
+       "kind": "code",
+       "label": "통일 전: API마다 에러 모양이 다르다",
+       "size": 13,
+       "lines": [
+        "글 API    404  { \"error\": \"not found\" }",
+        "댓글 API  400  { \"result\": false, \"msg\": \"실패\" }",
+        [
+         "회원 API  200  \"FAIL\"          ← 실패인데 200",
+         "errorOnDark"
+        ],
+        "",
+        [
+         "→ 화면 개발자가 에러 모양 3가지를 따로 처리",
+         "onDarkSoft"
+        ]
+       ]
+      },
+      {
+       "kind": "http",
+       "file": "실제-응답/get-404.txt",
+       "cmd": "curl -i localhost:8080/api/v1/posts/99999",
+       "label": "통일 후: 예제 서버 실제 응답",
+       "size": 13
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 17,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "성공 응답  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "단건은 자원 그대로 · 목록은 content + page · 필드는 camelCase · 날짜는 ISO-8601",
+        {}
+       ]
+      ],
+      [
+       [
+        "에러 응답  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "표준(RFC 9457) type · title · status · detail + 팀 에러 코드 code → 화면은 code 하나만 보고 처리",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "응답도 형식을 하나로 맞춥니다. 성공 응답은 단건이면 자원을 그대로, 목록이면 content와 page로 감싸서 주고, 필드 이름은 camelCase, 날짜는 ISO-8601로 통일합니다. 그럼 에러는 어떻게 보낼까요. 왼쪽처럼 API마다 에러 모양이 다르면, 프론트엔드는 API마다 에러를 꺼내는 코드를 따로 짜야 하고, 문장으로 분기했다가 백엔드가 문구를 고치면 깨집니다. 그래서 오른쪽처럼 모든 API가 같은 형식으로 보냅니다. RFC 9457 표준의 type, title, status, detail에 우리 팀 에러 코드 code를 붙입니다. 프론트엔드는 에러 처리를 한 곳에만 쓰고, code로 분기하고, detail 문장은 화면에 보여 주기만 합니다. 스택 트레이스나 SQL 같은 내부 정보는 응답에 넣지 않고 서버 로그에만 남깁니다."
+  },
+  {
+   "section": "04 전역 예외 처리와 입력 검증",
+   "eyebrow": "04 · EXCEPTION · VALIDATION",
+   "title": "전역 예외 처리와 입력 검증",
+   "blocks": [
+    {
+     "kind": "table",
+     "colW": [
+      3.3,
+      4.3,
+      4.3
+     ],
+     "size": 16,
+     "rowH": 0.6,
+     "colorCol": {
+      "2": "error"
+     },
+     "rows": [
+      [
+       "요청이 지나가는 순서",
+       "하는 일",
+       "실패하면"
+      ],
+      [
+       "① 입력 검증 (@Valid)",
+       "요청 DTO의 형식 검사",
+       "형식 오류 (빈 제목) → 400"
+      ],
+      [
+       "② 컨트롤러",
+       "요청 받고 넘기기 (try-catch 없음)",
+       "—"
+      ],
+      [
+       "③ 서비스",
+       "업무 규칙 검사",
+       "글 없음 404 · 중복 제목 409 · 권한 없음 403"
+      ],
+      [
+       "④ DB",
+       "읽기 · 쓰기",
+       "예상 못 한 오류 → 500 + 로그"
+      ]
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 17,
+     "color": "body",
+     "lines": [
+      "성공하면 200 · 201 · 204로 응답하고, 실패는 어디서 났든 예외로 던진다"
+     ]
+    },
+    {
+     "kind": "callout",
+     "text": "던진 예외는 @RestControllerAdvice 한곳에 모여 같은 형식으로 응답한다",
+     "size": 20
+    }
+   ],
+   "notes": "이 형식을 모든 API가 지키게 하는 방법이 전역 예외 처리입니다. 요청은 입력 검증, 컨트롤러, 서비스, DB 순서로 처리되고, 성공하면 바로 응답이 나갑니다. 실패는 두 종류입니다. 제목이 비었다처럼 값만 보면 아는 건 맨 앞의 입력 검증에서 400으로 돌려보냅니다. 글이 없다, 제목이 중복이다처럼 DB를 봐야 아는 건 서비스에서 예외를 던집니다. 던진 예외는 호출한 쪽으로 거꾸로 올라가서, 결국 전역 예외 처리기 한 곳에 모입니다. 여기서 상태 코드와 앞에서 본 공통 에러 형식으로 바꿔 응답합니다. 예상 못 한 예외는 로그를 남기고 500으로 답합니다."
+  },
+  {
+   "eyebrow": "04 · EXCEPTION · VALIDATION",
+   "title": "코드로 보면",
+   "blocks": [
+    {
+     "kind": "code",
+     "label": "요청 DTO: 규칙을 적어 두면 컨트롤러에 들어오기 전에 검사 (실패하면 400)",
+     "size": 14,
+     "lines": [
+      "public record CreatePostRequest(",
+      [
+       "    @NotBlank @Size(max = 100) String title,",
+       "amber"
+      ],
+      [
+       "    @NotBlank String content) {}",
+       "amber"
+      ]
+     ]
+    },
+    {
+     "kind": "code",
+     "label": "전역 예외 처리기 (요약): 모든 예외를 한 곳에서 상태 코드 + 공통 에러 형식으로",
+     "size": 14,
+     "lines": [
+      [
+       "@RestControllerAdvice",
+       "amber"
+      ],
+      "class GlobalExceptionHandler {",
+      [
+       "    @ExceptionHandler(ApiException.class)                    // 업무 예외 → 404, 409, 403",
+       "onDark"
+      ],
+      "    ProblemDetail handle(ApiException e) { ... }",
+      [
+       "    @ExceptionHandler(MethodArgumentNotValidException.class) // @Valid 실패 → 400 + 틀린 필드",
+       "onDark"
+      ],
+      "    ProblemDetail handleInvalid(...) { ... }",
+      [
+       "    @ExceptionHandler(Exception.class)                       // 예상 못 한 예외 → 로그 + 500",
+       "onDark"
+      ],
+      "    ProblemDetail handleUnknown(Exception e) { ... }",
+      "}"
+     ]
+    }
+   ],
+   "notes": "코드로 보면 두 장면입니다. 위는 요청 DTO에 검증 규칙을 적은 것이고, 아래가 전역 예외 처리기입니다. 예외 종류마다 어떤 응답을 줄지 한 곳에 적어 두니, 컨트롤러마다 try-catch를 쓸 필요가 없고 에러 형식도 항상 같습니다. 화면에서 이미 검사했더라도 서버 검증은 생략하지 않습니다. API는 curl이나 Postman으로 화면 없이도 호출할 수 있기 때문입니다."
+  },
+  {
+   "eyebrow": "05 · PAGINATION",
+   "title": "목록은 쿼리로: 검색 · 정렬 · 페이징",
+   "badge": "1 / 4",
+   "blocks": [
+    {
+     "kind": "inline",
+     "text": "GET /api/v1/posts",
+     "size": 17,
+     "color": "ink"
+    },
+    {
+     "kind": "table",
+     "rows": [
+      [
+       "부분",
+       "파라미터",
+       "정하는 것"
+      ],
+      [
+       "어떤 자원",
+       "/api/v1/posts",
+       "경로"
+      ]
+     ],
+     "colW": [
+      2.2,
+      5.2,
+      4.5
+     ],
+     "mono": [
+      1
+     ],
+     "size": 17,
+     "rowH": 0.52
+    }
+   ],
+   "notes": "글 목록 API는 어떤 글을, 어떤 순서로, 몇 개씩 줄지를 정해야 합니다.",
+   "screen": "주소 쌓기 1단계 (같은 위치에서 넘기면 주소만 늘어난다)",
+   "section": "05 페이징 · 검색 · 정렬"
+  },
+  {
+   "eyebrow": "05 · PAGINATION",
+   "title": "목록은 쿼리로: 검색 · 정렬 · 페이징",
+   "badge": "2 / 4",
+   "blocks": [
+    {
+     "kind": "inline",
+     "text": "GET /api/v1/posts?topic=TRAVEL&keyword=제주",
+     "size": 17,
+     "color": "ink"
+    },
+    {
+     "kind": "table",
+     "rows": [
+      [
+       "부분",
+       "파라미터",
+       "정하는 것"
+      ],
+      [
+       "어떤 자원",
+       "/api/v1/posts",
+       "경로"
+      ],
+      [
+       "검색",
+       "topic=TRAVEL&keyword=제주",
+       "어떤 글만?"
+      ]
+     ],
+     "colW": [
+      2.2,
+      5.2,
+      4.5
+     ],
+     "mono": [
+      1
+     ],
+     "size": 17,
+     "rowH": 0.52
+    }
+   ],
+   "notes": "검색 조건은 topic, keyword로 받습니다.",
+   "screen": "주소 쌓기 2단계 (같은 위치에서 넘기면 주소만 늘어난다)"
+  },
+  {
+   "eyebrow": "05 · PAGINATION",
+   "title": "목록은 쿼리로: 검색 · 정렬 · 페이징",
+   "badge": "3 / 4",
+   "blocks": [
+    {
+     "kind": "inline",
+     "text": "GET /api/v1/posts?topic=TRAVEL&keyword=제주&sort=createdAt,desc",
+     "size": 17,
+     "color": "ink"
+    },
+    {
+     "kind": "table",
+     "rows": [
+      [
+       "부분",
+       "파라미터",
+       "정하는 것"
+      ],
+      [
+       "어떤 자원",
+       "/api/v1/posts",
+       "경로"
+      ],
+      [
+       "검색",
+       "topic=TRAVEL&keyword=제주",
+       "어떤 글만?"
+      ],
+      [
+       "정렬",
+       "sort=createdAt,desc",
+       "어떤 순서로?"
+      ]
+     ],
+     "colW": [
+      2.2,
+      5.2,
+      4.5
+     ],
+     "mono": [
+      1
+     ],
+     "size": 17,
+     "rowH": 0.52
+    }
+   ],
+   "notes": "정렬은 sort=필드,방향으로 받습니다.",
+   "screen": "주소 쌓기 3단계 (같은 위치에서 넘기면 주소만 늘어난다)"
+  },
+  {
+   "eyebrow": "05 · PAGINATION",
+   "title": "목록은 쿼리로: 검색 · 정렬 · 페이징",
+   "badge": "4 / 4",
+   "blocks": [
+    {
+     "kind": "inline",
+     "text": "GET /api/v1/posts?topic=TRAVEL&keyword=제주&sort=createdAt,desc&page=0&size=20",
+     "size": 17,
+     "color": "ink"
+    },
+    {
+     "kind": "table",
+     "rows": [
+      [
+       "부분",
+       "파라미터",
+       "정하는 것"
+      ],
+      [
+       "어떤 자원",
+       "/api/v1/posts",
+       "경로"
+      ],
+      [
+       "검색",
+       "topic=TRAVEL&keyword=제주",
+       "어떤 글만?"
+      ],
+      [
+       "정렬",
+       "sort=createdAt,desc",
+       "어떤 순서로?"
+      ],
+      [
+       "페이징",
+       "page=0&size=20",
+       "몇 개씩, 몇 번째 묶음?"
+      ]
+     ],
+     "colW": [
+      2.2,
+      5.2,
+      4.5
+     ],
+     "mono": [
+      1
+     ],
+     "size": 17,
+     "rowH": 0.52
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      "조건은 모두 물음표(?) 뒤에 이름=값으로 · 안 보내면 기본값 (최신순, 20개)"
+     ]
+    }
+   ],
+   "notes": "페이징은 page와 size로 받습니다. 앞에서 말했듯 보여 주는 방식이니 모두 쿼리에 붙이고, 안 보내면 최신순 20개가 기본입니다.",
+   "screen": "주소 쌓기 4단계 (같은 위치에서 넘기면 주소만 늘어난다)"
+  },
+  {
+   "eyebrow": "05 · PAGINATION",
+   "title": "목록 응답에는 페이지 정보를 같이",
+   "blocks": [
+    {
+     "kind": "row",
+     "widths": [
+      1.1,
+      1
+     ],
+     "cols": [
+      {
+       "kind": "code",
+       "label": "GET /api/v1/posts?page=1&size=20",
+       "size": 13,
+       "lines": [
+        "{",
+        [
+         "  \"content\": [",
+         "amber"
+        ],
+        "    { \"id\": 37, \"title\": \"부산 맛집\", ... },",
+        "    { \"id\": 36, \"title\": \"제주 여행\", ... },",
+        [
+         "    ... 모두 20개",
+         "onDarkSoft"
+        ],
+        "  ],",
+        [
+         "  \"page\": {",
+         "amber"
+        ],
+        "    \"number\": 1,",
+        "    \"size\": 20,",
+        "    \"totalElements\": 57,",
+        "    \"totalPages\": 3",
+        "  }",
+        "}"
+       ]
+      },
+      {
+       "kind": "table",
+       "colW": [
+        1.7,
+        3.5
+       ],
+       "mono": [
+        0
+       ],
+       "size": 15,
+       "rowH": 0.55,
+       "rows": [
+        [
+         "칸",
+         "뜻"
+        ],
+        [
+         "content",
+         "이번 묶음의 글 목록 (없으면 빈 배열 [])"
+        ],
+        [
+         "number",
+         "지금 몇 번째 묶음 (0부터 → 화면엔 2쪽)"
+        ],
+        [
+         "size",
+         "한 묶음에 몇 개"
+        ],
+        [
+         "totalElements",
+         "전체 글 수"
+        ],
+        [
+         "totalPages",
+         "전체 묶음 수 → 마지막 쪽 번호"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "inline",
+     "mono": false,
+     "color": "ink",
+     "size": 17,
+     "text": "서버가 제한할 것: size 최대 100 · 정렬은 정해 둔 필드만 · 정렬 조건이 없으면 최신순"
+    }
+   ],
+   "notes": "응답에는 글 목록과 함께 전체 개수, 전체 페이지 수 같은 페이지 정보를 줘야 화면이 페이지 번호를 그릴 수 있습니다. 결과가 없으면 404가 아니라 200과 빈 배열입니다. 대신 서버는 size 최댓값, 정렬 가능한 필드, 기본 정렬을 정해 둡니다. size=1000000 요청 하나로 서버가 멈추면 안 되니까요."
+  },
+  {
+   "eyebrow": "06 · DOCS · 글결",
+   "title": "API 문서: Swagger",
+   "blocks": [
+    {
+     "kind": "image",
+     "path": "../그림/글결/Swagger-1-목록.png",
+     "cuts": [],
+     "h": 5.27
+    }
+   ],
+   "notes": "마지막은 문서입니다. 문서를 따로 쓰면 코드만 바뀌고 문서는 그대로 남기 쉽습니다. 그래서 코드에서 자동으로 만듭니다. 제가 만든 멀티 블로그 서비스 글결의 문서로 보여 드리겠습니다. 첫째는 Swagger입니다. springdoc이 서버의 컨트롤러를 읽어 API 목록을 자동으로 만들고, 로그인, 블로그, 글처럼 묶음별로 보여 줍니다. 메서드가 색으로 구분되어 주소와 함께 한눈에 보입니다.",
+   "screen": "글결 API를 Swagger UI로 띄운 목록 화면 (글결 REST Docs의 API로 명세를 만들어 다시 띄움)",
+   "section": "06 API 문서",
+   "badge": "글결"
+  },
+  {
+   "eyebrow": "06 · DOCS · 글결",
+   "title": "Swagger에서 API 하나 펼치기",
+   "blocks": [
+    {
+     "kind": "image",
+     "path": "../그림/글결/Swagger-2-글-쓰기.png",
+     "cuts": [
+      0.5
+     ],
+     "h": 5.27
+    }
+   ],
+   "notes": "하나를 펼치면 필요한 머리글, 요청 바디 예시, 응답 코드별 예시가 나옵니다. 글 쓰기는 성공하면 201, 제목을 비우면 400과 공통 에러 형식이 옵니다. Try it out을 누르면 여기서 바로 호출해 볼 수 있어서, 프론트엔드 개발자가 묻지 않고 확인할 수 있습니다.",
+   "screen": "글 쓰기 API를 펼친 화면. 위 머리글 → 요청 바디 예시 → 201 · 400 응답",
+   "badge": "글결"
+  },
+  {
+   "eyebrow": "06 · DOCS · 글결",
+   "title": "API 문서: Spring REST Docs",
+   "blocks": [
+    {
+     "kind": "image",
+     "path": "../그림/글결/REST-Docs-00-첫-화면.png",
+     "cuts": [],
+     "h": 5.27
+    }
+   ],
+   "notes": "둘째는 Spring REST Docs입니다. 여기 있는 요청과 응답은 테스트가 실제로 보내고 받은 것이라, 응답에 문서에 없는 칸이 생기거나 적은 칸이 사라지면 테스트가 실패합니다. 그래서 문서가 코드와 어긋나지 않습니다. 만드는 방법은 간단합니다. Swagger는 springdoc 의존성을 추가하면 컨트롤러를 읽어 자동으로 만들어지고, REST Docs는 API마다 테스트에 칸 설명을 적으면 테스트를 돌릴 때 문서 조각이 생겨 이 HTML로 모입니다.",
+   "screen": "글결 REST Docs 첫 화면 (Asciidoctor로 다시 만든 화면)",
+   "badge": "글결"
+  },
+  {
+   "eyebrow": "06 · DOCS · 글결",
+   "title": "공통 에러 형식: 글결 실제 응답",
+   "blocks": [
+    {
+     "kind": "image",
+     "path": "../그림/글결/REST-Docs-02-오류-응답.png",
+     "cuts": [],
+     "h": 5.27
+    }
+   ],
+   "notes": "글결의 공통 에러 형식입니다. 글결은 code, message, fieldErrors 세 칸으로 팀 형식을 정했고, 모든 API가 이 모양으로 답합니다. 화면은 code로 분기하고 message는 보여 주기만 합니다. 입력값 오류면 fieldErrors에 칸마다 까닭이 와서 제목 칸 옆에 바로 문구를 띄웁니다. 오른쪽 404도 같은 모양입니다.",
+   "screen": "글결 REST Docs 8.1 → 8.3",
+   "badge": "글결"
+  },
+  {
+   "type": "closing",
+   "section": "정리",
+   "title": "한 장 요약",
+   "rows": [
+    [
+     "무엇",
+     "URL = 명사 · 복수형  /posts/42"
+    ],
+    [
+     "어떻게",
+     "메서드 = 조회 · 생성 · 수정 · 삭제"
+    ],
+    [
+     "입력 검증",
+     "@Valid · 서버가 반드시 다시"
+    ],
+    [
+     "예외",
+     "@RestControllerAdvice 한곳에서 같은 에러 형식"
+    ],
+    [
+     "결과",
+     "상태 코드 + 하나의 응답 모양"
+    ],
+    [
+     "목록",
+     "?page=0&size=20&sort=createdAt,desc 처럼 쿼리로"
+    ],
+    [
+     "문서",
+     "이 규칙을 모두 미리 적어 둔다"
+    ]
+   ],
+   "notes": "오늘 내용을 요청 하나의 순서로 정리하면 이렇습니다. 자원은 URL로, 행동은 메서드로 표현하고, 입력은 서버에서 검증하고, 예외는 한곳에서 처리하고, 결과는 상태 코드와 같은 형식의 응답으로 돌려줍니다. 목록은 쿼리로 나눠서 주고, 이 모든 규칙은 문서로 공개합니다. 이 규칙을 지키면 처음 보는 사람도 주소만 보고 API를 읽을 수 있습니다. 감사합니다."
+  }
+ ],
+ "spare": [
+  {
+   "title": "요청과 응답의 구조",
+   "screen": "질문이 나오면: 요청 · 응답에 무엇이 들어 있나요?",
+   "blocks": [
+    {
+     "kind": "row",
+     "cols": [
+      {
+       "kind": "code",
+       "label": "요청: 클라이언트 → 서버",
+       "size": 14,
+       "lines": [
+        [
+         "POST /api/v1/posts",
+         "amber"
+        ],
+        [
+         "Content-Type: application/json",
+         "onDarkSoft"
+        ],
+        [
+         "Authorization: Bearer eyJhb…",
+         "onDarkSoft"
+        ],
+        "",
+        "{",
+        "  \"title\": \"부산 맛집\",",
+        "  \"content\": \"돼지국밥\"",
+        "}"
+       ]
+      },
+      {
+       "kind": "http",
+       "file": "실제-응답/post-201.txt",
+       "cmd": "curl -i -X POST …/api/v1/posts",
+       "label": "응답: 서버 → 클라이언트 (예제 서버 실제 응답)",
+       "size": 14
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "요청  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "메서드 + 주소 + 헤더 + 바디      ",
+        {}
+       ],
+       [
+        "응답  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "상태 코드 + 헤더 + 바디",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "요청에는 메서드와 주소, 헤더, 바디가 들어 있고, 응답에는 상태 코드, 헤더, 바디가 돌아옵니다. 오른쪽은 예제 서버에 실제로 글을 만든 응답이라, 201과 함께 새 글의 주소가 Location 헤더에 옵니다."
+  },
+  {
+   "title": "위 id를 빼도 되는 경우",
+   "screen": "질문이 나오면: /comments/7처럼 위 id를 빼도 되는 이유는?",
+   "blocks": [
+    {
+     "kind": "row",
+     "cols": [
+      {
+       "kind": "code",
+       "label": "블로그 댓글: GET /comments/7",
+       "size": 14,
+       "lines": [
+        [
+         "id   post_id   content",
+         "onDarkSoft"
+        ],
+        "6    99        잘 봤습니다",
+        [
+         "7    42        감사합니다",
+         "amber"
+        ],
+        "8    99        궁금한 점이…",
+        "",
+        [
+         "SELECT * FROM comments WHERE id = 7",
+         "teal"
+        ],
+        [
+         "→ 한 줄. 그 줄에 post_id = 42도 있음",
+         "success"
+        ]
+       ]
+      },
+      {
+       "kind": "code",
+       "label": "GitHub 이슈: GET /repos/react/issues/12",
+       "size": 14,
+       "lines": [
+        [
+         "repo          number   title",
+         "onDarkSoft"
+        ],
+        "spring-boot   1        첫 이슈",
+        [
+         "spring-boot   12       로그인 오류",
+         "amber"
+        ],
+        [
+         "react         12       화면 깨짐",
+         "amber"
+        ],
+        "",
+        [
+         "SELECT * FROM issues WHERE number = 12",
+         "teal"
+        ],
+        [
+         "→ 두 줄. 어느 것인지 모름",
+         "errorOnDark"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "inline",
+     "mono": false,
+     "color": "ink",
+     "size": 18,
+     "text": "위 id를 서버가 스스로 알아낼 수 있으면 빼도 되고, 알아낼 수 없으면 주소에 넣는다"
+    }
+   ],
+   "notes": "댓글은 번호가 전체에서 하나라서, 7번 댓글을 찾으면 그 줄에 글 번호 42도 들어 있습니다. 그래서 /comments/7만으로 충분합니다. GitHub 이슈는 번호가 저장소마다 1부터 다시 매겨져서, 12번 이슈가 여러 개입니다. 그래서 저장소를 주소에 꼭 넣어야 합니다."
+  },
+  {
+   "title": "멱등성",
+   "screen": "질문이 나오면: 멱등성이 뭔가요? 재시도는 왜 안전한가요?",
+   "blocks": [
+    {
+     "kind": "row",
+     "cols": [
+      {
+       "kind": "code",
+       "label": "POST /posts 를 3번 보내면",
+       "size": 15,
+       "lines": [
+        "1번째 → 201 · 43번 글 생성",
+        "2번째 → 201 · 44번 글 생성",
+        "3번째 → 201 · 45번 글 생성",
+        "",
+        [
+         "결과: 같은 글이 3개 생김",
+         "errorOnDark"
+        ],
+        [
+         "멱등 아님 → 중복을 막아야 한다",
+         "onDarkSoft"
+        ]
+       ]
+      },
+      {
+       "kind": "code",
+       "label": "DELETE /posts/42 를 3번 보내면",
+       "size": 15,
+       "lines": [
+        "1번째 → 204 · 42번 글 삭제",
+        "2번째 → 404 · 이미 없음",
+        "3번째 → 404 · 이미 없음",
+        "",
+        [
+         "결과: 42번 글 없음",
+         "success"
+        ],
+        [
+         "1번 보낸 것과 상태가 같다 → 멱등",
+         "onDarkSoft"
+        ]
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "멱등 O  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "GET · PUT · DELETE      ",
+        {}
+       ],
+       [
+        "멱등 X  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "POST → 글쓰기 버튼은 한 번 누르면 막아 둔다",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "멱등은 여러 번 보내도 서버 상태가 한 번 보낸 것과 같다는 뜻입니다. DELETE는 두 번째부터 404가 오지만 42번 글이 없는 상태는 같아서 멱등입니다. POST는 보낼 때마다 글이 하나씩 생겨서 멱등이 아니고, 그래서 중복을 막아야 합니다."
+  },
+  {
+   "title": "401과 403",
+   "screen": "질문이 나오면: 401과 403은 뭐가 다른가요?",
+   "blocks": [
+    {
+     "kind": "inline",
+     "size": 17,
+     "color": "ink",
+     "text": "DELETE /api/v1/posts/42   (글 삭제 요청)"
+    },
+    {
+     "kind": "table",
+     "colW": [
+      3.2,
+      4.4,
+      4.3
+     ],
+     "size": 17,
+     "rowH": 0.62,
+     "rows": [
+      [
+       "단계",
+       "확인하는 것",
+       "실패하면"
+      ],
+      [
+       "① 인증 (Authentication)",
+       "로그인했나? (JWT · 세션)",
+       "401 Unauthorized: 누구인지 모름"
+      ],
+      [
+       "② 인가 (Authorization)",
+       "이 글을 지울 권한이 있나? (글쓴이 · 관리자)",
+       "403 Forbidden: 누구인지 알지만 권한 없음"
+      ],
+      [
+       "둘 다 통과",
+       "",
+       "204 No Content: 42번 글 삭제 완료"
+      ]
+     ],
+     "colorCol": {
+      "2": "error"
+     }
+    }
+   ],
+   "notes": "401과 403은 실패한 단계가 다릅니다. 먼저 로그인했는지 확인하는 인증에서 실패하면 401, 로그인은 했지만 이 글을 지울 권한이 없으면 403입니다. 401은 누구인지 모르는 것, 403은 누구인지 알지만 권한이 없는 것입니다."
+  },
+  {
+   "title": "오프셋과 커서",
+   "screen": "질문이 나오면: 오프셋과 커서 페이징은 뭐가 다른가요?",
+   "blocks": [
+    {
+     "kind": "cards",
+     "h": 2.9,
+     "items": [
+      {
+       "kicker": "오프셋 (쪽 번호)",
+       "code": "GET /posts?page=2&size=20",
+       "codeSize": 15,
+       "body": [
+        "앞의 40개를 세면서 건너뛰고 41~60번째를 가져온다",
+        "장점: 원하는 쪽으로 바로 이동 (게시판)",
+        "단점: 뒤쪽일수록 느리고, 새 글이 오면 겹칠 수 있다"
+       ]
+      },
+      {
+       "kicker": "커서 (마지막으로 본 위치)",
+       "code": "GET /posts?cursor=981&size=20",
+       "codeSize": 15,
+       "body": [
+        "세지 않고 981번 바로 다음부터 20개 (980번 ~ 961번)",
+        "장점: 데이터가 많아도 빠르다 (무한 스크롤)",
+        "단점: 5쪽으로 바로 가기는 어렵다"
+       ]
+      }
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 18,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "안전장치  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "size 최댓값 (예: 100) · 기본 정렬 · 정렬할 수 있는 칸 제한",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "오프셋은 쪽 번호로 앞의 글을 세면서 건너뛰어서, 원하는 쪽으로 바로 갈 수 있지만 뒤로 갈수록 느려집니다. 커서는 마지막으로 본 글 번호 다음부터 가져와서 데이터가 많아도 빠르지만, 특정 쪽으로 바로 가기는 어렵습니다. 그래서 게시판은 오프셋, 무한 스크롤은 커서를 씁니다."
+  },
+  {
+   "eyebrow": "APPENDIX",
+   "title": "글결이 쓰는 상태 코드",
+   "blocks": [
+    {
+     "kind": "image",
+     "path": "../그림/글결/REST-Docs-01-오류-상태-코드.png",
+     "cuts": [],
+     "h": 5.27
+    }
+   ],
+   "notes": "글결은 400, 401, 403, 404, 409, 429를 씁니다. 남의 비공개 글은 403이 아니라 404로 답해서, 그 글이 있다는 사실도 드러나지 않게 했습니다.",
+   "screen": "질문이 나오면: 글결에서는 어떤 상태 코드를 쓰나요?",
+   "badge": "글결"
+  },
+  {
+   "eyebrow": "APPENDIX",
+   "title": "REST Docs에 API 하나가 적힌 모양",
+   "blocks": [
+    {
+     "kind": "image",
+     "path": "../그림/글결/REST-Docs-03-댓글-쓰기-전체.png",
+     "cuts": [
+      0.36,
+      0.7
+     ],
+     "h": 5.27
+    }
+   ],
+   "notes": "댓글 쓰기 하나에 요청 머리글, 주소 안의 값, 요청 본문 칸, 실제 요청, 실제 응답, 응답 칸이 차례로 적혀 있습니다. 모두 테스트가 실제로 주고받은 값입니다.",
+   "screen": "질문이 나오면: REST Docs에 API 하나가 어떻게 적혀 있나요?",
+   "badge": "글결"
+  },
+  {
+   "title": "단일 서버의 요청 흐름",
+   "screen": "질문이 나오면: 실제 서버 안에서 요청이 어떻게 처리되나요?",
+   "blocks": [
+    {
+     "kind": "inline",
+     "size": 17,
+     "color": "ink",
+     "text": "POST /api/v1/posts/42/comments   (42번 글에 댓글 작성)"
+    },
+    {
+     "kind": "table",
+     "colW": [
+      0.9,
+      3.0,
+      8.0
+     ],
+     "size": 16,
+     "rowH": 0.52,
+     "rows": [
+      [
+       "순서",
+       "어디서",
+       "하는 일"
+      ],
+      [
+       "①",
+       "인증 필터",
+       "JWT · 세션 확인, 실패하면 401"
+      ],
+      [
+       "②",
+       "URL 매핑",
+       "경로와 메서드로 CommentController 선택"
+      ],
+      [
+       "③",
+       "CommentService",
+       "postService.exists(42): 같은 프로세스 안의 메서드 호출 (네트워크 없음)"
+      ],
+      [
+       "④",
+       "DB 1개",
+       "comments 테이블에 INSERT"
+      ],
+      [
+       "⑤",
+       "응답",
+       "201 Created 또는 4xx · 5xx"
+      ]
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 17,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "장점  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "구조가 단순하고 내부 호출이 빠르다      ",
+        {}
+       ],
+       [
+        "단점  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "일부 기능만 따로 배포하거나 확장하기 어렵다",
+        {}
+       ]
+      ]
+     ]
+    }
+   ],
+   "notes": "Spring Boot 애플리케이션 하나에서는 인증 필터, URL 매핑, 컨트롤러, 서비스, DB 순서로 처리됩니다. 댓글 서비스가 글이 있는지 확인할 때도 같은 프로세스 안의 메서드 호출이라 빠릅니다. 대신 일부 기능만 따로 배포하거나 늘리기는 어렵습니다."
+  },
+  {
+   "title": "MSA의 요청 흐름",
+   "screen": "질문이 나오면: MSA에서는 어떻게 되나요?",
+   "blocks": [
+    {
+     "kind": "inline",
+     "size": 17,
+     "color": "ink",
+     "text": "POST /api/v1/posts/42/comments   (42번 글에 댓글 작성)"
+    },
+    {
+     "kind": "table",
+     "colW": [
+      0.9,
+      3.0,
+      8.0
+     ],
+     "size": 15,
+     "rowH": 0.46,
+     "rows": [
+      [
+       "순서",
+       "어디서",
+       "하는 일"
+      ],
+      [
+       "①",
+       "API Gateway",
+       "인증: JWT 확인, 실패하면 401"
+      ],
+      [
+       "②",
+       "API Gateway",
+       "라우팅: /posts/*/comments → comment-service"
+      ],
+      [
+       "③",
+       "comment-service",
+       "요청을 받는다"
+      ],
+      [
+       "④",
+       "→ post-service",
+       "GET /api/v1/posts/42: 네트워크 HTTP 호출 → 200 또는 404"
+      ],
+      [
+       "⑤",
+       "comment DB",
+       "INSERT (서비스마다 DB가 따로)"
+      ],
+      [
+       "⑥",
+       "응답",
+       "201 Created 또는 4xx · 5xx"
+      ]
+     ]
+    },
+    {
+     "kind": "text",
+     "size": 16,
+     "color": "body",
+     "lines": [
+      [
+       [
+        "장점  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "서비스마다 따로 배포 · 확장      ",
+        {}
+       ],
+       [
+        "단점  ",
+        {
+         "bold": true
+        }
+       ],
+       [
+        "서비스 사이가 네트워크 호출이라 지연 · 장애를 처리해야 한다",
+        {}
+       ]
+      ],
+      "클라이언트가 보내는 요청(URL · 메서드)은 단일 서버와 똑같다"
+     ]
+    }
+   ],
+   "notes": "MSA에서는 API Gateway가 먼저 인증하고, 주소를 보고 맞는 서비스로 보냅니다. 댓글 서비스가 글이 있는지 확인할 때는 글 서비스에 HTTP로 물어봐야 합니다. 그래도 클라이언트가 보내는 요청은 단일 서버와 똑같습니다."
+  },
+  {
+   "title": "MSA에서 에러가 전달되는 흐름",
+   "screen": "질문이 나오면: MSA에서 에러는 어떻게 전달되나요?",
+   "blocks": [
+    {
+     "kind": "code",
+     "label": "42번 글이 없을 때",
+     "size": 14,
+     "lines": [
+      "클라이언트      → Gateway          POST /api/v1/posts/42/comments",
+      [
+       "Gateway                            JWT 확인 OK",
+       "success"
+      ],
+      "Gateway         → comment-service  POST /api/v1/posts/42/comments",
+      "comment-service → post-service     GET /api/v1/posts/42",
+      [
+       "post-service    → comment-service  404 POST_NOT_FOUND",
+       "errorOnDark"
+      ],
+      [
+       "comment-service → Gateway          404 POST_NOT_FOUND",
+       "errorOnDark"
+      ],
+      [
+       "Gateway         → 클라이언트       404 POST_NOT_FOUND",
+       "errorOnDark"
+      ]
+     ]
+    },
+    {
+     "kind": "cards",
+     "h": 1.55,
+     "items": [
+      {
+       "kicker": "에러 형식이 모든 서비스에서 같으면",
+       "title": "상태 코드와 code가 그대로 전달된다",
+       "titleSize": 18,
+       "body": [
+        "클라이언트는 어느 서비스에서 났는지 몰라도 처리 가능"
+       ]
+      },
+      {
+       "kicker": "post-service가 응답하지 않으면",
+       "title": "꺼져 있음 → 503 · 시간 초과 → 504",
+       "titleSize": 18,
+       "body": [
+        "그대로 500을 주지 말고 원인에 맞는 코드로"
+       ]
+      }
+     ]
+    }
+   ],
+   "notes": "에러 형식이 모든 서비스에서 같으면, 글 서비스의 404와 POST_NOT_FOUND가 그대로 클라이언트까지 전달됩니다. 글 서비스가 꺼져 있으면 503, 제한 시간 안에 답이 없으면 504처럼 원인에 맞는 코드로 답합니다."
+  }
+ ]
+}
