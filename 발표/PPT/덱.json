@@ -10,6 +10,11 @@
   "핵심 메시지": "자원은 URL로, 행동은 메서드로, 결과는 상태 코드로. 그러면 처음 보는 사람도 API를 읽을 수 있다.",
   "만들기": "`cd 발표/PPT && node ../../.claude/skills/cream-coral-pptx/scripts/build_deck.js 덱.json` (이 파일의 대사와 PPT 발표자 노트는 `PPT/덱.json`에서 같이 나온다)"
  },
+ "fonts": {
+  "head": "Pretendard",
+  "body": "Pretendard SemiBold",
+  "mono": "JetBrains Mono"
+ },
  "qa": [
   [
    "모든 서비스가 REST를 쓰나요?",
@@ -101,7 +106,7 @@
       {
        "kind": "code",
        "label": "API: 형식이 자유라 같은 '42번 글 삭제'도 제각각",
-       "size": 17,
+       "size": 15,
        "lines": [
         [
          "POST /deletePost.do?no=42",
@@ -125,7 +130,7 @@
       {
        "kind": "code",
        "label": "RESTful API: REST 원칙으로 형식을 통일",
-       "size": 17,
+       "size": 15,
        "lines": [
         [
          "DELETE /api/v1/posts/42",
